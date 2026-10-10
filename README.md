@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.0 · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing.
+Kit v1.1 · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing.
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -13,6 +13,7 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`csv/catch_log_template.csv`](csv/catch_log_template.csv) | The catch log columns and one example row, for any tool |
 | [`csv/components.csv`](csv/components.csv) | The ten components, a definition each, and the sorting question |
 | [`csv/example_log_v1.1.csv`](csv/example_log_v1.1.csv) | Appendix A-2 of the paper (v1.1), lightly condensed |
+| [`csv/register_in_motion_template.csv`](csv/register_in_motion_template.csv) | Register of provisions in motion: status components, the issuer's source, last resolved, next check, and known pending changes (kit v1.1) |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |

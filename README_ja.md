@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。
-キット v1.0 · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます。
+キット v1.1 · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます。
 
 ※英語版READMEを正本とします。
 
@@ -15,6 +15,7 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`csv/catch_log_template.csv`](csv/catch_log_template.csv) | キャッチログの列と例1行（どのツールでも使える形式） |
 | [`csv/components.csv`](csv/components.csv) | 10成分、それぞれの定義、仕分けの問い |
 | [`csv/example_log_v1.1.csv`](csv/example_log_v1.1.csv) | 論文の付録A-2（v1.1、表現を一部圧縮） |
+| [`csv/register_in_motion_template.csv`](csv/register_in_motion_template.csv) | 動いている規定の登録簿：状態の成分、発行者の出典、最終確認日、次回確認日、値を動かしうる既知の変化（キットv1.1） |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |

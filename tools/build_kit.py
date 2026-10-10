@@ -11,7 +11,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
 
-KIT_VERSION = "1.0"
+KIT_VERSION = "1.1"
 PAPER = "What Breaks in a Citation, v1.1 (26 July 2026)"
 
 F = "Arial"
@@ -173,7 +173,7 @@ title(ws, "Citation provenance kit — reproduction kit", f"Kit v{KIT_VERSION} �
 lines = [
     ("What this is", "The working materials for the discipline described in What Breaks in a Citation: a catch log, a closed list of citation components, the grading and notation rules, a cost calculator, and the author's own 25-entry log (lightly condensed) as a worked example. The Note column on recurrences is added by the kit."),
     ("Where to type", "Yellow cells are inputs. Grey rows are examples — overwrite or delete them. Everything else is reference or formula."),
-    ("Sheets", "Catch log — your record, one row per catch, confirmation or abstention.\nComponents — the ten components and the one sorting question.\nGrades & notation — A–D, the null slot, and the rules for writing them.\nCost calculator — actions × counts × your own unit times.\nExample log v1.1 — Appendix A of the paper, lightly condensed."),
+    ("Sheets", "Catch log — your record, one row per catch, confirmation or abstention.\nComponents — the ten components and the one sorting question.\nGrades & notation — A–D, the null slot, and the rules for writing them.\nCost calculator — actions × counts × your own unit times.\nExample log v1.1 — Appendix A of the paper, lightly condensed.\nRegister in motion — status components with an issuer\'s source and a next-check date (kit v1.1)."),
     ("Three rules for the log", "1. Record confirmations and abstentions, not only corrections. Without them there is no denominator.\n2. Fill the 'what would have happened' column yourself. It is the one field nobody else can fill.\n3. Keep the log open after release. Publication is a marker in the log, not its end."),
     ("Columns the original log lacked", "'Did an existing rule fire?': two rules failed to prevent their own failure from recurring, and the log could not show it (Appendix B, §9-1).\n'Duration': no effort was recorded and it cannot be reconstructed (§8-1).\n'Stakes': the distinction between a step of the argument collapsing and one footnote dying (§7-1), as a filterable field.\n'Phase': the log closed at release, so post-publication defects went unnumbered (§9-7)."),
     ("What this kit does not do", "It does not verify anything. It records what your verification acts produced. A perfectly graded document can still be misread."),
@@ -307,6 +307,51 @@ ex.cell(row=s + 1, column=1).font = Font(name=F, size=10, italic=True)
 ex.merge_cells(start_row=s + 1, start_column=1, end_row=s + 1, end_column=6)
 ex.freeze_panes = "C5"
 
+
+# Register of provisions in motion (added in kit v1.1)
+REG_COLS = [
+    ("Provision\n規定", 30), ("Component\n成分", 14), ("Value as resolved\n確認した値", 36), ("Grade\n評価", 14),
+    ("Issuer's source (URL)\n発行者の出典", 34), ("Last resolved\n最終確認日", 13), ("Next check\n次回確認", 16),
+    ("Known pending changes (invalidation events)\n値を動かしうる既知の変化", 40), ("Notes\n備考", 30),
+]
+REG_EXAMPLE = [
+    ("India — DPDP Rules 2025, Rules 3, 5–16, 22, 23", "commencement",
+     "Eighteen months from publication (month: May 2027 — author's arithmetic)", "period: A | still operative: —",
+     "Gazette notification G.S.R. 846(E), 13 Nov 2025, Rule 1(4)", "2026-10-10", "Monthly; and on any MeitY notification",
+     "MeitY sought views (Jan 2026) on cutting 18 months to 12; no amending notification found on 2026-10-10",
+     "A government explainer (17 Nov 2025) gives the notification date as 14 Nov 2025"),
+    ("India — DPDP Rules 2025, Rule 4 (consent managers)", "commencement",
+     "Twelve months from publication (month: November 2026)", "A",
+     "G.S.R. 846(E), Rule 1(3)", "2026-10-10", "November 2026", "—", ""),
+    ("Japan — Corporate Governance Code (July 2026), English edition", "edition",
+     "Provisional translation available, dated 21 Jul 2026; posting date not shown", "exists: A | existed on 24 Jul: —",
+     "https://www.jpx.co.jp/english/equities/listing/cg/", "2026-10-10", "On any change to the page",
+     "—", "Terms differ from the author's translation: General Principle, Interpretive Guidance, reasonableness"),
+    ("Japan — NTA Q&A on electronic books (books and documents)", "edition",
+     "July 2026 edition listed; posting date not shown", "exists: A | current on 24 Jul: —",
+     "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/4-3.htm", "2026-10-10", "Each June–July",
+     "—", "Conflict: a practitioner report (C) says published 10 Jul 2026. Question numbers and pages to be retaken"),
+    ("Japan — Electronic Books Regulation art. 5(5)", "identifier",
+     "Becomes art. 5(4) on 1 Jan 2027", "A (as recorded in the Q&A)", "NTA Q&A, definitions", "2026-10-10", "2027-01",
+     "—", ""),
+]
+
+rg = wb.create_sheet("Register in motion")
+title(rg, "Register of provisions in motion",
+      "Every status component (commencement, edition, existence, dependency) gets a row, an issuer's source and a next-check date. Record what could move the value, not only the value.")
+header(rg, 4, [c for c, _ in REG_COLS], [w for _, w in REG_COLS])
+for i, row in enumerate(REG_EXAMPLE, start=5):
+    for j, v in enumerate(row, start=1):
+        body(rg.cell(row=i, column=j, value=v), fill=EX_FILL, color="52606D")
+rg.cell(row=5, column=1).comment = Comment("Grey rows: the domain paper's register, re-resolved on 10 Oct 2026. Overwrite or delete them.", "kit")
+for rr in range(5 + len(REG_EXAMPLE), 5 + len(REG_EXAMPLE) + 60):
+    for j in range(1, len(REG_COLS) + 1):
+        body(rg.cell(row=rr, column=j), fill=INPUT_FILL)
+dvc = DataValidation(type="list", formula1="=Components!$A$5:$A$20", allow_blank=True)
+dvc.showErrorMessage = False
+rg.add_data_validation(dvc); dvc.add("B5:B200")
+rg.freeze_panes = "B5"
+
 wb.save(os.path.join(OUT, "citation-provenance-kit.xlsx"))
 
 # ---------------------------------------------------------------- CSVs
@@ -322,4 +367,8 @@ with open(os.path.join(OUT, "example_log_v1.1.csv"), "w", newline="", encoding="
     w = csv.writer(f)
     w.writerow(["no", "error_to_correction", "how_noticed_gradeA", "component_gradeD", "rule_derived_gradeD", "note"])
     w.writerows(EXAMPLE)
+with open(os.path.join(OUT, "register_in_motion_template.csv"), "w", newline="", encoding="utf-8-sig") as f:
+    w = csv.writer(f)
+    w.writerow([c.replace("\n", " / ") for c, _ in REG_COLS])
+    w.writerows(REG_EXAMPLE)
 print("built")
