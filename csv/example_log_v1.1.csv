@@ -1,0 +1,26 @@
+﻿no,error_to_correction,how_noticed_gradeA,component_gradeD,rule_derived_gradeD,note
+1,A practice generated the institutions → the institutions still make the practice rational (the practice is older),Self-review,outside,—,
+2,A national audit body was the counterpart to a ministry report → the counterpart is a paragraph of a government economic survey; the audit body's remit does not reach private firms,Primary source check,attribution,—,
+3,"An official translation omitted ""such as"" → both vintages contain it",Official translation PDF,wording,Translation policy,
+4,"""borrowing in a large amount"" → ""in a significant amount""",Official translation PDF,wording,Translation policy,
+5,"""transfer is wrong, assignment is right"" → the framing was wrong: two vintages of the official translation circulate; citing without specifying which is the error",Comparison of both files,edition,Pin the edition,
+6,Applicability by market capitalisation → the capitalisation wording was deleted from the regulation on a stated date,Consolidated regulation,edition,Register of provisions in motion,
+7,The committee's terms of reference required amendment → the scope is mandated by a schedule; no amendment needed,Consolidated regulation,wording,—,Contested (§A-4)
+8,"A procurement rule listed ""life cycle cost"" among its criteria → the phrase is not in the rule; a secondary gloss had been promoted to statutory text; price is one of five criteria and one had been dropped",Primary source at printed page,wording + dependency,Verbatim at the printed page,
+9,The basis for quality-and-cost selection was a 2021 office memorandum → the memorandum is not in the consolidated rules; the basis is a numbered rule in the main text,Full-text search of consolidated rules,identifier + existence,—,
+10,An e-marketplace obligation bound procuring entities generally → it binds ministries and departments,Primary source,wording,—,
+11,"Substantive commencement on a specific day → commencement is expressed as an interval; state the month, do not compute the day",Gazette notification,date,"Quote the period, do not compute the date",
+12,A proposed name for a fictional entity → rejected; the prefix belongs to public-sector naming convention,Reconsideration of reader assumptions,outside,—,
+13,The 2021 edition of a governance code was current → it was revised and took effect three days before the paper's date,Primary source,edition,Register of provisions in motion,
+14,A supplementary principle requiring disclosure of delegated authority was current → deleted in the revision,Code text,existence,Register of provisions in motion,
+15,"A supplementary principle on risk management → promoted to a principle, with specifics moved to guidance outside comply-or-explain",Code text,edition,Register of provisions in motion,
+16,"The rules permit quality-weighted selection, so lowest-price is practice not rule → the quality-weighted route is confined to consultancy; software falls under goods; the goods rule directs award to the lowest evaluated bidder; non-financial weighting is capped",Cross-reading four provisions,wording,Mechanism over content,Contested (§A-4) — strongest candidate
+17,A vendor's third-party certification satisfies the audit-trail requirement → it does not on its own; the assurance report must address the statutory requirement and cover the buyer's reporting period,Professional institute guidance,attribution,—,Contested (§A-4)
+18,A statutory provision means liability does not transfer (present tense) → not yet in force; commencement eighteen months out,Gazette commencement order,commencement,Do not write an unenforced obligation in the present tense,
+19,"The doctrine is unestablished / does not reach the forum → both diverge from the source: it exists, is not codified in the same language, and there is apprehension that it is not taken into account",Source text,wording,Do not characterise from memory / Do not drop the qualifiers,
+20,"The statutory list of reserved matters is closed → it is not; a residual clause permits extension by rules; extension is prospective, published and dated",Statute at printed page,wording,Do not characterise from memory,Contested (§A-4)
+21,An annually revised government Q&A: the 2022 edition was current → the 2025 edition is current; a cited rule renumbers on a stated future date,Issuing authority's site,edition + date,Register of provisions in motion,
+22,"A rule adds nine items to the statutory list (unamended) → the rule has been amended; nine notifications over five years, chain open; the G.S.R. 206(E) collision was found inside this chain",Chain trace,edition → identifier,Cite consolidated text only / Triple-key identification,
+23,The authoritative file of the Q&A is one PDF → that file is the change-marked edition; page references must be retaken,Issuing authority's site,edition,Pin the edition (second occurrence),Recurrence after rule existed
+24,A control is grounded on a data-protection rule (present tense) → that rule is also eighteen months out; recurrence of #18,Consolidation pass over the control document,commencement,"#18's rule, which did not fire",Recurrence after rule existed
+25,Permission to name a third party had been obtained → oral only; nothing in writing,Internal contradiction in the control document,outside,—,

@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "No attribution is required (CC0 1.0). If you wish to cite the kit, please use this record."
+title: "Citation provenance kit: reproduction kit for What Breaks in a Citation"
+type: dataset
+authors:
+  - family-names: Iuchi
+    given-names: Ayako
+version: "1.0"
+date-released: "2026-10-10"
+license: CC0-1.0
+references:
+  - type: report
+    title: "What Breaks in a Citation: Component-graded citation as a production discipline"
+    authors:
+      - family-names: Iuchi
+        given-names: Ayako
+    version: "1.1"
+    date-released: "2026-07-26"
+    url: "https://lnkd.in/p/giTfeMUh"
