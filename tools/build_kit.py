@@ -293,7 +293,7 @@ for k, n in enumerate(notes):
 # Example log
 ex = wb.create_sheet("Example log v1.1")
 title(ex, "Worked example — the source project's log (Appendix A-2, v1.1, lightly condensed)",
-      "Error, correction and manner of discovery: grade A (contemporaneous). Component and rule: grade D (applied afterwards by the author). English is a translation; the Japanese original governs.")
+      "Error, correction and manner of discovery: grade A (contemporaneous). Component and rule: grade D (applied afterwards by the author). English is the author's translation; the Japanese original governs (published as Appendix A-2 of the Japanese edition from v1.2).")
 header(ex, 4, ["#", "Error → Correction", "How it came to notice (A)", "Component (D)", "Rule derived (D)", "Note"], [5, 80, 28, 20, 34, 26])
 for i, row in enumerate(EXAMPLE, start=5):
     for j, v in enumerate(row, start=1):

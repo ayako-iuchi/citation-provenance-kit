@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.1.1 — 2026-10-12
+
+- README and the example-log sheet now say where the governing Japanese log is published (Appendix A-2 of the Japanese edition, from paper v1.2). Kit v1.0 and v1.1 said the Japanese original governs without saying it was unpublished; that statement came from the paper and is corrected there as entry #36.
+
 ## Kit v1.1 — 2026-10-10
 
 - Added the **Register in motion** sheet and `csv/register_in_motion_template.csv`: one row per status component (commencement, edition, existence, dependency), with the issuer's source, the date last resolved, the next check, and known pending changes that could move the value.

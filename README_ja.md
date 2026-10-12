@@ -48,7 +48,7 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 - What Breaks in a Citation — [English](https://lnkd.in/p/giTfeMUh) · [日本語](https://lnkd.in/p/gFUXFv2w)
 - What Your Buyer Is Defending Against（元プロジェクト） — [English](https://lnkd.in/p/gHNjBuCd) · [日本語](https://lnkd.in/p/gF-kd9DF)
 
-実例ログは日本語原本からの翻訳で、日本語原本が優先します。成分と規則の列は著者が事後に付けた分類です（D評価）。4件に異論の余地があります（論文の付録A-4）。
+実例ログは著者による英訳です。原記録は日本語で付けられ、日本語が優先します。論文のv1.2（2026年10月12日）から、日本語版の付録A-2として公開されます。v1.1では参照されていたものの、公開されていませんでした。成分と規則の列は著者が事後に付けた分類です（D評価）。4件に異論の余地があります（論文の付録A-4）。
 
 ## ライセンス
 
