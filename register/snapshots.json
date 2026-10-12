@@ -1,0 +1,16 @@
+[
+  {
+    "id": "nta-qa-2025-06-q55",
+    "source": {
+      "issuer": "National Tax Agency (Japan)",
+      "title": "電子帳簿保存法一問一答（電子計算機を使用して作成する帳簿書類関係）",
+      "url": "https://www.nta.go.jp/law/joho-zeikaishaku/sonota/jirei/4-3.htm"
+    },
+    "edition": "June 2025 edition",
+    "locus": "Q55, printed p. 42",
+    "wording": "優良な電子帳簿の要件には、システム関係書類の備付けに関する事項等、機能に関する事項以外の要件もあり、それらを含め全ての要件を満たす必要がありますのでご注意ください。",
+    "wording_sha256": "9ba894202d00833f634e708e1f9d9c8183483bf060606b31bd1fd1d3fcd86767",
+    "read_on": null,
+    "translation": "Note that the requirements for superior electronic books include requirements other than those concerning function — such as matters relating to the keeping of documents on administrative procedures — and that all of these requirements, those included, must be satisfied. (The author's translation, from What Your Buyer Is Defending Against v1.1, §6-2.)"
+  }
+]

@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/status_assertion.schema.json",
+  "title": "Status assertion",
+  "description": "One dated statement about a status component of a source: commencement, edition, existence, dependency or identifier. Assertions are appended, never edited. A later assertion about the same subject and component replaces an earlier one for 'what is believed now', and the earlier one stays on record for 'what was believed then'. Kit v1.3. CC0 1.0.",
+  "type": "object",
+  "required": ["id", "subject", "component", "value", "grade", "recorded_on", "source", "expires_on"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable identifier of this assertion. Never reused."
+    },
+    "subject": {
+      "type": "string",
+      "description": "What the status is about: a provision, an edition of a document, a snapshot id."
+    },
+    "component": {
+      "enum": ["commencement", "edition", "existence", "dependency", "identifier"],
+      "description": "Only components that can become false without the document changing belong here. Wording, page and figure belong in a snapshot."
+    },
+    "value": {
+      "type": ["string", "null"],
+      "description": "What was established. null means: looked, and could not establish it. null is a valid answer, not a missing field."
+    },
+    "grade": {
+      "type": "string",
+      "description": "Evidence grade in the kit's notation, per component where grades diverge, e.g. 'exists: A | current on 24 Jul: —'."
+    },
+    "valid_from": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "When the value starts to hold in the world (valid time), if known."
+    },
+    "valid_to": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "When the value stops holding in the world (valid time), if known."
+    },
+    "recorded_on": {
+      "type": "string",
+      "format": "date",
+      "description": "The day this assertion was made (transaction time). The query 'what did I believe on day X' reads this field."
+    },
+    "source": {
+      "type": "string",
+      "description": "Where the value was established: the issuer's URL or instrument, or the document that records the finding."
+    },
+    "expires_on": {
+      "type": ["string", "null"],
+      "format": "date",
+      "description": "After this day the value is not trusted until re-resolved. null means no date-based expiry was stated; the query reports that rather than treating the value as permanent."
+    },
+    "next_check": {
+      "type": "string",
+      "description": "The re-check rule as written by the author, e.g. 'Each June–July' or 'On any change to the page'."
+    },
+    "pending_changes": {
+      "type": "string",
+      "description": "Known events that could move the value (invalidation events)."
+    },
+    "supersedes": {
+      "type": ["string", "null"],
+      "description": "The id of the assertion this one replaces, if any. The replaced assertion is not edited."
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

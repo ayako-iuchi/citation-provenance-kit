@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/snapshot.schema.json",
+  "title": "Snapshot",
+  "description": "The words of one edition of a source at one locus, as read on one day. A snapshot is written once and not edited. If a new edition changes the words, that is a new snapshot; whether an edition is current is a status assertion, not part of the snapshot. Kit v1.3. CC0 1.0.",
+  "type": "object",
+  "required": [
+    "id",
+    "source",
+    "edition",
+    "locus",
+    "wording",
+    "wording_sha256",
+    "read_on"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "source": {
+      "type": "object",
+      "description": "Identify the source by a composite key, not by a number alone: gazette numbers, for example, are reissued each year.",
+      "required": [
+        "issuer",
+        "title"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "issuer": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "number": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string"
+        },
+        "amends": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        }
+      }
+    },
+    "edition": {
+      "type": "string",
+      "description": "Which edition was read, as the issuer names it, e.g. 'June 2025 edition'."
+    },
+    "locus": {
+      "type": "string",
+      "description": "Question, article, paragraph and printed page — not the page of an electronic file."
+    },
+    "wording": {
+      "type": "string",
+      "description": "The words as they appear in that edition, in the original language."
+    },
+    "wording_sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 of the UTF-8 wording. Lets a later reader confirm the words have not been edited since they were recorded."
+    },
+    "read_on": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date",
+      "description": "The day the words were read. null when the day was not recorded — a gap to disclose, not to fill from memory."
+    },
+    "translation": {
+      "type": "string",
+      "description": "An English rendering, if any, and whose."
+    }
+  }
+}

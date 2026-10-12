@@ -17,6 +17,10 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`csv/example_log_v1.1.csv`](csv/example_log_v1.1.csv) | 論文の付録A-2（v1.1、表現を一部圧縮） |
 | [`csv/register_in_motion_template.csv`](csv/register_in_motion_template.csv) | 動いている規定の登録簿：状態の成分、発行者の出典、最終確認日、次回確認日、値を動かしうる既知の変化（キットv1.1） |
 | [`tools/citelint.py`](tools/citelint.py) | 成分別格付け引用を使う文書のための小さなlinter。未定義のログ番号、「上記6つ」のような数の不一致、残った制作メモ、目次にあって本文に見出しがない項目、語彙の外の記法、本文に印字された書式記号を検出（キットv1.2） |
+| [`schema/`](schema/) | **スナップショット**（ある版のある箇所の文言。一度書いたら変えない）と、**状態の主張**（施行・版・存在・依存・識別子についての、日付付きの記述1件）のJSON Schema（キットv1.3、未リリース） |
+| [`register/status_log.jsonl`](register/status_log.jsonl) | 動いている規定の登録簿を、追記だけのログにしたもの。v1.1の5行のあとに、2026年10月12日の発見を、置き換える行と並べて追加（キットv1.3、未リリース） |
+| [`tools/statuslog.py`](tools/statuslog.py) | 「X日の時点で何を記録していたか」と「今日、何を頼れるか」に答える。期限切れの状態には値を返さない（キットv1.3、未リリース） |
+| [`tools/migrate_register.py`](tools/migrate_register.py) | v1.1の登録簿CSVを状態ログの最初の行に変換する。有効期限を推測で作らない（キットv1.3、未リリース） |
 | [`tests/test_citelint.py`](tests/test_citelint.py) | linterのテスト（`python3 -m pytest tests`） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
@@ -50,6 +54,23 @@ python3 tools/citelint.py paper_from_pdf.txt --format rendered --lang ja  # 公�
 ```
 
 何か見つけると終了コード1を返すので、CIで使えます。読むのはテキストだけです。読みが正しいか、出典がまだ有効か、言葉の違う2つの文が矛盾しているかは判断できません。論文v1.1にかけると、のちに#26〜#44として記録された欠陥18件（確認の#34を除く）のうち8件と、もう1件の一部を見つけました。誰も見つけていなかったものも1件ありました。日本語版で、目次の第3章の題が本文の見出しと一致していません。結果はHypothetical Technical Blog #18で報告しています。
+
+## 状態ログ（キットv1.3、未リリース）
+
+v1.1の登録簿は、1行に1つの値と1つの最終確認日を持ちます。値が動くと、前の値を置いておく場所がありません。行を直すと、かつて別のことを信じていたという記録も消えます。状態ログは行を書き換えません。新しい発見は新しい行として加え、どの行を置き換えるかをその行に書きます。
+
+```
+python3 tools/statuslog.py register/status_log.jsonl --list
+python3 tools/statuslog.py register/status_log.jsonl --subject "Japan — NTA Q&A on electronic books (books and documents)" --component edition --on 2026-10-11 --believed
+python3 tools/statuslog.py register/status_log.jsonl --subject "India — DPDP Rules 2025, Rule 4 (consent managers)" --component commencement --on 2026-11-02
+python3 tools/statuslog.py --verify-append yesterday.jsonl today.jsonl
+```
+
+2つ目は10月11日の時点で記録していた内容を返します。3つ目は次回確認日を過ぎているので、`"status": "expired"` を返し、値は返しません。期限切れの値を古い値で代用しません。状態はスナップショットに入れないので、検索用に索引する文言が、古くなりうる状態を抱えることはありません。
+
+`migrate_register.py` が有効期限を入れるのは、「次回確認」が日付か一定の間隔を示している行だけです。「ページが変わったら」はどちらでもないので、その行の期限は空（null）のままにし、問い合わせでは `no-expiry-stated` と報告します。
+
+しないこと：何を再確認すべきかを決めること、出典同士の食い違いを解くこと、格付けすること。それはあなたの仕事のままです。
 
 ## このキットがしないこと
 

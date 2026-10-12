@@ -15,6 +15,10 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`csv/example_log_v1.1.csv`](csv/example_log_v1.1.csv) | Appendix A-2 of the paper (v1.1), lightly condensed |
 | [`csv/register_in_motion_template.csv`](csv/register_in_motion_template.csv) | Register of provisions in motion: status components, the issuer's source, last resolved, next check, and known pending changes (kit v1.1) |
 | [`tools/citelint.py`](tools/citelint.py) | A small linter for documents that use component-graded citation: undefined log tokens, "the six above" counts, leftover drafting notes, Contents entries without headings, notation outside the vocabulary, and markup printed as text (kit v1.2) |
+| [`schema/`](schema/) | JSON Schemas for a **snapshot** (the words of one edition at one locus, written once) and a **status assertion** (one dated statement about commencement, edition, existence, dependency or identifier) (kit v1.3, unreleased) |
+| [`register/status_log.jsonl`](register/status_log.jsonl) | The register of provisions in motion as an append-only log: the five v1.1 rows, then the finding of 12 October 2026 added beside the row it replaces (kit v1.3, unreleased) |
+| [`tools/statuslog.py`](tools/statuslog.py) | Answers "what had I recorded as of day X?" and "what may I rely on today?", and returns no value once a status has expired (kit v1.3, unreleased) |
+| [`tools/migrate_register.py`](tools/migrate_register.py) | Turns a v1.1 register CSV into the first lines of a status log, without inventing expiry dates (kit v1.3, unreleased) |
 | [`tests/test_citelint.py`](tests/test_citelint.py) | Tests for the linter (`python3 -m pytest tests`) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
@@ -48,6 +52,23 @@ python3 tools/citelint.py paper_from_pdf.txt --format rendered --lang ja  # text
 ```
 
 It exits with status 1 when it reports anything, so it can run in CI. It reads only the text. It cannot tell whether a reading is right, whether a source is still in force, or whether two sentences that use different words make claims that contradict each other. On the paper's v1.1, it found 8 of the 18 defects later logged as #26–#44 (excluding #34, a confirmation), and part of a ninth. It also found one that no reader had: in the Japanese edition, the Contents title of chapter 3 does not match the chapter heading. Hypothetical Technical Blog #18 reports the run.
+
+## The status log (kit v1.3, unreleased)
+
+The v1.1 register keeps one value and one "last resolved" date per row. When a value moves, the row has nowhere to keep the old one, and correcting it erases the record that you once believed otherwise. The status log never edits a line. A newer finding is a new line that names the line it supersedes.
+
+```
+python3 tools/statuslog.py register/status_log.jsonl --list
+python3 tools/statuslog.py register/status_log.jsonl --subject "Japan — NTA Q&A on electronic books (books and documents)" --component edition --on 2026-10-11 --believed
+python3 tools/statuslog.py register/status_log.jsonl --subject "India — DPDP Rules 2025, Rule 4 (consent managers)" --component commencement --on 2026-11-02
+python3 tools/statuslog.py --verify-append yesterday.jsonl today.jsonl
+```
+
+The second command answers what had been recorded on 11 October; the third returns `"status": "expired"` and no value, because the row's next check has passed. An expired value is not replaced by the old one. Status never goes into a snapshot, so the words you index for search do not carry a status that can go stale.
+
+`migrate_register.py` sets an expiry only where the "Next check" text gives a date or a regular interval. "On any change to the page" gives neither; that row's expiry stays null, and the query reports it as `no-expiry-stated`.
+
+What it does not do: decide what to re-check, settle a conflict between sources, or grade anything. Those stay with you.
 
 ## What this kit does not do
 
