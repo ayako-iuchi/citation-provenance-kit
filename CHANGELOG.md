@@ -2,6 +2,12 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Unreleased (kit v1.3, in preparation)
+
+- **Found 2026-10-12 — the register disagrees with the post it came from.** The Register in motion row for Japan's National Tax Agency Q&A (kit v1.1 and v1.2) still says that one practitioner report (C) gives a publication date of 10 July 2026, and that question numbers and pages are to be retaken. Hypothetical Technical Blog #17, in its draft as it stands on 12 October 2026, says more: two practitioner reports, dated 13 and 14 July, both give that date; the A grade for "June 2025 edition current on 24 July 2026" is withdrawn; and the citations held (Q7 on printed p. 9, Q55 and Q56 on p. 42, in the July 2026 edition's contents).
+- The row is **left as it stands in this release on purpose.** The template keeps one value and one "last resolved" date per row, so correcting the row would also erase the record that the kit once said otherwise. Kit v1.3 will add the newer finding as a new, dated entry and keep the 10 October value beside it.
+- Recorded in the method paper's log as entry #46.
+
 ## Kit v1.2 — 2026-10-12
 
 - Added `tools/citelint.py`, a linter with six checks (C1–C6), its tests, and its output on both editions of the paper in `evidence/`.
