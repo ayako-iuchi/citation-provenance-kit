@@ -1,0 +1,9 @@
+en_v1.1.md:45: C4 listed in the Contents, but no heading with this text exists in the body
+en_v1.1.md:45: C4 listed in the Contents, but no heading with this text exists in the body
+en_v1.1.md:552: C2 "the six above", but 7 subsections precede this one
+en_v1.1.md:727: C3 drafting note left in the text: "should be amended accordingly"
+en_v1.1.md:783: C1 log token X-01 is used but no log entry defines it
+en_v1.1.md:783: C1 log token X-02 is used but no log entry defines it
+en_v1.1.md:785: C1 log token X-01 is used but no log entry defines it
+en_v1.1.md:785: C1 log token X-02 is used but no log entry defines it
+8 finding(s): C1 4, C2 1, C3 1, C4 2

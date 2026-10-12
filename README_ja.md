@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。
-キット v1.1 · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます。
+キット v1.2 · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます。
 
 ※英語版READMEを正本とします。
 
@@ -16,6 +16,9 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`csv/components.csv`](csv/components.csv) | 10成分、それぞれの定義、仕分けの問い |
 | [`csv/example_log_v1.1.csv`](csv/example_log_v1.1.csv) | 論文の付録A-2（v1.1、表現を一部圧縮） |
 | [`csv/register_in_motion_template.csv`](csv/register_in_motion_template.csv) | 動いている規定の登録簿：状態の成分、発行者の出典、最終確認日、次回確認日、値を動かしうる既知の変化（キットv1.1） |
+| [`tools/citelint.py`](tools/citelint.py) | 成分別格付け引用を使う文書のための小さなlinter。未定義のログ番号、「上記6つ」のような数の不一致、残った制作メモ、目次にあって本文に見出しがない項目、語彙の外の記法、本文に印字された書式記号を検出（キットv1.2） |
+| [`tests/test_citelint.py`](tests/test_citelint.py) | linterのテスト（`python3 -m pytest tests`） |
+| [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -38,6 +41,15 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 ## コスト計算表
 
 作業ごとに「件数 × 単位時間（分）÷ 60」で時間を出します。単位時間は意図的に空欄にしています。ご自身の値を入れてください。出てきた数値は **D評価** であり、使う場所では必ずそう明記してください。
+
+## linter
+
+```
+python3 tools/citelint.py paper.md                                        # 著者のMarkdown原稿
+python3 tools/citelint.py paper_from_pdf.txt --format rendered --lang ja  # 公開ファイルから取り出したテキスト
+```
+
+何か見つけると終了コード1を返すので、CIで使えます。読むのはテキストだけです。読みが正しいか、出典がまだ有効か、言葉の違う2つの文が矛盾しているかは判断できません。論文v1.1にかけると、のちに#26〜#44として記録された欠陥18件（確認の#34を除く）のうち8件と、もう1件の一部を見つけました。誰も見つけていなかったものも1件ありました。日本語版で、目次の第3章の題が本文の見出しと一致していません。結果はHypothetical Technical Blog #18で報告しています。
 
 ## このキットがしないこと
 

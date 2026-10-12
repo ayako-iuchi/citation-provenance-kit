@@ -1,0 +1,2 @@
+ja_v1.2_rendered.txt:34: C4 listed in the Contents, but no heading with this text exists in the body
+1 finding(s): C4 1

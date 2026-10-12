@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.1 · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing.
+Kit v1.2 · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing.
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -14,6 +14,9 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`csv/components.csv`](csv/components.csv) | The ten components, a definition each, and the sorting question |
 | [`csv/example_log_v1.1.csv`](csv/example_log_v1.1.csv) | Appendix A-2 of the paper (v1.1), lightly condensed |
 | [`csv/register_in_motion_template.csv`](csv/register_in_motion_template.csv) | Register of provisions in motion: status components, the issuer's source, last resolved, next check, and known pending changes (kit v1.1) |
+| [`tools/citelint.py`](tools/citelint.py) | A small linter for documents that use component-graded citation: undefined log tokens, "the six above" counts, leftover drafting notes, Contents entries without headings, notation outside the vocabulary, and markup printed as text (kit v1.2) |
+| [`tests/test_citelint.py`](tests/test_citelint.py) | Tests for the linter (`python3 -m pytest tests`) |
+| [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -36,6 +39,15 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 ## The cost calculator
 
 Hours = count × unit minutes ÷ 60, per action. The unit times are left blank on purpose. Supply your own. Any figure it produces is **grade D** and should be labelled so wherever it appears.
+
+## The linter
+
+```
+python3 tools/citelint.py paper.md                                   # the author's Markdown source
+python3 tools/citelint.py paper_from_pdf.txt --format rendered --lang ja  # text taken from the published file
+```
+
+It exits with status 1 when it reports anything, so it can run in CI. It reads only the text. It cannot tell whether a reading is right, whether a source is still in force, or whether two sentences that use different words make claims that contradict each other. On the paper's v1.1, it found 8 of the 18 defects later logged as #26–#44 (excluding #34, a confirmation), and part of a ninth. It also found one that no reader had: in the Japanese edition, the Contents title of chapter 3 does not match the chapter heading. Hypothetical Technical Blog #18 reports the run.
 
 ## What this kit does not do
 

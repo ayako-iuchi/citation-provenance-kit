@@ -1,0 +1,48 @@
+ja_v1.1_rendered.txt:19: C6 empty table row
+ja_v1.1_rendered.txt:20: C6 table-alignment row (:-: / ---) printed as a table row
+ja_v1.1_rendered.txt:36: C4 listed in the Contents, but no heading with this text exists in the body
+ja_v1.1_rendered.txt:54: C4 listed in the Contents, but no heading with this text exists in the body
+ja_v1.1_rendered.txt:54: C6 HTML entity &nbsp; printed as text
+ja_v1.1_rendered.txt:56: C6 HTML entity &nbsp; printed as text
+ja_v1.1_rendered.txt:58: C6 HTML entity &nbsp; printed as text
+ja_v1.1_rendered.txt:82: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:88: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:209: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:213: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:215: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:223: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:227: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:229: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:231: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:414: C6 backtick printed as text (8)
+ja_v1.1_rendered.txt:420: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:423: C6 table-alignment row (:-: / ---) printed as a table row
+ja_v1.1_rendered.txt:485: C6 empty table row
+ja_v1.1_rendered.txt:502: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:588: C2 「上記6つ」だが、この節の前に小節が7つある
+ja_v1.1_rendered.txt:699: C6 table-alignment row (:-: / ---) printed as a table row
+ja_v1.1_rendered.txt:705: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:707: C6 backtick printed as text (4)
+ja_v1.1_rendered.txt:721: C6 backtick printed as text (2)
+ja_v1.1_rendered.txt:733: C3 drafting note left in the text: "に合わせて改める"
+ja_v1.1_rendered.txt:739: C6 backtick printed as text (4)
+ja_v1.1_rendered.txt:746: C6 table-alignment row (:-: / ---) printed as a table row
+ja_v1.1_rendered.txt:780: C1 log token X-01 is used but no log entry defines it
+ja_v1.1_rendered.txt:780: C1 log token X-02 is used but no log entry defines it
+ja_v1.1_rendered.txt:780: C1 log entry #8 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #5 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #23 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #22 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #22 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #11 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #18 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #24 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #19 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #19 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #6 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #13 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #14 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #15 is referenced but not in the log
+ja_v1.1_rendered.txt:780: C1 log entry #21 is referenced but not in the log
+ja_v1.1_rendered.txt:794: C6 backtick printed as text (2)
+47 finding(s): C1 17, C2 1, C3 1, C4 2, C6 26
