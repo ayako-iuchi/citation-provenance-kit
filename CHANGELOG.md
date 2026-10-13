@@ -8,11 +8,15 @@ Revisions are dated and kept visible. Nothing is changed silently.
 - The row is **left as it stands in this release on purpose.** The template keeps one value and one "last resolved" date per row, so correcting the row would also erase the record that the kit once said otherwise. Kit v1.3 will add the newer finding as a new, dated entry and keep the 10 October value beside it.
 - Recorded in the method paper's log as entry #46.
 - **2026-10-13 — the blog posts were renumbered.** An earlier series reached #16, so the posts of this series moved up by one: #16–#19 became #17–#20. Blog numbers in the kit now name the post by number and title. Log entry numbers (#1–#48, as in `csv/components.csv` and the worked example) are a different series and did not change.
-- **Found 2026-10-13 — the released README names the linter post by a number that now belongs to another post.** Kit v1.2 says "Hypothetical Technical Blog #18 reports the run". After the renumbering, #18 is *Commencement Is a Cache-Invalidation Problem*; the run is reported in #19, *A Rule Is Not a Mechanism*. Corrected here in both READMEs. Recorded in the method paper's log as entry #48.
+- **Found 2026-10-13 — the released README names the linter post by a number that now belongs to another post.** Kit v1.2 says "Hypothetical Technical Blog #18 reports the run". After the renumbering, #18 is *Commencement Is a Cache-Invalidation Problem*; the run is reported in #19, *A Rule Is Not a Mechanism*. Corrected on the released branch on 13 October (see the README correction below); v1.3 also gives the post's title. Recorded in the method paper's log as entry #48.
 - Line 6 of `register/status_log.jsonl` is not yet released. Its source now gives the post's new number and its title. This is a correction to an unreleased draft, kept visible in the Git history, not an edit to a released line.
 - Added `schema/` (snapshot and status assertion), `register/status_log.jsonl`, `register/snapshots.json`, `tools/statuslog.py`, `tools/migrate_register.py` and `tests/test_statuslog.py`. The status log's first five lines are the v1.1 register, converted by `migrate_register.py` without change; the sixth is the finding of 12 October, which names the line it supersedes. The v1.1 register CSV and the workbook sheet are unchanged.
 - The one snapshot, Q55 of the National Tax Agency Q&A (June 2025 edition), has `read_on: null`. The day those words were read was not recorded, and is not supplied.
 - **Found 2026-10-12 — `CITATION.cff` still gives version 1.1.1.** Kit v1.2 did not update it. To be corrected at the v1.3 release, not before, so that the released file and the version it names agree. Recorded in the method paper's log as entry #47.
+
+## README correction — 2026-10-13 (no new version)
+
+- The blog posts of this series were renumbered: an earlier series reached #16, so #16–#19 became #17–#20. Kit v1.2's README said "Hypothetical Technical Blog #18 reports the run"; after the renumbering, #18 is *Commencement Is a Cache-Invalidation Problem*. The run is reported in #19, *A Rule Is Not a Mechanism*. Both READMEs were corrected on 13 October 2026 (commit c9a9823). That commit did not record the change here; this entry does. Recorded in the method paper's log as entry #48.
 
 ## Kit v1.2 — 2026-10-12
 
