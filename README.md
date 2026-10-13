@@ -51,7 +51,7 @@ python3 tools/citelint.py paper.md                                   # the autho
 python3 tools/citelint.py paper_from_pdf.txt --format rendered --lang ja  # text taken from the published file
 ```
 
-It exits with status 1 when it reports anything, so it can run in CI. It reads only the text. It cannot tell whether a reading is right, whether a source is still in force, or whether two sentences that use different words make claims that contradict each other. On the paper's v1.1, it found 8 of the 18 defects later logged as #26–#44 (excluding #34, a confirmation), and part of a ninth. It also found one that no reader had: in the Japanese edition, the Contents title of chapter 3 does not match the chapter heading. Hypothetical Technical Blog #18 reports the run.
+It exits with status 1 when it reports anything, so it can run in CI. It reads only the text. It cannot tell whether a reading is right, whether a source is still in force, or whether two sentences that use different words make claims that contradict each other. On the paper's v1.1, it found 8 of the 18 defects later logged as #26–#44 (excluding #34, a confirmation), and part of a ninth. It also found one that no reader had: in the Japanese edition, the Contents title of chapter 3 does not match the chapter heading. Hypothetical Technical Blog #19, *A Rule Is Not a Mechanism*, reports the run.
 
 ## The status log (kit v1.3, unreleased)
 
