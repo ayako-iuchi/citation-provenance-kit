@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## README correction — 2026-10-13 (no new version)
+
+- The blog posts of this series were renumbered: an earlier series reached #16, so #16–#19 became #17–#20. Kit v1.2's README said "Hypothetical Technical Blog #18 reports the run"; after the renumbering, #18 is *Commencement Is a Cache-Invalidation Problem*. The run is reported in #19, *A Rule Is Not a Mechanism*. Both READMEs were corrected on 13 October 2026 (commit c9a9823). That commit did not record the change here; this entry does. Recorded in the method paper's log as entry #48.
+
 ## Kit v1.2 — 2026-10-12
 
 - Added `tools/citelint.py`, a linter with six checks (C1–C6), its tests, and its output on both editions of the paper in `evidence/`.
