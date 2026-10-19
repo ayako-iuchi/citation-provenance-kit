@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.2 · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing.
+Kit v1.3 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing.
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -15,11 +15,11 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`csv/example_log_v1.1.csv`](csv/example_log_v1.1.csv) | Appendix A-2 of the paper (v1.1), lightly condensed |
 | [`csv/register_in_motion_template.csv`](csv/register_in_motion_template.csv) | Register of provisions in motion: status components, the issuer's source, last resolved, next check, and known pending changes (kit v1.1) |
 | [`tools/citelint.py`](tools/citelint.py) | A small linter for documents that use component-graded citation: undefined log tokens, "the six above" counts, leftover drafting notes, Contents entries without headings, notation outside the vocabulary, and markup printed as text (kit v1.2) |
-| [`schema/`](schema/) | JSON Schemas for a **snapshot** (the words of one edition at one locus, written once) and a **status assertion** (one dated statement about commencement, edition, existence, dependency or identifier) (kit v1.3, unreleased) |
-| [`register/status_log.jsonl`](register/status_log.jsonl) | The register of provisions in motion as an append-only log: the five v1.1 rows, then the finding of 12 October 2026 added beside the row it replaces (kit v1.3, unreleased) |
-| [`tools/statuslog.py`](tools/statuslog.py) | Answers "what had I recorded as of day X?" and "what may I rely on today?", and returns no value once a status has expired (kit v1.3, unreleased) |
-| [`tools/migrate_register.py`](tools/migrate_register.py) | Turns a v1.1 register CSV into the first lines of a status log, without inventing expiry dates (kit v1.3, unreleased) |
-| [`tests/test_citelint.py`](tests/test_citelint.py) | Tests for the linter (`python3 -m pytest tests`) |
+| [`schema/`](schema/) | JSON Schemas for a **snapshot** (the words of one edition at one locus, written once) and a **status assertion** (one dated statement about commencement, edition, existence, dependency or identifier) (kit v1.3) |
+| [`register/status_log.jsonl`](register/status_log.jsonl) | The register of provisions in motion as an append-only log: the five v1.1 rows, then the finding of 12 October 2026 added beside the row it replaces (kit v1.3) |
+| [`tools/statuslog.py`](tools/statuslog.py) | Answers "what had I recorded as of day X?" and "what may I rely on today?", and returns no value once a status has expired (kit v1.3) |
+| [`tools/migrate_register.py`](tools/migrate_register.py) | Turns a v1.1 register CSV into the first lines of a status log, without inventing expiry dates (kit v1.3) |
+| [`tests/`](tests/) | Tests for the linter and the status log (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
@@ -53,7 +53,7 @@ python3 tools/citelint.py paper_from_pdf.txt --format rendered --lang ja  # text
 
 It exits with status 1 when it reports anything, so it can run in CI. It reads only the text. It cannot tell whether a reading is right, whether a source is still in force, or whether two sentences that use different words make claims that contradict each other. On the paper's v1.1, it found 8 of the 18 defects later logged as #26–#44 (excluding #34, a confirmation), and part of a ninth. It also found one that no reader had: in the Japanese edition, the Contents title of chapter 3 does not match the chapter heading. Hypothetical Technical Blog #19, *A Rule Is Not a Mechanism*, reports the run.
 
-## The status log (kit v1.3, unreleased)
+## The status log (kit v1.3)
 
 The v1.1 register keeps one value and one "last resolved" date per row. When a value moves, the row has nowhere to keep the old one, and correcting it erases the record that you once believed otherwise. The status log never edits a line. A newer finding is a new line that names the line it supersedes.
 
@@ -73,6 +73,18 @@ What it does not do: decide what to re-check, settle a conflict between sources,
 ## What this kit does not do
 
 It verifies nothing. It records what your verification acts produced. A document can be perfectly graded and still misread.
+
+## Posts that use the kit
+
+Hypothetical Technical Blog, *Citation provenance* (English, on note):
+
+- #17 — [What Broke Was the Provenance, Not the Claim](https://note.com/ayako_iuchi/n/nb5dbd0aa502b)
+- #18 — [Commencement Is a Cache-Invalidation Problem](https://note.com/ayako_iuchi/n/n6cbb36bb35c1) (the register of provisions in motion, added in kit v1.1)
+- #19 — [A Rule Is Not a Mechanism](https://note.com/ayako_iuchi/n/n5adfbe0c66f8) (the linter, kit v1.2)
+- #20 — [Fixed Words, Moving Status](https://note.com/ayako_iuchi/n/ne5747d7bcd77) (the status log, kit v1.3)
+- #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
+
+Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`). #19 and #20 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2.
 
 ## Sources
 

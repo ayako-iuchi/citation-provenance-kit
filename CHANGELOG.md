@@ -2,7 +2,13 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
-## Unreleased (kit v1.3, in preparation)
+## Kit v1.3 — 2026-10-20
+
+- **Released on 20 October 2026.** `main` was fast-forwarded to the branch `kit-v1.3`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written, except where marked.
+- **Found 2026-10-20 — a post cited this release before it existed.** Hypothetical Technical Blog #20, *Fixed Words, Moving Status*, was published on note on 13 October 2026 (14:40 JST). Its sources list "Citation provenance kit, v1.3" and link to this repository, whose default branch then held v1.2. For seven days the branch that link opens on did not hold v1.3; the work sat on the branch `kit-v1.3`.
+- **Found 2026-10-20 — no release had a tag.** v1.0 to v1.2 were named only in this file and in the README. Tags were added on 20 October 2026 at the commits that made each release: `v1.0` 02de134, `v1.1` 3c93219, `v1.1.1` fc5a27b, `v1.2` b55e308. They mark the release commits; they were not there at the time. `v1.3` marks this release.
+- `CITATION.cff` now gives version 1.3, released 2026-10-20 (entry #47 below).
+- The READMEs no longer mark the status log files "unreleased", list the posts that use the kit, and name the release tags.
 
 - **Found 2026-10-12 — the register disagrees with the post it came from.** The Register in motion row for Japan's National Tax Agency Q&A (kit v1.1 and v1.2) still says that one practitioner report (C) gives a publication date of 10 July 2026, and that question numbers and pages are to be retaken. Hypothetical Technical Blog #18, *Commencement Is a Cache-Invalidation Problem*, in its draft as it stands on 12 October 2026, says more: two practitioner reports, dated 13 and 14 July, both give that date; the A grade for "June 2025 edition current on 24 July 2026" is withdrawn; and the citations held (Q7 on printed p. 9, Q55 and Q56 on p. 42, in the July 2026 edition's contents).
 - The row is **left as it stands in this release on purpose.** The template keeps one value and one "last resolved" date per row, so correcting the row would also erase the record that the kit once said otherwise. Kit v1.3 will add the newer finding as a new, dated entry and keep the 10 October value beside it.
