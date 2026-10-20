@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/annotation.schema.json",
+  "title": "Component-graded annotation",
+  "description": "One annotation of component-graded citation, read as a typed record by tools/notation.py. A slot with a grade says the component was established by a source of that character; a slot with the em dash says it was considered and not established, and is not asserted; a component with no slot has no record either way. The three are different values and are never converted into one another. The record carries no date: a grade on a volatile component holds for the day it was resolved, which the status log keeps (kit v1.3). Kit v1.5. CC0 1.0.",
+  "type": "object",
+  "required": ["text", "form", "slots"],
+  "properties": {
+    "id": {"type": "string", "description": "Stable identifier, where the annotations of a document are kept as a file."},
+    "edition": {"type": "string", "description": "Which edition or language of the document the annotation was read from."},
+    "pdf_page": {"type": "integer", "minimum": 1, "description": "The page of the file it was read from (not the printed page number)."},
+    "line": {"type": "integer", "minimum": 1, "description": "The line of the text it was read from, when read from a text file."},
+    "use": {
+      "enum": ["citation", "example", "quoted"],
+      "description": "Recorded by a person, not by the tool: citation = the document grades a source it relies on; example = the document shows the notation; quoted = the document quotes an annotation, e.g. in a correction log. The tool cannot tell use from mention."
+    },
+    "text": {"type": "string", "description": "The annotation in its form, with whitespace normalised. Whitespace between tokens is not significant."},
+    "form": {"enum": ["en", "ja", "plain"], "description": "en: [wording: A | page: —]; ja: ［語: A｜頁: —］; plain: a single grade, [A]."},
+    "slots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["component", "written", "grade", "volatile"],
+        "additionalProperties": false,
+        "properties": {
+          "component": {"type": ["string", "null"], "description": "The component, by its English name in csv/components.csv. null: not in the closed vocabulary (check N1), or a plain grade."},
+          "written": {"type": ["string", "null"], "description": "The component as written in the document. null for a plain grade."},
+          "grade": {"type": "string", "description": "A, B, C, D or the em dash (U+2014) when the form is valid. Anything else is kept as written so that checks N2 and N3 can report it."},
+          "volatile": {"type": ["boolean", "null"], "description": "true if the component can become false without the document changing (csv/components.csv). null when the component is unknown or the grade is plain."}
+        }
+      }
+    }
+  }
+}

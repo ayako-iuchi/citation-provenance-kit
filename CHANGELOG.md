@@ -2,6 +2,11 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.5 — unreleased
+
+- Added `tools/notation.py`, `schema/annotation.schema.json`, `examples/method_paper_v1.2/` and `tests/test_notation.py`. The notation is read as typed records, in English and Japanese with one grammar, and checked for its form (N1–N7). Standard library only, as before. N5 (a component twice) and N7 (a first slot that is not established, reported as a notice) are not rules of the paper; they are added here.
+- **Found 2026-10-20 — the kit's closed vocabulary was two lists.** From kit v1.0 to v1.4, `csv/components.csv` and the workbook's Components sheet gave the Japanese name of *wording* as 文言. The paper's Japanese edition (§4-2, and its three annotations that use it) and `citelint.py` (from v1.2) give 語. Found when `notation.py`, which reads the vocabulary from `components.csv`, rejected the paper's own ［語: A｜頁: —］. Corrected to 語 in `tools/build_kit.py`, `csv/components.csv` and the workbook; nothing else in the generated files changed.
+
 ## README update — 2026-10-20 (no new version)
 
 - Both READMEs list Hypothetical Technical Blog #22, *The Chunk Is the Citation* (published on note on 20 October 2026, after kit v1.4 was released), among the posts that use the kit, and say that #22 names the version it describes. No file other than the READMEs and this one changed.

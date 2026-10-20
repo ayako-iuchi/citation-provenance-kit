@@ -1,5 +1,5 @@
 ﻿component,ja,definition,can_become_false_without_document_changing,example
-wording,文言,The words the claim attributes to the source are the words in it.,No,A rule cited as listing 'life cycle cost' among its criteria; the phrase was not in it (#8).
+wording,語,The words the claim attributes to the source are the words in it.,No,A rule cited as listing 'life cycle cost' among its criteria; the phrase was not in it (#8).
 figure,数値,A quantity stated or derived from the source is correct.,No (derived values: see Grades sheet),A 1.6% ratio derived from two cited primary values; never examined in v1.1.
 page,頁,"The locator (printed page, paragraph, article) points to where the text is.",No,Printed numbering ran three behind the file numbering in a 177-page instrument.
 date,日付,A date attributed to the source or computed from it is correct.,No,'Eighteen months from publication' rendered as a specific day (#11).

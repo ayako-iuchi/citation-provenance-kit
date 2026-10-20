@@ -52,7 +52,7 @@ def title(ws, text, sub):
 # ---------------------------------------------------------------- data
 COMPONENTS = [
     # name, ja, definition, can become false without the document changing?, example from the source project
-    ("wording", "文言", "The words the claim attributes to the source are the words in it.", "No",
+    ("wording", "語", "The words the claim attributes to the source are the words in it.", "No",
      "A rule cited as listing 'life cycle cost' among its criteria; the phrase was not in it (#8)."),
     ("figure", "数値", "A quantity stated or derived from the source is correct.", "No (derived values: see Grades sheet)",
      "A 1.6% ratio derived from two cited primary values; never examined in v1.1."),
