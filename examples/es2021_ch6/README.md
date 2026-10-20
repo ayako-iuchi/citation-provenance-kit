@@ -28,7 +28,7 @@ python3 tools/depaudit.py --loci examples/es2021_ch6/loci.jsonl --suggest "Doing
 
 ## Who recorded the edges
 
-The dependency records were drafted by Claude at the author's direction on 20 October 2026 and say so in `recorded_by`; the author has not yet reviewed them. A separate agent that did not draft them checked each against the printed pages the same day. They cover the five loci #21 relied on (¶6.19, ¶6.20, ¶6.21, section heading (c), ¶6.27) and the two paragraphs that cite the Doing Business report (¶6.5, ¶6.32). Any other locus is reported as **not audited**, which is not the same as naming no work. Five records carry a `note`: where a reading is an interpretation (footnote 6), where a source line is outside the excerpt, or where something named is not treated as a source.
+The dependency records were drafted by Claude at the author's direction on 20 October 2026 and say so in `recorded_by`; the author did not review them and, on 20 October 2026, chose to accept Claude's judgement. A separate agent that did not draft them checked each against the printed pages the same day. They cover the five loci #21 relied on (¶6.19, ¶6.20, ¶6.21, section heading (c), ¶6.27) and the two paragraphs that cite the Doing Business report (¶6.5, ¶6.32). Any other locus is reported as **not audited**, which is not the same as naming no work. Five records carry a `note`: where a reading is an interpretation (footnote 6), where a source line is outside the excerpt, or where something named is not treated as a source.
 
 ## Licence of the chapter's words
 
