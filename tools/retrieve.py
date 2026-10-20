@@ -6,9 +6,12 @@ and no dependencies, so nothing it returns can carry a status that has gone
 stale. What a returned locus rests on is looked up afterwards (depaudit.py).
 
 BM25 as in Robertson and Zaragoza, "The Probabilistic Relevance Framework: BM25
-and Beyond" (2009), with k1 = 1.2 and b = 0.75 and the idf
-log((N - n + 0.5) / (n + 0.5) + 1). Tokens are lowercased runs of letters and
-digits. There is no stemming: "persist" does not match "persists".
+and Beyond" (2009), with k1 = 1.2 and b = 0.75. The idf is the variant
+log((N - n + 0.5) / (n + 0.5) + 1), as in Lucene, which adds 1 so that it never
+goes negative; Robertson and Zaragoza's has no +1. A word repeated in the
+question counts each time. Tokens are lowercased runs of ASCII letters and
+digits, so "India’s" is "india" and "s". There is no stemming: "persist" does
+not match "persists".
 
 Usage:
     python3 retrieve.py LOCI.jsonl "question" [-k 3]
@@ -36,6 +39,8 @@ def load(path):
 
 class BM25:
     def __init__(self, loci, k1=1.2, b=0.75):
+        if not loci:
+            raise ValueError("no loci to index")
         self.loci, self.k1, self.b = loci, k1, b
         self.docs = [Counter(tokens(l["snapshot"]["wording"])) for l in loci]
         self.lens = [sum(d.values()) for d in self.docs]

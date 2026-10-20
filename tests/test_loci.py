@@ -112,6 +112,17 @@ def test_the_committed_loci_are_what_the_tool_makes():
         assert f.read() == out
 
 
+def test_figure_ticks_are_not_taken_for_footnote_numbers():
+    """A short line of digits counts as a footnote number only if the page's body carries that marker."""
+    page = {"printed_page": 1, "lines": [
+        {"y": 100, "h": 15.77, "text": "6.1 Body text with a marker²"},
+        {"y": 400, "h": 9.0, "text": "100"},
+        {"y": 700, "h": 13.14, "text": "The footnote."},
+        {"y": 701, "h": 7.66, "text": "2"}]}
+    kinds = [k for k, _ in loci.classify(page, 15.77)]
+    assert kinds == ["body", "body", "footnote", "footnote-number"]
+
+
 # --- pdflines -------------------------------------------------------------------------
 
 def test_pdflines_keeps_markers_and_drops_control_characters():

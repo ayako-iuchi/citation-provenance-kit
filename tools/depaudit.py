@@ -9,13 +9,18 @@ For each locus (named, or returned by retrieve.py for a question) it:
      and those of the footnotes anchored in it;
   3. attaches the status of each cited work from the status log, as of the day
      asked (statuslog.current: ok, no-expiry-stated, expired or no-record);
-  4. writes one row in the shape Hypothetical Technical Blog #21 proposed: the
-     locus, what it cites, the depth, the result, and what was not looked at.
+  4. writes one row with some of the fields Hypothetical Technical Blog #21
+     proposed for a citation SBOM: the locus, what it cites, the depth, the
+     result, each dependency's status with its expiry, and who recorded the
+     edges and when. It adds a list of what was not looked at (depth 2).
 
-It does not decide what a locus cites. Edges are recorded by a person, with a
-date, in a dependency file. A locus with no record is reported as not audited,
-which is not the same as "cites nothing". It does not grade a status either: the
-status value is printed as recorded.
+It does not decide what a locus cites. Edges are recorded, with a date, in a
+dependency file by whoever audits — a person, or an assistant at a person's
+direction — named in `recorded_by`. A locus with no record is reported as not
+audited, which is not the same as "names no work". A cited work whose status the
+log does not track is reported as "not-tracked"; one tracked but with nothing
+recorded by the day asked, as "no-record". It does not grade a status: the value
+is printed as recorded.
 
 `--suggest NAME` lists the loci whose words contain NAME. That is how a name
 match would find edges. It is shown for comparison and never used as an edge.
@@ -51,6 +56,8 @@ def suggest(loci, name):
 
 def audit(locus_id, loci, deps, log, on, quote=None):
     by_id = {l["id"]: l for l in loci}
+    if locus_id not in by_id:
+        raise KeyError(f"no locus with id {locus_id!r}")
     loc = by_id[locus_id]
     snap = loc["snapshot"]
     hash_ok = hashlib.sha256(snap["wording"].encode("utf-8")).hexdigest() == snap["wording_sha256"]
@@ -62,19 +69,20 @@ def audit(locus_id, loci, deps, log, on, quote=None):
             continue
         if d.get("status_subject"):
             st = statuslog.current(log, d["status_subject"], d.get("status_component", "existence"), on)
-            status = {"status": st["status"], "value": st["value"],
-                      "assertion": st["assertion"]["id"] if st["assertion"] else None}
+            a = st["assertion"]
+            status = {"status": st["status"], "value": st["value"], "assertion": a["id"] if a else None,
+                      "expires_on": a.get("expires_on") if a else None}
         else:
-            status = {"status": "no-record", "value": None, "assertion": None}
+            status = {"status": "not-tracked", "value": None, "assertion": None, "expires_on": None}
         cited.append({"cites": d["cites"], "how": d["how"],
                       "via": None if d["locus"] == locus_id else d["locus"], "status": status})
         unknowns.append(f"what {d['cites']} itself rests on (depth 2, not audited)")
     if not records:
         result = "not audited: no dependency record for this locus"
     elif not cited:
-        result = "audited at depth 1: cites no work"
+        result = "audited at depth 1: names no work"
     else:
-        on_record = sum(1 for c in cited if c["status"]["status"] != "no-record")
+        on_record = sum(1 for c in cited if c["status"]["status"] not in ("no-record", "not-tracked"))
         result = f"audited at depth 1: cites {len(cited)} work(s); {on_record} with a status on record"
     return {
         "locus": locus_id, "label": loc["label"], "printed_pages": loc["printed_pages"],
@@ -104,7 +112,16 @@ def main(argv=None):
     if args.suggest:
         print(json.dumps({"name": args.suggest, "loci_containing_it": suggest(loci, args.suggest)}, ensure_ascii=False))
         return 0
+    missing = [n for n in ("deps", "status", "on") if getattr(args, n) is None]
+    if missing:
+        ap.error("needed unless --suggest is used: " + ", ".join("--" + n for n in missing))
+    if not args.query and not args.locus:
+        ap.error("give --query or --locus")
     deps, log = load_jsonl(args.deps), statuslog.load(args.status)
+    known = {l["id"] for l in loci}
+    for i in args.locus or []:
+        if i not in known:
+            ap.error(f"no locus with id {i!r}")
     ids = args.locus or []
     if args.query:
         hits = retrieve.BM25(loci).search(args.query, args.k)

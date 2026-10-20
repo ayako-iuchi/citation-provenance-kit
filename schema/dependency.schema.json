@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/dependency.schema.json",
   "title": "Dependency edge",
-  "description": "One recorded fact about what a locus cites, one level down. A record with cites null means the locus was read and names no work; a locus with no record at all has not been audited. Edges are recorded by a person and appended, never edited. Kit v1.4. CC0 1.0.",
+  "description": "One recorded fact about what a locus cites, one level down. A record with cites null means the locus was read and names no work; a locus with no record at all has not been audited. Records are made by whoever audits — a person, or an assistant at a person's direction — named in recorded_by, and appended, never edited once released. Kit v1.4. CC0 1.0.",
   "type": "object",
   "required": [
     "id",
@@ -31,7 +31,7 @@
     },
     "how": {
       "type": "string",
-      "description": "How the citation was recognised, with the words as printed: named in the text, in a footnote, in a figure's source line."
+      "description": "How the citation was recognised, quoting the words as printed: named in the text, described without a title, in a footnote, in a figure's or table's source line."
     },
     "status_subject": {
       "type": "string",

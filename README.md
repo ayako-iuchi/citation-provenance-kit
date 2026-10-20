@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.3 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing.
+Kit v1.3 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -24,7 +24,7 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/depaudit.py`](tools/depaudit.py) | The check after retrieval: words against their hash, recorded dependency edges one level down, and each cited work's status from the status log, as of a given day (kit v1.4, unreleased) |
 | [`schema/locus.schema.json`](schema/locus.schema.json), [`schema/dependency.schema.json`](schema/dependency.schema.json) | A locus (with its snapshot nested unchanged) and a dependency edge (kit v1.4, unreleased) |
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | The chapter #21 audited by hand, run through the pipeline. The chapter's words there are the Government of India's and are **not** CC0 (kit v1.4, unreleased) |
-| [`tests/`](tests/) | Tests for the linter and the status log (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter and the check after retrieval (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
@@ -100,7 +100,7 @@ The example log is the author's English translation. The original log was kept i
 
 ## Licence
 
-The kit is dedicated to the public domain under CC0 1.0. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
+The kit is dedicated to the public domain under CC0 1.0, with one exception: the words of the Economic Survey 2020-21 in `examples/es2021_ch6/lines.json` and `examples/es2021_ch6/loci.jsonl` are a publication of the Government of India, reproduced in excerpt (kit v1.4, unreleased). They are not covered by CC0, and the kit grants no permission to reuse them. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
 
 ## Corrections
 

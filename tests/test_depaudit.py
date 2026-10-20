@@ -62,6 +62,16 @@ def test_name_match_on_doing_business_misses_6_32(loci):
     assert depaudit.suggest(loci, "Doing Business") == ["es2021-ch6-p6.5"]  # ¶6.32 prints "Buisness"
 
 
+def test_name_match_on_business_judgment_misses_6_27(loci):
+    assert depaudit.suggest(loci, "Business Judgment") == []  # ¶6.27 prints "Buisness Judgment Rule"
+    assert depaudit.suggest(loci, "Buisness") == ["es2021-ch6-p6.27", "es2021-ch6-p6.32"]
+
+
+def test_an_unknown_locus_is_an_error(loci, deps, log):
+    with pytest.raises(KeyError):
+        depaudit.audit("es2021-ch6-p9.99", loci, deps, log, ON)
+
+
 def test_name_match_on_world_bank_flags_6_20(loci, deps):
     assert "es2021-ch6-p6.20" in depaudit.suggest(loci, "World Bank")
     assert not any(d["locus"] in ("es2021-ch6-p6.20", "es2021-ch6-fn6") and d.get("status_subject") ==
@@ -77,19 +87,20 @@ def test_recorded_edges_reach_doing_business_from_6_5_and_6_32_only(deps):
 
 def test_6_32_reaches_a_discontinued_report_with_its_status_attached(loci, deps, log):
     row = depaudit.audit("es2021-ch6-p6.32", loci, deps, log, ON)
-    db = next(d for d in row["dependencies"] if d["cites"] == "World Bank, Ease of Doing Business 2020")
+    db = next(d for d in row["dependencies"] if d["cites"] == "World Bank, Doing Business 2020")
     assert db["status"]["status"] == "no-expiry-stated"
     assert db["status"]["value"].startswith("Discontinued")
     assert db["status"]["assertion"] == "2026-10-20-01"
+    assert db["status"]["expires_on"] is None
     wjp = next(d for d in row["dependencies"] if d["cites"].startswith("World Justice Project"))
-    assert wjp["status"]["status"] == "no-record"
+    assert wjp["status"]["status"] == "not-tracked"
 
 
 def test_the_l1_loci_do_not_reach_it(loci, deps, log):
     for lid in ("es2021-ch6-p6.19", "es2021-ch6-p6.20", "es2021-ch6-p6.21", "es2021-ch6-h188c", "es2021-ch6-p6.27"):
         row = depaudit.audit(lid, loci, deps, log, ON)
         assert row["depth"] == 1
-        assert all(d["status"]["status"] == "no-record" for d in row["dependencies"])
+        assert all(d["status"]["status"] == "not-tracked" for d in row["dependencies"])
 
 
 def test_a_footnote_travels_with_its_anchor(loci, deps, log):
@@ -98,9 +109,9 @@ def test_a_footnote_travels_with_its_anchor(loci, deps, log):
     assert len(via) == 1 and via[0]["cites"].startswith("World Bank Technical Assessment")
 
 
-def test_no_record_is_not_the_same_as_cites_nothing(loci, deps, log):
+def test_no_record_is_not_the_same_as_names_no_work(loci, deps, log):
     assert depaudit.audit("es2021-ch6-p6.18", loci, deps, log, ON)["result"].startswith("not audited")
-    assert depaudit.audit("es2021-ch6-p6.21", loci, deps, log, ON)["result"] == "audited at depth 1: cites no work"
+    assert depaudit.audit("es2021-ch6-p6.21", loci, deps, log, ON)["result"] == "audited at depth 1: names no work"
 
 
 def test_depth_two_is_named_as_unknown(loci, deps, log):

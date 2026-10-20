@@ -13,10 +13,18 @@ to sit under. This tool cuts a chapter into loci instead:
 Each locus records the printed pages it spans, and its words as a kit v1.3
 snapshot (words + SHA-256, written once). Page heads are dropped.
 
-It reads the line geometry written by pdflines.py. A line is a footnote line if
-it sits in the footnote zone at the foot of the page (from the first footnote
-number down) and is shorter than body text; a footnote number is a line of digits
-much shorter than body text.
+It reads the line geometry written by pdflines.py. A footnote number is a line
+of digits much shorter than body text whose number also appears as a superscript
+marker in the body of the same page. A line is a footnote line if it sits in the
+footnote zone at the foot of the page (from the first footnote number down) and is
+shorter than body text.
+
+Limits. It knows paragraphs, lettered headings and footnotes, nothing else.
+Tables, figures, captions, source lines and capitalised headings are not
+recognised: given a whole page, they are appended to the paragraph before them.
+The example therefore runs on lines excerpted by hand (examples/es2021_ch6/).
+HEAD_ZONE is the height of the page heads of that one PDF. Line-end hyphens are
+kept as printed ("poli- cies"), so a quotation that rejoins them will not match.
 
 Usage:
     python3 loci.py LINES.json [--read-on YYYY-MM-DD] > loci.jsonl
@@ -50,7 +58,9 @@ def _body_height(pages):
 def classify(page, body_h):
     """Label each line of one page: head, footnote-number, footnote, body."""
     lines = page["lines"]
-    numbers = [l for l in lines if l["text"].isdigit() and l["h"] < 0.75 * body_h and l["y"] >= HEAD_ZONE]
+    marked = {_sup_to_int(s) for l in lines if l["h"] >= body_h - 1 for s in MARKER.findall(l["text"])}
+    numbers = [l for l in lines if l["text"].isdigit() and l["h"] < 0.6 * body_h and l["y"] >= HEAD_ZONE
+               and int(l["text"]) in marked]
     zone = min((l["y"] for l in numbers), default=None)
     out = []
     for l in lines:

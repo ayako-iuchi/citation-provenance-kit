@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。
-キット v1.3（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます。
+キット v1.3（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（キットv1.4からの例外が1つあります。「ライセンス」を参照）。
 
 ※英語版READMEを正本とします。
 
@@ -26,7 +26,7 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`tools/depaudit.py`](tools/depaudit.py) | 検索の後の検査。文言をハッシュと照らし、記録した依存の辺を1段たどり、引かれた文献の状態を状態ログから指定日時点で付ける（キットv1.4、未リリース） |
 | [`schema/locus.schema.json`](schema/locus.schema.json)、[`schema/dependency.schema.json`](schema/dependency.schema.json) | 箇所（スナップショットをそのまま入れ子にする）と、依存の辺（キットv1.4、未リリース） |
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4、未リリース） |
-| [`tests/`](tests/) | linterと状態ログのテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
+| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
@@ -102,7 +102,7 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 
 ## ライセンス
 
-キットはCC0 1.0でパブリックドメインに供されています。論文は別ライセンスです（『What Breaks in a Citation』本文はCC BY 4.0）。
+キットはCC0 1.0でパブリックドメインに供されています。例外が1つあります。`examples/es2021_ch6/lines.json` と `examples/es2021_ch6/loci.jsonl` に含まれる経済白書2020-21の文言は、インド政府の刊行物の抜粋です（キットv1.4、未リリース）。CC0の対象外で、キットはその再利用について何の許諾も与えません。論文は別ライセンスです（『What Breaks in a Citation』本文はCC BY 4.0）。
 
 ## 訂正
 
