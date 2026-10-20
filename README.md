@@ -24,9 +24,9 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/depaudit.py`](tools/depaudit.py) | The check after retrieval: words against their hash, recorded dependency edges one level down, and each cited work's status from the status log, as of a given day (kit v1.4) |
 | [`schema/locus.schema.json`](schema/locus.schema.json), [`schema/dependency.schema.json`](schema/dependency.schema.json) | A locus (with its snapshot nested unchanged) and a dependency edge (kit v1.4) |
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | The chapter #21 audited by hand, run through the pipeline. The chapter's words there are the Government of India's and are **not** CC0 (kit v1.4) |
-| [`tools/notation.py`](tools/notation.py), [`schema/annotation.schema.json`](schema/annotation.schema.json) | Reads the notation, English and Japanese forms, with one grammar into typed records (component, grade, whether the component is volatile), checks its form (N1–N7), and rewrites it between the two forms (kit v1.5, unreleased) |
+| [`tools/notation.py`](tools/notation.py), [`schema/annotation.schema.json`](schema/annotation.schema.json) | Reads the notation, English and Japanese forms, with one grammar into typed records (component, grade, whether the component is volatile), checks its form (N0–N7), and rewrites it between the two forms (kit v1.5, unreleased) |
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | Every annotation in both editions of the paper, v1.2, as typed records (kit v1.5, unreleased) |
-| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter and the check after retrieval (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval and the notation reader (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
@@ -82,10 +82,10 @@ What it does not do: decide what to re-check, settle a conflict between sources,
 ```
 python3 tools/notation.py paper_from_pdf.txt            # check the form
 python3 tools/notation.py paper_from_pdf.txt --records  # one JSON line per annotation
-python3 tools/notation.py draft_en.md --to ja           # write every annotation in the Japanese form
+python3 tools/notation.py draft_en.md --markdown --to ja  # write every annotation in the Japanese form, skipping code
 ```
 
-A grade, the em dash and an absent slot are three different values: established, considered and not established, and not recorded. The tool keeps them apart and never turns one into another. It checks only what the text shows: the vocabulary (N1), the grade (N2), the dash character (N3), at most three slots (N4), no component twice (N5), no split where every grade is the same (N6), and, as a notice, a first slot that is not established (N7). It cannot tell whether the first slot is the one the claim rests on, whether a split carries weight, whether a component is applied as defined, or what document a grade was given against. It exits with status 1 when N1–N6 report anything.
+A grade, the em dash and an absent slot are three different values: established, considered and not established, and not recorded. The tool keeps them apart and never turns one into another. It reads a bracket only if it is a single grade or names a known component before a colon, and leaves Markdown links alone. It checks only what the text shows: the grammar (N0), the vocabulary (N1), the grade (N2), the dash character (N3), at most three slots (N4), no component twice (N5), no split where every grade is the same (N6), and, as a notice, a first slot that is not established (N7). It cannot tell whether the first slot is the one the claim rests on, whether a split carries weight, whether a component is applied as defined, or what document a grade was given against. When checking, it exits with status 1 when N0–N6 report anything; it exits with 2 if the file cannot be read. Declare a domain's extension components with `--extend restatement-status`.
 
 Each slot carries `volatile`, from `csv/components.csv`. The notation has no date, so a grade on a volatile component (edition, existence, commencement, dependency) holds only for the day it was resolved; that day belongs in the status log.
 

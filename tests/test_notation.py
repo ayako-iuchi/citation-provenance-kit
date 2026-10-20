@@ -80,7 +80,7 @@ def test_n2_grade_outside_scale():
     assert "N2" in codes("[wording: E | page: —]")
 
 
-@pytest.mark.parametrize("dash", ["-", "–", "―", "−", "ー", "－"])
+@pytest.mark.parametrize("dash", ["-", "–", "‒", "―", "−", "ー", "－"])
 def test_n3_wrong_dash(dash):
     assert codes(f"[wording: A | page: {dash}]") == ["N3"]
 
@@ -162,7 +162,98 @@ def test_wording_is_named_as_in_the_paper():
     assert "文言" not in notation.load_components()
 
 
+def test_example_records_are_what_the_parser_reads():
+    for rec in load_example():
+        again = one(rec["text"])
+        assert (again["form"], again["slots"]) == (rec["form"], rec["slots"]), rec["id"]
+
+
 def test_example_passes_every_mechanical_check():
     for rec in load_example():
         errors = [c for c, sev, _ in notation.check(rec) if sev == "error"]
         assert errors == [], (rec["id"], errors)
+
+
+# --- review of c5d12de (2026-10-20) ------------------------------------------
+
+def test_markdown_links_are_not_annotations():
+    text = "see [A](http://x) and ![B](img.png) and [C][ref]\n[A]: http://y\n"
+    assert list(notation.parse(text)) == []
+    assert notation.rewrite(text, "ja") == text
+
+
+def test_prose_brackets_with_colons_are_left_alone():
+    assert list(notation.parse("[Edit: typo] [Updated: 2024] [TODO: fix] [Note: B]")) == []
+
+
+def test_lone_wrong_dash_is_not_an_annotation():
+    assert list(notation.parse("[-] [ー]")) == []
+
+
+def test_plain_dash_gets_n7():
+    assert [c for c, _, _ in notation.check(one("[—]"))] == ["N7"]
+
+
+@pytest.mark.parametrize("text", ["[wording: A, page: B]", "[wording: A |]",
+                                  "[wording: A || page: B]", "[wording: A B]"])
+def test_n0_malformed(text):
+    assert codes(text) == ["N0"]
+
+
+def test_n0_is_not_rewritten():
+    assert notation.rewrite("x [wording: A, page: B] y", "ja") == "x [wording: A, page: B] y"
+
+
+def test_extension_component(tmp_path):
+    comps = notation.load_components(extend=["restatement-status=修正再表示"])
+    r = next(notation.parse("[restatement-status: A | figure: B]", comps))
+    assert r["slots"][0]["component"] == "restatement-status" and r["slots"][0]["volatile"] is None
+    assert notation.check(r) == []
+    p = tmp_path / "d.md"
+    p.write_text("[restatement-status: A | figure: B]", encoding="utf-8")
+    assert notation.main([str(p)]) == 1
+    assert notation.main([str(p), "--extend", "restatement-status"]) == 0
+
+
+def test_blank_line_stops_an_annotation():
+    assert list(notation.parse("[wording: A |\n\n page: B]")) == []
+
+
+def test_markdown_option_skips_code():
+    text = "real [wording: A | page: —]\n```\n[wording: A | page: A]\n```\nand `[wording: A | page: A]`\n"
+    assert len(list(notation.parse(text))) == 3
+    recs = list(notation.parse(text, markdown=True))
+    assert [r["text"] for r in recs] == ["[wording: A | page: —]"]
+    assert notation.rewrite(text, "ja", markdown=True).count("［語: A｜頁: —］") == 1
+
+
+def test_rewrite_keeps_crlf():
+    text = "a [wording: A | page: —]\r\nb\r\n"
+    assert notation.rewrite(text, "ja") == "a ［語: A｜頁: —］\r\nb\r\n"
+
+
+def test_cli_modes(tmp_path, capsys):
+    p = tmp_path / "d.md"
+    p.write_text("[wording: A | page: -]", encoding="utf-8")
+    assert notation.main([str(p), "--records"]) == 0
+    assert json.loads(capsys.readouterr().out)["slots"][1]["grade"] == "-"
+    assert notation.main([str(p), "--json"]) == 1
+    assert json.loads(capsys.readouterr().out)["findings"][0]["check"] == "N3"
+    assert notation.main([str(p), "--to", "ja"]) == 0
+    assert capsys.readouterr().out == "［語: A｜頁: -］"
+    assert notation.main([str(tmp_path / "missing.md")]) == 2
+
+
+def test_vocabulary_is_one_list():
+    """The bug of v1.0-v1.4: the Japanese names lived in more than one list."""
+    import ast
+    import citelint
+    src = open(os.path.join(ROOT, "tools", "build_kit.py"), encoding="utf-8").read()
+    build = None
+    for node in ast.walk(ast.parse(src)):
+        if isinstance(node, ast.Assign) and any(getattr(t, "id", None) == "COMPONENTS" for t in node.targets):
+            build = {row[0]: row[1] for row in ast.literal_eval(node.value)}
+    csv_names = notation._ja_names()
+    assert build == csv_names
+    assert set(csv_names) | set(csv_names.values()) == citelint.COMPONENTS["ja"]
+    assert set(csv_names) == citelint.COMPONENTS["en"]

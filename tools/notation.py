@@ -21,14 +21,23 @@ be half- or full-width):
                | open , grade , close                     (* plain [A] *)
     slot       = component , colon , grade
     grade      = "A" | "B" | "C" | "D" | "—"               (* U+2014 *)
-    component  = one of the ten names in csv/components.csv, English or Japanese
+    component  = one of the ten names in csv/components.csv, English or Japanese,
+                 or an extension the document declares (--extend; §4-2)
     open = "[" | "［" ;  close = "]" | "］" ;  bar = "|" | "｜" ;  colon = ":" | "："
+
+A bracket is read only if it is a single grade or names a known component
+before a colon. Other brackets ([sic], [LINK], [Note: ...], [A — a source]) and
+Markdown links ([A](url), [A][ref], a line starting [A]:) are left alone. An
+annotation may run across a single line break, not across a blank line.
 
 Checks (what a machine can see in the text):
 
-    N1 vocabulary     the component is not in the closed list (§4-2)
+    N0 malformed      a bracket names a component but does not follow the grammar
+                      ([wording: A, page: B], [wording: A |], [wording: A B])
+                      (added in kit v1.5)
+    N1 vocabulary    the component is not in the closed list (§4-2)
     N2 grade          the grade is not A-D or the em dash (§4-4)
-    N3 dash           a null slot written with another dash (- – ― − ー －): a different
+    N3 dash           a null slot written with another dash (- – ‒ ― − ー －): a different
                       character is a different value to anything that reads it
     N4 slots          more than three slots (§4-5)
     N5 duplicate      the same component twice in one annotation (not in the paper;
@@ -36,6 +45,7 @@ Checks (what a machine can see in the text):
     N6 no divergence  two or more slots, all with the same grade: write [A] (§4-5)
     N7 null first     the first slot, the one the claim rests on, is the em dash.
                       Not an error: the claim stands on something not established.
+                      A plain [—] is reported the same way.
                       Reported as a notice; it does not change the exit status
                       (added in kit v1.5)
 
@@ -53,12 +63,16 @@ log (kit v1.3), not in the annotation.
 
 Usage:
     python3 notation.py DOCUMENT [--json] [--records] [--to en|ja]
+                                 [--markdown] [--extend NAME[=日本語名]]...
 
     --records   print every annotation as a JSON line (the typed records)
-    --to        rewrite every annotation in the other language's form
-                (the rest of the text is left as it is)
+    --to        rewrite every well-formed annotation in the other language's
+                form; the rest of the text, line endings included, is left as it is
+    --markdown  skip fenced code blocks and inline code
+    --extend    declare an extension component; repeatable
 
-Exit status is 1 if N1-N6 report anything.
+Exit status, when checking (no --records, no --to): 1 if N0-N6 report
+anything, 0 otherwise. 2 if the document cannot be read, in every mode.
 
 CC0 1.0. Part of the citation provenance kit (v1.5).
 """
@@ -79,14 +93,19 @@ WRONG_DASHES = {"-": "hyphen-minus", "–": "en dash", "―": "horizontal bar",
 GRADES = {"A", "B", "C", "D", EM_DASH}
 TEMPLATE_NAMES, TEMPLATE_GRADES = {"component", "成分"}, {"grade", "級"}
 
-OPEN, CLOSE, BAR, COLON = "[［", "]］", "|｜", ":："
-# An annotation candidate: brackets holding at least one "word : token" pair, or a lone grade.
-CANDIDATE = re.compile(r"[\[［]([^\[\]［］\n]{1,200}?)[\]］]")
-SLOT = re.compile(r"^\s*([^:：|｜]+?)\s*[:：]\s*(\S*?)\s*$")
+BARRIER = "\x00"  # stands in for a blank line or masked code: an annotation never crosses it
+CANDIDATE = re.compile(r"[\[［]([^\[\]［］\x00\n]{1,200}?)[\]］]")
+NAME = r"[A-Za-z_\-぀-ヿ㐀-鿿]+"
+SLOT = re.compile(r"^\s*(" + NAME + r")\s*[:：]\s*(\S+)\s*$")
+LOOSE_NAME = re.compile(r"^\s*([^:：]+?)\s*[:：]")
 
 
-def load_components(path=COMPONENTS_CSV):
-    """Return {name: (english_name, volatile)} for English and Japanese names."""
+def load_components(path=COMPONENTS_CSV, extend=()):
+    """Return {name: (english_name, volatile)} for English and Japanese names.
+
+    extend: extension components declared by the document, as "name" or
+    "name=日本語名" (§4-2). Their volatility is not known, so it is None.
+    """
     table = {}
     with open(path, encoding="utf-8-sig", newline="") as f:
         for row in csv.DictReader(f):
@@ -94,65 +113,105 @@ def load_components(path=COMPONENTS_CSV):
             volatile = row["can_become_false_without_document_changing"].strip().lower().startswith("yes")
             table[en] = (en, volatile)
             table[ja] = (en, volatile)
+    for decl in extend:
+        en, _, ja = decl.partition("=")
+        table[en.strip()] = (en.strip(), None)
+        if ja.strip():
+            table[ja.strip()] = (en.strip(), None)
     return table
 
 
-def _ja_names(path=COMPONENTS_CSV):
+def _ja_names(path=COMPONENTS_CSV, extend=()):
     with open(path, encoding="utf-8-sig", newline="") as f:
-        return {row["component"].strip(): row["ja"].strip() for row in csv.DictReader(f)}
+        names = {row["component"].strip(): row["ja"].strip() for row in csv.DictReader(f)}
+    for decl in extend:
+        en, _, ja = decl.partition("=")
+        if ja.strip():
+            names[en.strip()] = ja.strip()
+    return names
 
 
 def _line_of(text, pos):
     return text.count("\n", 0, pos) + 1
 
 
-def parse(text, components=None):
-    """Yield one record per annotation found in text.
+def _view(text, markdown=False):
+    """A copy of text, the same length, in which an annotation can be found
+    across a single line break (as in text taken from a PDF) but not across a
+    blank line, and, with markdown=True, not inside code."""
+    v = text
+    if markdown:
+        mask = lambda m: BARRIER * len(m.group(0))
+        v = re.sub(r"(?ms)^[ \t]*(```|~~~).*?^[ \t]*\1[^\n]*$", mask, v)
+        v = re.sub(r"(`+)[^`]*?\1", mask, v)
+    v = re.sub(r"\n(?=[ \t\r]*\n)", BARRIER, v)
+    return v.replace("\r", " ").replace("\n", " ")
 
-    A bracket counts as an annotation if every part between bars has the form
-    `name: token`, or if it is a single grade on its own ([A]). Anything else
-    in brackets ([LINK], [sic], [A — a source]) is left alone.
-    """
-    components = components or load_components()
-    # Join lines so that an annotation broken across a line (as in text taken
-    # from a PDF) is still read; positions map back to the original lines.
-    flat = text.replace("\r\n", "\n")
-    joined = re.sub(r"\s*\n\s*", lambda m: " " * len(m.group(0)), flat)
-    for m in CANDIDATE.finditer(joined):
+
+def _scan(text, components, markdown=False):
+    """Yield (start, end, record) for every annotation, including malformed ones."""
+    view = _view(text, markdown)
+    for m in CANDIDATE.finditer(view):
+        before = view[m.start() - 1] if m.start() else ""
+        after = view[m.end()] if m.end() < len(view) else ""
+        at_line_start = text[:m.start()].rsplit("\n", 1)[-1].strip() == ""
+        if (before and before in "]!") or (after and after in "([") or (after == ":" and at_line_start):
+            continue  # a Markdown link, image or reference definition
         inner = m.group(1)
-        raw = flat[m.start():m.end()]
-        parts = re.split(r"[|｜]", inner)
-        if len(parts) == 1 and inner.strip() in GRADES | set(WRONG_DASHES):
-            yield {"line": _line_of(flat, m.start()), "text": " ".join(raw.split()),
-                   "form": "plain", "slots": [{"component": None, "written": None,
-                                               "grade": inner.strip(), "volatile": None}]}
+        raw = " ".join(inner.split())
+        line = _line_of(text, m.start())
+        wide = text[m.start()] == "［"
+        if raw in GRADES:
+            text_ = ("［%s］" if wide else "[%s]") % raw
+            yield m.start(), m.end(), {"line": line, "text": text_, "form": "plain",
+                                       "slots": [{"component": None, "written": None, "grade": raw, "volatile": None}]}
             continue
+        if ":" not in inner and "：" not in inner:
+            continue
+        parts = re.split(r"[|｜]", inner)
+        names = [LOOSE_NAME.match(p) for p in parts]
+        names = [n.group(1).strip() for n in names if n]
+        if not any(n in components for n in names):
+            continue  # not about any component: [Note: ...], [Edit: ...]
+        if names and all(n in TEMPLATE_NAMES for n in names):
+            continue  # the paper's statement of the form, [component: grade | ...]
         slots = []
         for part in parts:
             sm = SLOT.match(part)
             if not sm:
                 slots = None
                 break
-            name, grade = sm.group(1).strip(), sm.group(2).strip()
-            if not re.fullmatch(r"[A-Za-z぀-ヿ㐀-鿿]+", name):
-                slots = None
-                break
+            name, grade = sm.group(1), sm.group(2)
             known = components.get(name)
             slots.append({"component": known[0] if known else None, "written": name,
                           "grade": grade, "volatile": known[1] if known else None})
-        if not slots:
+        full = " ".join(text[m.start():m.end()].split())
+        if slots is None:
+            yield m.start(), m.end(), {"line": line, "text": full, "form": "malformed", "slots": []}
             continue
-        if all(s["written"] in TEMPLATE_NAMES and s["grade"] in TEMPLATE_GRADES for s in slots):
-            # The paper's own statement of the form, [component: grade | ...]: not an annotation.
-            continue
-        ja_shape = any(c in raw for c in "［］｜：") or any(
+        ja_shape = wide or any(c in inner for c in "｜：") or any(
             re.search(r"[぀-ヿ㐀-鿿]", s["written"]) for s in slots)
-        yield {"line": _line_of(flat, m.start()), "text": " ".join(raw.split()),
-               "form": "ja" if ja_shape else "en", "slots": slots}
+        yield m.start(), m.end(), {"line": line, "text": full, "form": "ja" if ja_shape else "en", "slots": slots}
+
+
+def parse(text, components=None, markdown=False):
+    """Yield one record per annotation found in text.
+
+    A bracket is read as an annotation if it is a single grade ([A]), or if at
+    least one of its parts names a known component before a colon. A bracket
+    that names a component but does not follow the grammar is yielded with
+    form "malformed" (check N0). Anything else in brackets ([LINK], [sic],
+    [Note: ...], [A — a source], Markdown links) is left alone.
+    """
+    components = components or load_components()
+    for _, _, rec in _scan(text, components, markdown):
+        yield rec
 
 
 def check(record):
     """Return a list of (check, severity, detail) for one record."""
+    if record["form"] == "malformed":
+        return [("N0", "error", "names a component but does not follow the grammar")]
     out = []
     slots = record["slots"]
     for s in slots:
@@ -163,21 +222,21 @@ def check(record):
             out.append(("N3", "error", f'null slot written with a {WRONG_DASHES[g]} (U+{ord(g):04X}), not the em dash (U+2014)'))
         elif g not in GRADES:
             out.append(("N2", "error", f'grade "{g}" is not A-D or the em dash'))
-    if record["form"] == "plain":
-        return out
-    if len(slots) > 3:
-        out.append(("N4", "error", f"{len(slots)} slots; three at most — split the claim, not the citation"))
-    seen = set()
-    for s in slots:
-        key = s["component"] or s["written"]
-        if key in seen:
-            out.append(("N5", "error", f'component "{s["written"]}" appears twice'))
-        seen.add(key)
-    grades = [s["grade"] for s in slots]
-    if len(grades) >= 2 and len(set(grades)) == 1 and grades[0] in GRADES:
-        out.append(("N6", "error", f"every slot is {grades[0]}; write [{grades[0]}]"))
+    if record["form"] != "plain":
+        if len(slots) > 3:
+            out.append(("N4", "error", f"{len(slots)} slots; three at most — split the claim, not the citation"))
+        seen = set()
+        for s in slots:
+            key = s["component"] or s["written"]
+            if key in seen:
+                out.append(("N5", "error", f'component "{s["written"]}" appears twice'))
+            seen.add(key)
+        grades = [s["grade"] for s in slots]
+        if len(grades) >= 2 and len(set(grades)) == 1 and grades[0] in GRADES:
+            out.append(("N6", "error", f"every slot is {grades[0]}; write [{grades[0]}]"))
     if slots and slots[0]["grade"] == EM_DASH:
-        out.append(("N7", "notice", f'the first slot ({slots[0]["written"]}) is not established; the claim rests on it'))
+        first = slots[0]["written"] or "the only grade"
+        out.append(("N7", "notice", f"the first slot ({first}) is not established; the claim rests on it"))
     return out
 
 
@@ -196,21 +255,19 @@ def render(record, lang, ja_names=None):
     return "[" + " | ".join(parts) + "]" if lang == "en" else "［" + "｜".join(parts) + "］"
 
 
-def rewrite(text, lang):
-    """Return text with every annotation written in the given language's form."""
-    ja_names = _ja_names()
-    components = load_components()
-    flat = text.replace("\r\n", "\n")
-    joined = re.sub(r"\s*\n\s*", lambda m: " " * len(m.group(0)), flat)
+def rewrite(text, lang, markdown=False, extend=()):
+    """Return text with every well-formed annotation written in the given
+    language's form. Everything else, line endings included, is left as it is."""
+    ja_names = _ja_names(extend=extend)
+    components = load_components(extend=extend)
     out, last = [], 0
-    for m in CANDIDATE.finditer(joined):
-        rec = next(parse(flat[m.start():m.end()], components), None)
-        if rec is None:
+    for start, end, rec in _scan(text, components, markdown):
+        if rec["form"] == "malformed":
             continue
-        out.append(flat[last:m.start()])
+        out.append(text[last:start])
         out.append(render(rec, lang, ja_names))
-        last = m.end()
-    out.append(flat[last:])
+        last = end
+    out.append(text[last:])
     return "".join(out)
 
 
@@ -220,13 +277,20 @@ def main(argv=None):
     ap.add_argument("--json", action="store_true", help="findings as JSON")
     ap.add_argument("--records", action="store_true", help="every annotation as a JSON line")
     ap.add_argument("--to", choices=["en", "ja"], help="rewrite annotations in this form")
+    ap.add_argument("--markdown", action="store_true", help="skip code blocks and inline code")
+    ap.add_argument("--extend", action="append", default=[], metavar="NAME[=日本語名]",
+                    help="an extension component the document declares (§4-2); repeatable")
     a = ap.parse_args(argv)
-    with open(a.document, encoding="utf-8") as f:
-        text = f.read()
+    try:
+        with open(a.document, encoding="utf-8", newline="") as f:
+            text = f.read()
+    except (OSError, UnicodeDecodeError) as e:
+        print(f"notation: cannot read {a.document}: {e}", file=sys.stderr)
+        return 2
     if a.to:
-        sys.stdout.write(rewrite(text, a.to))
+        sys.stdout.write(rewrite(text, a.to, a.markdown, a.extend))
         return 0
-    records = list(parse(text))
+    records = list(parse(text, load_components(extend=a.extend), a.markdown))
     if a.records:
         for r in records:
             print(json.dumps(r, ensure_ascii=False))
@@ -241,8 +305,7 @@ def main(argv=None):
         for f_ in findings:
             print(f'{a.document}:{f_["line"]}: {f_["check"]} {f_["severity"]}: {f_["detail"]}  {f_["text"]}')
         errors = sum(1 for f_ in findings if f_["severity"] == "error")
-        notices = len(findings) - errors
-        print(f"{len(records)} annotation(s), {errors} error(s), {notices} notice(s)")
+        print(f"{len(records)} annotation(s), {errors} error(s), {len(findings) - errors} notice(s)")
     return 1 if any(f_["severity"] == "error" for f_ in findings) else 0
 
 
