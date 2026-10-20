@@ -2,6 +2,12 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.6 — unreleased
+
+- Added `tools/nulleval.py`, `schema/null_item.schema.json`, `evals/null/` (five questions, eleven slots, and the run of 20 October 2026) and `tests/test_nulleval.py`. Standard library only, as before. The test's Economic Survey excerpts are the Government of India's and are not CC0.
+- **Found 2026-10-20 — the first scorer misread polite refusals.** Its first version counted prose such as "Not stated in the evidence…" as a value, so the three plain-prompt runs scored as filling every empty slot. Prose that opens like a refusal is now scored `unread` until a reader records what it does, in a readings file that names its reader. The stored results are those after reading.
+- The official text of the proviso to Rule 3(1) of the Companies (Accounts) Rules 2014 could not be reached from the government sites on 20 October 2026. The test uses the wording as *What Your Buyer Is Defending Against* v1.1 quotes and paraphrases it, and its label says so.
+
 ## README update — 2026-10-20 (no new version)
 
 - Both READMEs list Hypothetical Technical Blog #23, *The Component Is the Type* (published in English on note and LinkedIn on 20 October 2026, after kit v1.5 was released), among the posts that use the kit, and say that it names the version it describes. No other file changed.

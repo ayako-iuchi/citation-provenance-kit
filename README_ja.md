@@ -28,6 +28,7 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4） |
 | [`tools/notation.py`](tools/notation.py)、[`schema/annotation.schema.json`](schema/annotation.schema.json) | 記法を、英語形と日本語形を1つの文法で読み、型付きの記録（成分、格付け、その成分が動くかどうか）にする。形を検査し（N0〜N7）、2つの形の間で書き換える（キットv1.5） |
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5） |
+| [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6、未リリース） |
 | [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取りのテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
@@ -90,6 +91,15 @@ python3 tools/notation.py draft_ja.md --markdown --to en  # コードを除き�
 格付け、ダッシュ、スロットがないこと、の3つは違う値です。確定した、考えたが確定しない、記録がない。ツールはこの3つを分けたまま持ち、互いに変換しません。読むのは、格付け1つだけの括弧か、コロンの前に既知の成分を挙げた括弧だけで、Markdownのリンクは読みません。検査するのはテキストに見えることだけです。文法（N0）、語彙（N1）、格付け（N2）、ダッシュの文字（N3）、スロットは3つまで（N4）、同じ成分を2度書かない（N5）、格付けがすべて同じなら分けない（N6）、そして通知として、第1スロットが確定していない（N7）。第1スロットが主張の荷重を支えているか、分けた格付けに意味があるか、成分が定義どおりに使われているか、格付けがどの文書に対して付いたかは判断できません。検査のときは、N0〜N6が何かを報告すると終了ステータス1、ファイルを読めなければ2で終わります。分野の拡張成分は `--extend restatement-status` のように宣言します。
 
 各スロットは `csv/components.csv` から `volatile` を受け取ります。記法は日付を持たないので、動く成分（版、存在、施行、依存）の格付けは、確かめた日にだけ成り立ちます。その日は状態ログに置きます。
+
+## 空の答えが正解になりうるテスト（キットv1.6、未リリース）
+
+```
+python3 tools/nulleval.py evals/null/items.jsonl ANSWERS.json [--readings READINGS.json]
+python3 tools/nulleval.py evals/null/items.jsonl --baseline fill   # または empty
+```
+
+各スロットの正解は、問いと一緒に渡す証拠に対して決めます。値か、3種類の空（`not-established`、`expired`、`no-record`）のどれかです。採点は6つの結果を数え、合計しません。いちばん大事なのは `filled`（正解が空なのに値を答えた）と `blanked`（正解が値なのに空にした）です。断りの形で始まる散文は、読み手が何をしているかを記録するまで `unread` として残します。2026年10月20日の実行は `evals/null/README.md` にあります。
 
 ## このキットがしないこと
 
