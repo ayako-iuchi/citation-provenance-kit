@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。
-キット v1.4（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（キットv1.4からの例外が1つあります。「ライセンス」を参照）。
+キット v1.5（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（キットv1.4からの例外が1つあります。「ライセンス」を参照）。
 
 ※英語版READMEを正本とします。
 
@@ -26,8 +26,8 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`tools/depaudit.py`](tools/depaudit.py) | 検索の後の検査。文言をハッシュと照らし、記録した依存の辺を1段たどり、引かれた文献の状態を状態ログから指定日時点で付ける（キットv1.4） |
 | [`schema/locus.schema.json`](schema/locus.schema.json)、[`schema/dependency.schema.json`](schema/dependency.schema.json) | 箇所（スナップショットをそのまま入れ子にする）と、依存の辺（キットv1.4） |
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4） |
-| [`tools/notation.py`](tools/notation.py)、[`schema/annotation.schema.json`](schema/annotation.schema.json) | 記法を、英語形と日本語形を1つの文法で読み、型付きの記録（成分、格付け、その成分が動くかどうか）にする。形を検査し（N0〜N7）、2つの形の間で書き換える（キットv1.5、未リリース） |
-| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5、未リリース） |
+| [`tools/notation.py`](tools/notation.py)、[`schema/annotation.schema.json`](schema/annotation.schema.json) | 記法を、英語形と日本語形を1つの文法で読み、型付きの記録（成分、格付け、その成分が動くかどうか）にする。形を検査し（N0〜N7）、2つの形の間で書き換える（キットv1.5） |
+| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5） |
 | [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取りのテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
@@ -79,7 +79,7 @@ python3 tools/statuslog.py --verify-append yesterday.jsonl today.jsonl
 
 しないこと：何を再確認すべきかを決めること、出典同士の食い違いを解くこと、格付けすること。それはあなたの仕事のままです。
 
-## 型付きの記録としての記法（キットv1.5、未リリース）
+## 型付きの記録としての記法（キットv1.5）
 
 ```
 python3 tools/notation.py paper_from_pdf.txt            # 形を検査する
@@ -106,7 +106,7 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 - #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
 - #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282)（箇所への分割、検索、検索後の依存の検査。キットv1.4）
 
-リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`）。#19、#20、#22は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。#22はv1.4のリリースの後、2026年10月20日に公開されました。
+リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`、`v1.5`）。#19、#20、#22は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。#22はv1.4のリリースの後、2026年10月20日に公開されました。
 
 ## 出典
 

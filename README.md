@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.4 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
+Kit v1.5 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -24,8 +24,8 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/depaudit.py`](tools/depaudit.py) | The check after retrieval: words against their hash, recorded dependency edges one level down, and each cited work's status from the status log, as of a given day (kit v1.4) |
 | [`schema/locus.schema.json`](schema/locus.schema.json), [`schema/dependency.schema.json`](schema/dependency.schema.json) | A locus (with its snapshot nested unchanged) and a dependency edge (kit v1.4) |
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | The chapter #21 audited by hand, run through the pipeline. The chapter's words there are the Government of India's and are **not** CC0 (kit v1.4) |
-| [`tools/notation.py`](tools/notation.py), [`schema/annotation.schema.json`](schema/annotation.schema.json) | Reads the notation, English and Japanese forms, with one grammar into typed records (component, grade, whether the component is volatile), checks its form (N0–N7), and rewrites it between the two forms (kit v1.5, unreleased) |
-| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | Every annotation in both editions of the paper, v1.2, as typed records (kit v1.5, unreleased) |
+| [`tools/notation.py`](tools/notation.py), [`schema/annotation.schema.json`](schema/annotation.schema.json) | Reads the notation, English and Japanese forms, with one grammar into typed records (component, grade, whether the component is volatile), checks its form (N0–N7), and rewrites it between the two forms (kit v1.5) |
+| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | Every annotation in both editions of the paper, v1.2, as typed records (kit v1.5) |
 | [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval and the notation reader (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
@@ -77,7 +77,7 @@ The second command answers what had been recorded on 11 October; the third retur
 
 What it does not do: decide what to re-check, settle a conflict between sources, or grade anything. Those stay with you.
 
-## The notation as typed records (kit v1.5, unreleased)
+## The notation as typed records (kit v1.5)
 
 ```
 python3 tools/notation.py paper_from_pdf.txt            # check the form
@@ -104,7 +104,7 @@ Hypothetical Technical Blog, *Citation provenance* (English, on note):
 - #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
 - #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282) (loci, retrieval and the dependency check after it, kit v1.4)
 
-Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`). #19, #20 and #22 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22 was published on 20 October 2026, after v1.4 was released.
+Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`). #19, #20 and #22 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22 was published on 20 October 2026, after v1.4 was released.
 
 ## Sources
 

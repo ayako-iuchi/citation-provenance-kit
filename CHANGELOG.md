@@ -2,7 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
-## Kit v1.5 — unreleased
+## Kit v1.5 — 2026-10-20
+
+- **Released on 20 October 2026,** before Hypothetical Technical Blog #23 (*The Component Is the Type*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.5`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
+- Known issue: `citelint.py` reads inside Markdown inline code, and with `--lang ja` it reports check C5 on `[Note: B]` written as inline code in the Japanese edition of #23; with `--lang en` it does not. A false positive, to be fixed in a later version. `notation.py --markdown` skips code.
 
 - Added `tools/notation.py`, `schema/annotation.schema.json`, `examples/method_paper_v1.2/` and `tests/test_notation.py`. The notation is read as typed records, in English and Japanese with one grammar, and checked for its form (N0–N7). Standard library only, as before. N0 (a bracket that names a component but does not follow the grammar), N5 (a component twice) and N7 (a first slot that is not established, reported as a notice) are not rules of the paper; they are added here. Extension components (§4-2) are declared with `--extend`.
 - A separate agent reviewed the first draft (c5d12de) on 20 October 2026. It read Markdown links such as `[A](url)` as annotations and broke them when rewriting, passed malformed annotations in silence, read prose such as `[Note: B]` as an annotation, read inside code, and changed CRLF line endings. Each is fixed and has a test. A second review of the fixes (15c6fb6) found that the link check dropped annotations followed by a footnote or a parenthesis, that an unmatched backtick hid the rest of a document under `--markdown`, that fences did not close as CommonMark closes them, and that a page number in brackets after a component name was reported as an error; these too are fixed and tested.
