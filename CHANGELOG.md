@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## README update — 2026-10-21 (no new version)
+
+- Both READMEs list Hypothetical Technical Blog #24, *Not Established Is an Answer* (published in English on note and LinkedIn on 20 October 2026, after kit v1.6 was released), among the posts that use the kit, and say that it names the version it describes. No other file changed.
+
 ## Kit v1.7 — 2026-10-20
 
 - **Released on 20 October 2026,** before Hypothetical Technical Blog #25 (*A Zero Needs a Denominator*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.7`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
