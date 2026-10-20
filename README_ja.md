@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。
-キット v1.3（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（キットv1.4からの例外が1つあります。「ライセンス」を参照）。
+キット v1.4（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（キットv1.4からの例外が1つあります。「ライセンス」を参照）。
 
 ※英語版READMEを正本とします。
 
@@ -21,11 +21,11 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`register/status_log.jsonl`](register/status_log.jsonl) | 動いている規定の登録簿を、追記だけのログにしたもの。v1.1の5行のあとに、2026年10月12日の発見を、置き換える行と並べて追加（キットv1.3） |
 | [`tools/statuslog.py`](tools/statuslog.py) | 「X日の時点で何を記録していたか」と「今日、何を頼れるか」に答える。期限切れの状態には値を返さない（キットv1.3） |
 | [`tools/migrate_register.py`](tools/migrate_register.py) | v1.1の登録簿CSVを状態ログの最初の行に変換する。有効期限を推測で作らない（キットv1.3） |
-| [`tools/pdflines.py`](tools/pdflines.py)、[`tools/loci.py`](tools/loci.py) | 頁の配置を使って、章を**箇所**（番号付きの段落、節見出し、脚注）に分ける。各箇所に印字頁の範囲と、スナップショットとしての文言を持たせる（キットv1.4、未リリース） |
-| [`tools/retrieve.py`](tools/retrieve.py) | 箇所の文言だけを対象にしたBM25。出すのは候補で、引用ではない（キットv1.4、未リリース） |
-| [`tools/depaudit.py`](tools/depaudit.py) | 検索の後の検査。文言をハッシュと照らし、記録した依存の辺を1段たどり、引かれた文献の状態を状態ログから指定日時点で付ける（キットv1.4、未リリース） |
-| [`schema/locus.schema.json`](schema/locus.schema.json)、[`schema/dependency.schema.json`](schema/dependency.schema.json) | 箇所（スナップショットをそのまま入れ子にする）と、依存の辺（キットv1.4、未リリース） |
-| [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4、未リリース） |
+| [`tools/pdflines.py`](tools/pdflines.py)、[`tools/loci.py`](tools/loci.py) | 頁の配置を使って、章を**箇所**（番号付きの段落、節見出し、脚注）に分ける。各箇所に印字頁の範囲と、スナップショットとしての文言を持たせる（キットv1.4） |
+| [`tools/retrieve.py`](tools/retrieve.py) | 箇所の文言だけを対象にしたBM25。出すのは候補で、引用ではない（キットv1.4） |
+| [`tools/depaudit.py`](tools/depaudit.py) | 検索の後の検査。文言をハッシュと照らし、記録した依存の辺を1段たどり、引かれた文献の状態を状態ログから指定日時点で付ける（キットv1.4） |
+| [`schema/locus.schema.json`](schema/locus.schema.json)、[`schema/dependency.schema.json`](schema/dependency.schema.json) | 箇所（スナップショットをそのまま入れ子にする）と、依存の辺（キットv1.4） |
+| [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4） |
 | [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
@@ -91,7 +91,7 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 - #20 — [Fixed Words, Moving Status](https://note.com/ayako_iuchi/n/ne5747d7bcd77)（状態ログ、キットv1.3）
 - #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
 
-リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`）。#19と#20は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。
+リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`）。#19と#20は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。
 
 ## 出典
 
@@ -102,7 +102,7 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 
 ## ライセンス
 
-キットはCC0 1.0でパブリックドメインに供されています。例外が1つあります。`examples/es2021_ch6/lines.json` と `examples/es2021_ch6/loci.jsonl` に含まれる経済白書2020-21の文言は、インド政府の刊行物の抜粋です（キットv1.4、未リリース）。CC0の対象外で、キットはその再利用について何の許諾も与えません。論文は別ライセンスです（『What Breaks in a Citation』本文はCC BY 4.0）。
+キットはCC0 1.0でパブリックドメインに供されています。例外が1つあります。`examples/es2021_ch6/lines.json` と `examples/es2021_ch6/loci.jsonl` に含まれる経済白書2020-21の文言は、インド政府の刊行物の抜粋です（キットv1.4）。CC0の対象外で、キットはその再利用について何の許諾も与えません。論文は別ライセンスです（『What Breaks in a Citation』本文はCC BY 4.0）。
 
 ## 訂正
 

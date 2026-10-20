@@ -2,7 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
-## Unreleased (kit v1.4, in preparation)
+## Kit v1.4 — 2026-10-20
+
+- **Released on 20 October 2026,** before Hypothetical Technical Blog #22 (*The Chunk Is the Citation*), which cites it, is published: the order #20 and v1.3 got wrong. `main` was fast-forwarded to the branch `kit-v1.4`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
+- Known issue: `citelint.py --lang ja` reports check C5 (notation outside the vocabulary) on a JSON code block in the Japanese edition of #22, which uses no grade notation there. A false positive, to be fixed in a later version.
 
 - Added `tools/pdflines.py`, `tools/loci.py`, `tools/retrieve.py`, `tools/depaudit.py`, `schema/locus.schema.json`, `schema/dependency.schema.json`, `examples/es2021_ch6/` and `tests/test_loci.py`, `tests/test_depaudit.py`. Standard library only, as before.
 - `register/status_log.jsonl` gains one line, `2026-10-20-01`: the World Bank's Doing Business report, discontinued (announced 16 September 2021). No expiry is stated, so a query reports `no-expiry-stated`. The earlier lines are unchanged (`statuslog.py --verify-append` against v1.3 says yes).

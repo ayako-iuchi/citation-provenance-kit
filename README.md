@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.3 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
+Kit v1.4 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -19,11 +19,11 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`register/status_log.jsonl`](register/status_log.jsonl) | The register of provisions in motion as an append-only log: the five v1.1 rows, then the finding of 12 October 2026 added beside the row it replaces (kit v1.3) |
 | [`tools/statuslog.py`](tools/statuslog.py) | Answers "what had I recorded as of day X?" and "what may I rely on today?", and returns no value once a status has expired (kit v1.3) |
 | [`tools/migrate_register.py`](tools/migrate_register.py) | Turns a v1.1 register CSV into the first lines of a status log, without inventing expiry dates (kit v1.3) |
-| [`tools/pdflines.py`](tools/pdflines.py), [`tools/loci.py`](tools/loci.py) | Split a chapter into **loci** — numbered paragraphs, section headings, footnotes — using the page geometry, each with the printed pages it spans and its words as a snapshot (kit v1.4, unreleased) |
-| [`tools/retrieve.py`](tools/retrieve.py) | BM25 over the words of the loci only: a proposal, not a citation (kit v1.4, unreleased) |
-| [`tools/depaudit.py`](tools/depaudit.py) | The check after retrieval: words against their hash, recorded dependency edges one level down, and each cited work's status from the status log, as of a given day (kit v1.4, unreleased) |
-| [`schema/locus.schema.json`](schema/locus.schema.json), [`schema/dependency.schema.json`](schema/dependency.schema.json) | A locus (with its snapshot nested unchanged) and a dependency edge (kit v1.4, unreleased) |
-| [`examples/es2021_ch6/`](examples/es2021_ch6/) | The chapter #21 audited by hand, run through the pipeline. The chapter's words there are the Government of India's and are **not** CC0 (kit v1.4, unreleased) |
+| [`tools/pdflines.py`](tools/pdflines.py), [`tools/loci.py`](tools/loci.py) | Split a chapter into **loci** — numbered paragraphs, section headings, footnotes — using the page geometry, each with the printed pages it spans and its words as a snapshot (kit v1.4) |
+| [`tools/retrieve.py`](tools/retrieve.py) | BM25 over the words of the loci only: a proposal, not a citation (kit v1.4) |
+| [`tools/depaudit.py`](tools/depaudit.py) | The check after retrieval: words against their hash, recorded dependency edges one level down, and each cited work's status from the status log, as of a given day (kit v1.4) |
+| [`schema/locus.schema.json`](schema/locus.schema.json), [`schema/dependency.schema.json`](schema/dependency.schema.json) | A locus (with its snapshot nested unchanged) and a dependency edge (kit v1.4) |
+| [`examples/es2021_ch6/`](examples/es2021_ch6/) | The chapter #21 audited by hand, run through the pipeline. The chapter's words there are the Government of India's and are **not** CC0 (kit v1.4) |
 | [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter and the check after retrieval (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
@@ -89,7 +89,7 @@ Hypothetical Technical Blog, *Citation provenance* (English, on note):
 - #20 — [Fixed Words, Moving Status](https://note.com/ayako_iuchi/n/ne5747d7bcd77) (the status log, kit v1.3)
 - #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
 
-Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`). #19 and #20 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2.
+Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`). #19 and #20 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2.
 
 ## Sources
 
@@ -100,7 +100,7 @@ The example log is the author's English translation. The original log was kept i
 
 ## Licence
 
-The kit is dedicated to the public domain under CC0 1.0, with one exception: the words of the Economic Survey 2020-21 in `examples/es2021_ch6/lines.json` and `examples/es2021_ch6/loci.jsonl` are a publication of the Government of India, reproduced in excerpt (kit v1.4, unreleased). They are not covered by CC0, and the kit grants no permission to reuse them. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
+The kit is dedicated to the public domain under CC0 1.0, with one exception: the words of the Economic Survey 2020-21 in `examples/es2021_ch6/lines.json` and `examples/es2021_ch6/loci.jsonl` are a publication of the Government of India, reproduced in excerpt (kit v1.4). They are not covered by CC0, and the kit grants no permission to reuse them. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
 
 ## Corrections
 
