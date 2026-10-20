@@ -30,7 +30,7 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5）と、公開されたキャッチログを番号・成分・結果・公開前後だけにしたもの（キットv1.7） |
 | [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6） |
 | [`tools/catchlog.py`](tools/catchlog.py) | 成分ごとに、公開前と公開後に分けて訂正と確認を別に数え、意味のないゼロを示す（キットv1.7）。`--fields` で各欄の埋まり具合を示す（キットv1.8、未リリース） |
-| [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（#45〜#62）を、判断の欄だけにしたもの（キットv1.8、未リリース） |
+| [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（#45〜#62）を、発見日、判断の欄、所要時間、公開前後だけにしたもの（キットv1.8、未リリース） |
 | [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
@@ -119,7 +119,7 @@ python3 tools/catchlog.py LOG.csv --fields
 python3 tools/catchlog.py examples/series_log/after_v1.2.csv --fields
 ```
 
-`--fields` は、キャッチログの各欄がどれだけ埋まっているかを、公開前と公開後に分けて報告します。埋まっている、未判断（または記録なし）、空、の3つです。「見逃していたら何が起きたか」と「影響の大きさ」に判断のない項目を番号で挙げます。欄を埋めることはしません。ワークブックとCSVの雛形には、影響の大きさの次に「「見逃していたら」を誰が書いたか」の列を足しました（author、author chose from assistant's options、assistant、not yet decided）。論文はこの欄を委任できない項目と呼びます（§9-5）が、補助者が下書きすることはできてしまうからです。`examples/series_log/after_v1.2.csv` は、論文v1.2より後の著者のログ（#45〜#62、論文には未掲載）を、判断の欄、所要時間、公開前後だけで持ちます。18件のうち判断があるのは3件で、3件とも補助者の候補から選ばれています。
+`--fields` は、キャッチログの各欄がどれだけ埋まっているかを、公開前と公開後に分けて報告します。埋まっている、未判断（または記録なし）、空、の3つです。「見逃していたら何が起きたか」と「影響の大きさ」に判断のない項目を番号で挙げます。欄を埋めることはしません。ワークブックとCSVの雛形には、影響の大きさの次に「「見逃していたら」を誰が書いたか」の列を足しました（author、author chose from assistant's options、assistant、not yet decided）。論文はこの欄を委任できない項目と呼びます（§9-5）が、補助者が下書きすることはできてしまうからです。`examples/series_log/after_v1.2.csv` は、論文v1.2より後の著者のログ（#45〜#62、論文には未掲載）を、発見日、判断の欄、所要時間、公開前後だけで持ちます。18件のうち判断があるのは3件で、3件とも補助者の候補から選ばれています。
 
 ## このキットがしないこと
 

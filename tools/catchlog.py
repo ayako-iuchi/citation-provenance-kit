@@ -42,8 +42,11 @@ With --fields it reports, instead, how full each column is: for every column,
 how many rows have it filled, how many mark it as not yet decided (or not recorded), and how many
 leave it blank, before and after release, and which entries have no decision in
 "what would have happened" and "stakes". It fills nothing in. A value counts as
-"not yet decided" when it is "—" or "-", or begins with "—" or "(", or contains
-未判断, 著者が記入, 記録なし, "not yet decided", "to be decided", "not recorded" or "TBD". If the log has the
+"not yet decided" when it is only a dash (— – ― － -), a dash followed by a note in
+brackets ("—（未判断、2026-10-20）"), or only one of 未判断, 著者が記入, 記録なし,
+"not yet decided", "to be decided", "not recorded", "TBD", "N/A" or "?" (in brackets or
+not). Anything else is an answer, even if it mentions those words. A row whose phase is
+blank or unknown is counted under "unknown" rather than stopping the report. If the log has the
 column "Who wrote 'what would have happened'?" (kit v1.8), its values are counted.
 
 Usage:
@@ -53,7 +56,7 @@ Usage:
 An unknown component name is reported on stderr; with --strict it is an error.
 Exit status: 0, or 2 on unreadable input.
 
-Standard library only. CC0 1.0. Part of the citation provenance kit (v1.7).
+Standard library only. CC0 1.0. Part of the citation provenance kit (v1.8).
 """
 import argparse
 import csv
@@ -143,6 +146,12 @@ def _kind(outcome):
     return "other"
 
 
+class LogRows(list):
+    """The rows of a log, with the column labels in order and the labels of no and phase."""
+    labels = ()
+    skip = ()
+
+
 def read_log(path, components=None, strict=False, warn=None, columns_only=False):
     """Read a catch log. With columns_only (for --fields), component and outcome are optional."""
     components = components or load_components()
@@ -162,11 +171,20 @@ def read_log(path, components=None, strict=False, warn=None, columns_only=False)
             cols, start, header = found, i + 1, line
             break
     if cols is None:
-        raise ValueError(f"{path}: no header row with component and outcome columns in the first 10 rows")
+        need = "no and phase" if columns_only else "component and outcome"
+        raise ValueError(f"{path}: no header row with {need} columns in the first 10 rows")
     missing = [k for k in (("no", "phase") if columns_only else ("no", "component", "outcome", "phase")) if k not in cols]
     if missing:
         raise ValueError(f"missing column(s): {', '.join(missing)}")
-    rows, unknown = [], []
+    labels = [_label(h) if h.strip() else "" for h in header]
+    seen = set()
+    for lab in labels:
+        if lab and lab in seen:
+            raise ValueError(f"{path}: two columns named {lab!r}")
+        seen.add(lab)
+    rows, unknown = LogRows(), []
+    rows.labels = tuple(lab for lab in labels if lab)
+    rows.skip = (labels[cols["no"]], labels[cols["phase"]])
     for line in rows_in[start:]:
         get = lambda k: line[cols[k]].strip() if k in cols and cols[k] < len(line) else ""
         no = get("no")
@@ -186,13 +204,17 @@ def read_log(path, components=None, strict=False, warn=None, columns_only=False)
         if not comps and not columns_only:
             raise ValueError(f"entry {no!r}: no component")
         ph = re.sub(r"\s*[（(].*$", "", get("phase")).casefold()
-        if ph not in PHASE_NAMES:
+        if ph not in PHASE_NAMES and columns_only:
+            phase = "unknown"
+        elif ph not in PHASE_NAMES:
             raise ValueError(f"entry {no!r}: phase must be pre or post (or 公開前／公開後), not {get('phase')!r}")
+        else:
+            phase = PHASE_NAMES[ph]
         kind = _kind(get("outcome"))
         rows.append({"no": no, "components": comps, "outcome": get("outcome"), "kind": kind,
-                     "phase": PHASE_NAMES[ph], "count": _count(get("count"), kind, no),
-                     "fields": {_label(header[j]): (line[j].strip() if j < len(line) else "")
-                                for j in range(len(header)) if header[j].strip()}})
+                     "phase": phase, "count": _count(get("count"), kind, no) if not columns_only else 1,
+                     "fields": {labels[j]: (line[j].strip() if j < len(line) else "")
+                                for j in range(len(header)) if labels[j]}})
     if unknown:
         msg = "; ".join(f"entry {n!r}: {c!r}" for n, c in unknown)
         if strict:
@@ -203,28 +225,40 @@ def read_log(path, components=None, strict=False, warn=None, columns_only=False)
 
 def _label(h):
     """A column's display name: its first line (the workbook writes "English\nJapanese")."""
-    return re.split(r"\n| / ", h.replace("\ufeff", "").strip())[0].strip()
+    return re.split(r"\n| / | ／ |／", h.replace("\ufeff", "").strip())[0].strip()
 
 
-PENDING = re.compile(r"^\s*(?:[—-]\s*$|[—(（])|未判断|著者が記入|記録なし|not yet decided|to be decided|not recorded|\bTBD\b", re.I)
+_DASH = "—–―－-"
+PENDING = re.compile(r"[%s]+\s*(?:[（(].*[)）])?|[（(]?\s*(?:未判断|著者が記入|記録なし|not yet decided|to be decided|"
+                     r"not recorded|tbd|n/?a|\?)\s*[)）]?\.?" % _DASH, re.I)
 WOULD = re.compile(r"^what would have happened|^見逃していたら何が", re.I)
-STAKES_COL = re.compile(r"^stakes$|影響の大きさ", re.I)
-WHO_COL = re.compile(r"^who wrote", re.I)
+STAKES_COL = re.compile(r"^stakes\b|影響の大きさ", re.I)
+WHO_COL = re.compile(r"^who wrote|誰が書いたか", re.I)
+FIELD_PHASES = ("pre", "post", "unknown")
+
+
+def state(value):
+    """'blank', 'pending' (not yet decided or not recorded) or 'filled'."""
+    v = (value or "").strip()
+    return "blank" if not v else "pending" if PENDING.fullmatch(v) else "filled"
 
 
 def fields(rows):
-    """{column: {phase: {"filled": n, "pending": n, "blank": n}}}, the entries with no decision
-    in the two judgment columns, and the counts of the 'who wrote' column."""
-    cols = list(dict.fromkeys(k for r in rows for k in r["fields"]))
-    out = {c: {p: {"filled": 0, "pending": 0, "blank": 0} for p in PHASES} for c in cols}
+    """{column: {phase: {"filled": n, "pending": n, "blank": n}}} for every column except the
+    entry number and the phase, the entries with no decision (blank or pending) in the two
+    judgment columns, and the counts of the 'who wrote' column."""
+    labels = getattr(rows, "labels", None) or list(dict.fromkeys(k for r in rows for k in r["fields"]))
+    skip = getattr(rows, "skip", ())
+    cols = [c for c in labels if c not in skip]
+    out = {c: {p: {"filled": 0, "pending": 0, "blank": 0} for p in FIELD_PHASES} for c in cols}
     undecided = {}
     who = {}
     for r in rows:
         for c in cols:
             v = r["fields"].get(c, "")
-            state = "blank" if not v else "pending" if PENDING.search(v) else "filled"
-            out[c][r["phase"]][state] += 1
-            if state != "filled" and (WOULD.search(c) or STAKES_COL.search(c)):
+            st = state(v)
+            out[c][r["phase"]][st] += 1
+            if st != "filled" and (WOULD.search(c) or STAKES_COL.search(c)):
                 undecided.setdefault(c, []).append(r["no"])
             if WHO_COL.search(c):
                 who[v or "(blank)"] = who.get(v or "(blank)", 0) + 1
@@ -293,9 +327,10 @@ def main(argv=None):
             return 0
         print(f"{len(rows)} row(s). filled / not yet decided / blank, before and after release")
         w = max([len(c) for c in f["columns"]] + [6])
+        shown = [p for p in FIELD_PHASES if p != "unknown" or any(r["phase"] == "unknown" for r in rows)]
         for c, cells in f["columns"].items():
-            parts = [f"{cells[p]['filled']} / {cells[p]['pending']} / {cells[p]['blank']}" for p in PHASES]
-            print(f"{c[:w]:<{w}}  pre {parts[0]:<14} post {parts[1]}")
+            parts = [f"{p} {cells[p]['filled']} / {cells[p]['pending']} / {cells[p]['blank']}" for p in shown]
+            print(f"{c[:w]:<{w}}  " + "    ".join(f"{x:<16}" for x in parts).rstrip())
         for c, nos in f["undecided"].items():
             print(f"no decision in '{c}': " + ", ".join(nos))
         if f["who"]:

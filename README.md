@@ -28,7 +28,7 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | Every annotation in both editions of the paper, v1.2, as typed records (kit v1.5), and its published catch log as numbers, components, outcomes and phases (kit v1.7) |
 | [`tools/nulleval.py`](tools/nulleval.py), [`evals/null/`](evals/null/), [`schema/null_item.schema.json`](schema/null_item.schema.json) | A test where an empty answer can be right: five questions, a scorer that counts filled and blanked slots apart and three kinds of empty, and a recorded run (kit v1.6) |
 | [`tools/catchlog.py`](tools/catchlog.py) | Counts corrections and confirmations apart for each component, before and after release, and says which zeros mean nothing (kit v1.7); with `--fields`, how full each column is (kit v1.8, unreleased) |
-| [`examples/series_log/`](examples/series_log/) | The author's log after the paper's v1.2 (#45–#62), judgment columns only (kit v1.8, unreleased) |
+| [`examples/series_log/`](examples/series_log/) | The author's log after the paper's v1.2 (#45–#62): date found, judgment columns, duration and phase only (kit v1.8, unreleased) |
 | [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer and the catch-log tally (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
@@ -117,7 +117,7 @@ python3 tools/catchlog.py LOG.csv --fields
 python3 tools/catchlog.py examples/series_log/after_v1.2.csv --fields
 ```
 
-`--fields` reports how full each column of a catch log is, before and after release: filled, not yet decided (or not recorded), or blank. It lists the entries with no decision in "what would have happened had it gone unnoticed" and in "stakes", and fills nothing in. The workbook and the CSV template have a new column after Stakes, "Who wrote 'what would have happened'?" (author; author chose from assistant's options; assistant; not yet decided), because the paper calls that field the one that cannot be delegated (§9-5), and an assistant can still draft it. `examples/series_log/after_v1.2.csv` holds the author's log after the paper's v1.2 (#45–#62, not yet published in a paper) with only the judgment columns, the duration and the phase: three of eighteen entries have a decision, all chosen from an assistant's options.
+`--fields` reports how full each column of a catch log is, before and after release: filled, not yet decided (or not recorded), or blank. It lists the entries with no decision in "what would have happened had it gone unnoticed" and in "stakes", and fills nothing in. The workbook and the CSV template have a new column after Stakes, "Who wrote 'what would have happened'?" (author; author chose from assistant's options; assistant; not yet decided), because the paper calls that field the one that cannot be delegated (§9-5), and an assistant can still draft it. `examples/series_log/after_v1.2.csv` holds the author's log after the paper's v1.2 (#45–#62, not yet published in a paper) with only the date found, the judgment columns, the duration and the phase: three of eighteen entries have a decision, all chosen from an assistant's options.
 
 ## What this kit does not do
 

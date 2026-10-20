@@ -242,3 +242,60 @@ def test_template_has_the_who_column():
         head = next(_csv.reader(f))
     assert "Who wrote 'what would have happened'? / 「見逃していたら」を誰が書いたか" in head
     assert head.index("Stakes / 影響の大きさ") + 1 == head.index("Who wrote 'what would have happened'? / 「見逃していたら」を誰が書いたか")
+
+
+# --- review of 9d4ab14 / 26a0b7b (2026-10-21) --------------------------------
+
+@pytest.mark.parametrize("value,want", [
+    ("(Minor) the table would show an old value", "filled"),
+    ("— nothing: a reader checks the page anyway", "filled"),
+    ("(none — this failure produced the rule)", "filled"),
+    ("The date was not recorded in the source, so the reader would cite the wrong year", "filled"),
+    ("記録なしの資料を引いたため、主張が崩れる", "filled"),
+    ("N/A", "pending"), ("n/a", "pending"), ("?", "pending"), ("–", "pending"), ("―", "pending"), ("－", "pending"),
+    ("—（前のスレッドで発見。日付は記録されていない）", "pending"), ("not yet decided", "pending"), ("(TBD)", "pending"),
+])
+def test_state_only_flags_markers(value, want):
+    assert catchlog.state(value) == want
+
+
+def test_blank_phase_is_counted_not_fatal(tmp_path, capsys):
+    p = write(tmp_path, "no,phase,Stakes\n1,post,Small\n2,,TBD\n")
+    f = catchlog.fields(catchlog.read_log(p, columns_only=True))
+    assert f["columns"]["Stakes"]["unknown"]["pending"] == 1
+    assert catchlog.main([p, "--fields"]) == 0
+    assert "unknown 0 / 1 / 0" in capsys.readouterr().out
+
+
+def test_japanese_who_header_and_stakes_variants(tmp_path):
+    p = write(tmp_path, "#,公開前／後,影響の大きさ (§7-1),「見逃していたら」を誰が書いたか\n1,公開後,,author\n")
+    f = catchlog.fields(catchlog.read_log(p, columns_only=True))
+    assert f["who"] == {"author": 1} and list(f["undecided"]) == ["影響の大きさ (§7-1)"]
+    p2 = write(tmp_path, "no,phase,Stakes (§7-1)\n1,pre,\n", "s2.csv")
+    assert list(catchlog.fields(catchlog.read_log(p2, columns_only=True))["undecided"]) == ["Stakes (§7-1)"]
+
+
+def test_fullwidth_slash_label_and_duplicate_labels(tmp_path):
+    p = write(tmp_path, "no,phase,Notes ／ メモ\n1,pre,a\n")
+    assert "Notes" in catchlog.fields(catchlog.read_log(p, columns_only=True))["columns"]
+    with pytest.raises(ValueError, match="two columns"):
+        catchlog.read_log(write(tmp_path, "no,phase,Notes / メモ,Notes\n1,pre,a,b\n", "d.csv"), columns_only=True)
+
+
+def test_no_and_phase_not_listed_and_empty_log_lists_columns():
+    f = catchlog.fields(catchlog.read_log(os.path.join(ROOT, "csv", "catch_log_template.csv"), columns_only=True))
+    assert "#" not in f["columns"] and "Phase" not in f["columns"]
+    assert "Who wrote 'what would have happened'?" in f["columns"]
+
+
+def test_fields_mode_error_message(tmp_path, capsys):
+    assert catchlog.main([write(tmp_path, "a,b\n1,2\n"), "--fields"]) == 2
+    assert "no and phase" in capsys.readouterr().err
+
+
+def test_series_example_keeps_phase_notes():
+    import csv as _csv
+    with open(SERIES, encoding="utf-8") as f:
+        rows = list(_csv.DictReader(f))
+    assert {r["#"]: r["Phase / 公開前／後"] for r in rows}["46"] == "公開後（キットv1.2は公開済み）"
+    assert all(r["phase"] == "post" for r in catchlog.read_log(SERIES, columns_only=True))
