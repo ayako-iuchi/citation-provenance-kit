@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。
-キット v1.5（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（キットv1.4からの例外が1つあります。「ライセンス」を参照）。
+キット v1.6（2026年10月20日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（キットv1.4からの例外が1つあります。「ライセンス」を参照）。
 
 ※英語版READMEを正本とします。
 
@@ -28,8 +28,8 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4） |
 | [`tools/notation.py`](tools/notation.py)、[`schema/annotation.schema.json`](schema/annotation.schema.json) | 記法を、英語形と日本語形を1つの文法で読み、型付きの記録（成分、格付け、その成分が動くかどうか）にする。形を検査し（N0〜N7）、2つの形の間で書き換える（キットv1.5） |
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5） |
-| [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6、未リリース） |
-| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取りのテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
+| [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6） |
+| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
@@ -92,7 +92,7 @@ python3 tools/notation.py draft_ja.md --markdown --to en  # コードを除き�
 
 各スロットは `csv/components.csv` から `volatile` を受け取ります。記法は日付を持たないので、動く成分（版、存在、施行、依存）の格付けは、確かめた日にだけ成り立ちます。その日は状態ログに置きます。
 
-## 空の答えが正解になりうるテスト（キットv1.6、未リリース）
+## 空の答えが正解になりうるテスト（キットv1.6）
 
 ```
 python3 tools/nulleval.py evals/null/items.jsonl ANSWERS.json [--readings READINGS.json]
@@ -117,7 +117,7 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 - #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282)（箇所への分割、検索、検索後の依存の検査。キットv1.4）
 - #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263)（型付きの記録としての記法。キットv1.5）
 
-リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`、`v1.5`）。#19、#20、#22、#23は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。#22と#23は2026年10月20日に、それぞれv1.4とv1.5のリリースの後に公開されました。
+リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`、`v1.5`、`v1.6`）。#19、#20、#22、#23は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。#22と#23は2026年10月20日に、それぞれv1.4とv1.5のリリースの後に公開されました。
 
 ## 出典
 

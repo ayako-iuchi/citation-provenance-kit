@@ -1,11 +1,11 @@
 cff-version: 1.2.0
-message: "No attribution is required (CC0 1.0; the Economic Survey excerpt in examples/es2021_ch6/ is not CC0). If you wish to cite the kit, please use this record."
+message: "No attribution is required (CC0 1.0; the Economic Survey excerpts in examples/es2021_ch6/ and evals/null/ are not CC0). If you wish to cite the kit, please use this record."
 title: "Citation provenance kit: reproduction kit for What Breaks in a Citation"
 type: dataset
 authors:
   - family-names: Iuchi
     given-names: Ayako
-version: "1.5"
+version: "1.6"
 date-released: "2026-10-20"
 license: CC0-1.0
 references:

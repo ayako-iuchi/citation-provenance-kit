@@ -2,7 +2,9 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
-## Kit v1.6 — unreleased
+## Kit v1.6 — 2026-10-20
+
+- **Released on 20 October 2026,** before Hypothetical Technical Blog #24 (*Not Established Is an Answer*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.6`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
 
 - Added `tools/nulleval.py`, `schema/null_item.schema.json`, `evals/null/` (five questions, eleven slots, and the run of 20 October 2026) and `tests/test_nulleval.py`. Standard library only, as before. The test's Economic Survey excerpts are the Government of India's and are not CC0.
 - **Found 2026-10-20 — the first scorer misread polite refusals.** Its first version counted prose such as "Not stated in the evidence…" as a value, so the three plain-prompt runs scored as filling every empty slot. Prose that opens like a refusal is now scored `unread` until a reader records what it does, in a readings file that names its reader. The stored results are those after reading.
