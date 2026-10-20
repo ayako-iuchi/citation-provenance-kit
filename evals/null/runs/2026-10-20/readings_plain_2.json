@@ -1,0 +1,37 @@
+{
+ "rule3-1/commenced-by": {
+  "read_as": "empty",
+  "kind": "not-established",
+  "reader": "independent agent, 2026-10-20",
+  "note": "'Not stated in the evidence ... so I cannot supply them'"
+ },
+ "bjr/basis": {
+  "read_as": "empty",
+  "kind": "not-established",
+  "reader": "independent agent, 2026-10-20",
+  "note": "'The basis cannot be given from the evidence.'"
+ },
+ "p632-status/index-status": {
+  "read_as": "empty",
+  "kind": "no-record",
+  "reader": "independent agent, 2026-10-20",
+  "note": "'The log has no line/entry for ... No status is recorded.'"
+ },
+ "dpdp/rule4": {
+  "read_as": "empty",
+  "kind": "expired",
+  "reader": "independent agent, 2026-10-20",
+  "note": "'expired on 2026-11-01, before ... 2026-11-02, so it may not be relied on'"
+ },
+ "deps/p621": {
+  "read_as": "value",
+  "reader": "independent agent, 2026-10-20",
+  "note": "'Nothing. ... read in full and names no document, report or study' (cites nothing)"
+ },
+ "deps/p618": {
+  "read_as": "empty",
+  "kind": "no-record",
+  "reader": "independent agent, 2026-10-20",
+  "note": "'¶6.18 has no dependency record, which means it has not been audited'"
+ }
+}

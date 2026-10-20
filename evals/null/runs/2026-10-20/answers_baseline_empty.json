@@ -1,0 +1,71 @@
+{
+ "model": "baseline: always empty",
+ "prompt": null,
+ "answers": {
+  "rule3-1": {
+   "applies-from": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   },
+   "commenced-by": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   }
+  },
+  "bjr": {
+   "exists": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   },
+   "basis": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   }
+  },
+  "p632-status": {
+   "report": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   },
+   "report-status": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   },
+   "index-status": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   }
+  },
+  "dpdp": {
+   "rule4": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   },
+   "rules-3-5-16": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   }
+  },
+  "deps": {
+   "p621": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   },
+   "p618": {
+    "answer": null,
+    "empty": "not-established",
+    "basis": null
+   }
+  }
+ }
+}

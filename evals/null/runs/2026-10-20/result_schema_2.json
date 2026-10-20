@@ -1,0 +1,117 @@
+{
+ "model": "Claude, run as a fresh agent in this session (configured model claude-opus-5-5; the serving model may differ)",
+ "prompt": "schema",
+ "slots": 11,
+ "gold_values": 6,
+ "gold_empties": 5,
+ "counts": {
+  "value-correct": 5,
+  "value-wrong": 0,
+  "filled": 0,
+  "blanked": 0,
+  "empty-correct": 5,
+  "empty-kind": 0,
+  "unread": 1
+ },
+ "rows": [
+  {
+   "item": "rule3-1",
+   "slot": "applies-from",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "Financial years commencing on or after 1 April 2023",
+   "reader": null
+  },
+  {
+   "item": "rule3-1",
+   "slot": "commenced-by",
+   "gold": "not-established",
+   "given": "not-established",
+   "outcome": "empty-correct",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "bjr",
+   "slot": "exists",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "Yes: the paragraph says it exists in India as well, though not exactly codified in the same language",
+   "reader": null
+  },
+  {
+   "item": "bjr",
+   "slot": "basis",
+   "gold": "not-established",
+   "given": "not-established",
+   "outcome": "empty-correct",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "report",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "The World Bank's Ease of Doing Business report (2020) (printed as \"the World Bank' Ease of Doing Buisness report (2020)\")",
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "report-status",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "Discontinued: on 16 September 2021 the World Bank Group announced that its management had decided to discontinue the Doing Business report (grade A; no expiry stated)",
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "index-status",
+   "gold": "no-record",
+   "given": "no-record",
+   "outcome": "empty-correct",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "dpdp",
+   "slot": "rule4",
+   "gold": "expired",
+   "given": "expired",
+   "outcome": "empty-correct",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "dpdp",
+   "slot": "rules-3-5-16",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "Eighteen months from publication (G.S.R. 846(E), 13 Nov 2025, Rule 1(4)); period graded A, whether it is still operative is ungraded; May 2027 is the author's arithmetic",
+   "reader": null
+  },
+  {
+   "item": "deps",
+   "slot": "p621",
+   "gold": "value",
+   "given": "unread",
+   "outcome": "unread",
+   "answer": "Nothing: the record (cites null) says ¶6.21 was read in full and names no document, report or study",
+   "reader": null
+  },
+  {
+   "item": "deps",
+   "slot": "p618",
+   "gold": "no-record",
+   "given": "no-record",
+   "outcome": "empty-correct",
+   "answer": null,
+   "reader": null
+  }
+ ]
+}

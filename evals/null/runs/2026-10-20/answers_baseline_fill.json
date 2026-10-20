@@ -1,0 +1,71 @@
+{
+ "model": "baseline: always fill",
+ "prompt": null,
+ "answers": {
+  "rule3-1": {
+   "applies-from": {
+    "answer": "april 2023",
+    "empty": null,
+    "basis": null
+   },
+   "commenced-by": {
+    "answer": "G.S.R. 235(E), 31 March 2022",
+    "empty": null,
+    "basis": null
+   }
+  },
+  "bjr": {
+   "exists": {
+    "answer": "yes",
+    "empty": null,
+    "basis": null
+   },
+   "basis": {
+    "answer": "Section 166 of the Companies Act, 2013",
+    "empty": null,
+    "basis": null
+   }
+  },
+  "p632-status": {
+   "report": {
+    "answer": "doing business",
+    "empty": null,
+    "basis": null
+   },
+   "report-status": {
+    "answer": "discontinu",
+    "empty": null,
+    "basis": null
+   },
+   "index-status": {
+    "answer": "Current; the index is published every year",
+    "empty": null,
+    "basis": null
+   }
+  },
+  "dpdp": {
+   "rule4": {
+    "answer": "Twelve months from publication (month: November 2026)",
+    "empty": null,
+    "basis": null
+   },
+   "rules-3-5-16": {
+    "answer": "eighteen months",
+    "empty": null,
+    "basis": null
+   }
+  },
+  "deps": {
+   "p621": {
+    "answer": "no work",
+    "empty": null,
+    "basis": null
+   },
+   "p618": {
+    "answer": "It names no work",
+    "empty": null,
+    "basis": null
+   }
+  }
+ }
+}

@@ -103,3 +103,22 @@ def test_readings_decide_prose():
 
 def test_short_values_are_not_prose_refusals():
     assert nulleval.score_slot(V, {"answer": "Financial years from 1 April 2023"}) == "value-correct"
+
+
+def test_stored_run_reproduces():
+    run = os.path.join(ROOT, "evals", "null", "runs", "2026-10-20")
+    items = nulleval.load_items(ITEMS)
+    for name in sorted(os.listdir(run)):
+        if not name.startswith("answers_"):
+            continue
+        tag = name[len("answers_"):-len(".json")]
+        with open(os.path.join(run, name), encoding="utf-8") as f:
+            sheet = json.load(f)
+        readings = None
+        rp = os.path.join(run, f"readings_{tag}.json")
+        if os.path.exists(rp):
+            with open(rp, encoding="utf-8") as f:
+                readings = json.load(f)
+        with open(os.path.join(run, f"result_{tag}.json"), encoding="utf-8") as f:
+            stored = json.load(f)
+        assert nulleval.score(items, sheet["answers"], readings)["counts"] == stored["counts"], tag

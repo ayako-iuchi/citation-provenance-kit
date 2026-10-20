@@ -1,0 +1,117 @@
+{
+ "model": "baseline: always empty",
+ "prompt": null,
+ "slots": 11,
+ "gold_values": 6,
+ "gold_empties": 5,
+ "counts": {
+  "value-correct": 0,
+  "value-wrong": 0,
+  "filled": 0,
+  "blanked": 6,
+  "empty-correct": 2,
+  "empty-kind": 3,
+  "unread": 0
+ },
+ "rows": [
+  {
+   "item": "rule3-1",
+   "slot": "applies-from",
+   "gold": "value",
+   "given": "not-established",
+   "outcome": "blanked",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "rule3-1",
+   "slot": "commenced-by",
+   "gold": "not-established",
+   "given": "not-established",
+   "outcome": "empty-correct",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "bjr",
+   "slot": "exists",
+   "gold": "value",
+   "given": "not-established",
+   "outcome": "blanked",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "bjr",
+   "slot": "basis",
+   "gold": "not-established",
+   "given": "not-established",
+   "outcome": "empty-correct",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "report",
+   "gold": "value",
+   "given": "not-established",
+   "outcome": "blanked",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "report-status",
+   "gold": "value",
+   "given": "not-established",
+   "outcome": "blanked",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "index-status",
+   "gold": "no-record",
+   "given": "not-established",
+   "outcome": "empty-kind",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "dpdp",
+   "slot": "rule4",
+   "gold": "expired",
+   "given": "not-established",
+   "outcome": "empty-kind",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "dpdp",
+   "slot": "rules-3-5-16",
+   "gold": "value",
+   "given": "not-established",
+   "outcome": "blanked",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "deps",
+   "slot": "p621",
+   "gold": "value",
+   "given": "not-established",
+   "outcome": "blanked",
+   "answer": null,
+   "reader": null
+  },
+  {
+   "item": "deps",
+   "slot": "p618",
+   "gold": "no-record",
+   "given": "not-established",
+   "outcome": "empty-kind",
+   "answer": null,
+   "reader": null
+  }
+ ]
+}

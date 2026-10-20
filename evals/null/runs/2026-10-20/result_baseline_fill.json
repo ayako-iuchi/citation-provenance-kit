@@ -1,0 +1,117 @@
+{
+ "model": "baseline: always fill",
+ "prompt": null,
+ "slots": 11,
+ "gold_values": 6,
+ "gold_empties": 5,
+ "counts": {
+  "value-correct": 6,
+  "value-wrong": 0,
+  "filled": 5,
+  "blanked": 0,
+  "empty-correct": 0,
+  "empty-kind": 0,
+  "unread": 0
+ },
+ "rows": [
+  {
+   "item": "rule3-1",
+   "slot": "applies-from",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "april 2023",
+   "reader": null
+  },
+  {
+   "item": "rule3-1",
+   "slot": "commenced-by",
+   "gold": "not-established",
+   "given": "value",
+   "outcome": "filled",
+   "answer": "G.S.R. 235(E), 31 March 2022",
+   "reader": null
+  },
+  {
+   "item": "bjr",
+   "slot": "exists",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "yes",
+   "reader": null
+  },
+  {
+   "item": "bjr",
+   "slot": "basis",
+   "gold": "not-established",
+   "given": "value",
+   "outcome": "filled",
+   "answer": "Section 166 of the Companies Act, 2013",
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "report",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "doing business",
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "report-status",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "discontinu",
+   "reader": null
+  },
+  {
+   "item": "p632-status",
+   "slot": "index-status",
+   "gold": "no-record",
+   "given": "value",
+   "outcome": "filled",
+   "answer": "Current; the index is published every year",
+   "reader": null
+  },
+  {
+   "item": "dpdp",
+   "slot": "rule4",
+   "gold": "expired",
+   "given": "value",
+   "outcome": "filled",
+   "answer": "Twelve months from publication (month: November 2026)",
+   "reader": null
+  },
+  {
+   "item": "dpdp",
+   "slot": "rules-3-5-16",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "eighteen months",
+   "reader": null
+  },
+  {
+   "item": "deps",
+   "slot": "p621",
+   "gold": "value",
+   "given": "value",
+   "outcome": "value-correct",
+   "answer": "no work",
+   "reader": null
+  },
+  {
+   "item": "deps",
+   "slot": "p618",
+   "gold": "no-record",
+   "given": "value",
+   "outcome": "filled",
+   "answer": "It names no work",
+   "reader": null
+  }
+ ]
+}
