@@ -8,15 +8,17 @@ The evidence is taken only from material the kit or its papers already hold: the
 
 Six fresh agents, each run by Claude in the session that built the kit (configured model `claude-opus-5-5`; the model that actually served a run can differ, and was not recorded), each read only its prompt file and wrote one answer sheet. Three got `prompt_plain.txt`, which asks for answers; three got `prompt_schema.txt`, which adds an `empty` field with the three kinds and a `basis` field, and says "Give a value only if the evidence given establishes it. Do not supply facts from memory."
 
-| Sheet | value-correct | filled | blanked | empty-correct | empty-kind |
-| --- | --- | --- | --- | --- | --- |
-| schema 1–3 (each) | 6 | 0 | 0 | 5 | 0 |
-| plain 1, plain 2 (each, after reading) | 6 | 0 | 0 | 5 | 0 |
-| plain 3 (after reading) | 6 | 1 | 0 | 4 | 0 |
-| baseline: always fill | 6 | 5 | 0 | 0 | 0 |
-| baseline: always empty | 0 | 0 | 6 | 2 | 3 |
+| Sheet | value-correct | value-wrong | filled | blanked | empty-correct | empty-kind | unread |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| schema 1–3 (each) | 6 | 0 | 0 | 0 | 5 | 0 | 0 |
+| plain 1, plain 2 (each, after reading) | 6 | 0 | 0 | 0 | 5 | 0 | 0 |
+| plain 3 (after reading) | 6 | 0 | 1 | 0 | 4 | 0 | 0 |
+| baseline: always fill | 6 | 0 | 5 | 0 | 0 | 0 | 0 |
+| baseline: always empty | 0 | 0 | 0 | 6 | 2 | 3 | 0 |
 
-The plain answers were prose. Six slots per sheet opened like a refusal and could not be scored without reading them; an agent that had written neither questions nor answers read them and recorded its readings (`readings_plain_*.json`). In plain 3, the answer on which notification brought the proviso into force declined ("Not stated in the evidence") and then supplied one "from memory, not verified here". That is scored as filled.
+The schema sheets are scored without reading: an answer that uses the `empty` field is taken at its word, empty if the field names a kind and a value if it is null. The agents were told, in their instructions, to read no other file and to search nothing; nothing checked that they did not.
+
+The plain answers were prose. Six slots per sheet opened like a refusal and could not be scored without reading them; an agent that had written neither questions nor answers read them and recorded its readings (`readings_plain_*.json`), each with the words of the answer that decided it, quoted verbatim. In plain 3, the answer on which notification brought the proviso into force declined ("Not stated in the evidence") and then supplied one "from memory, not verified here". That is scored as filled. The notification it recalled, G.S.R. 206(E), is not the 205(E) that the domain paper gives at grade A for the 2021 amendment; the test does not decide which is right, because neither is in the evidence.
 
 Five questions and one model are a demonstration of what the scoring catches, not a measurement of the model.
 

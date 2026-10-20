@@ -5,13 +5,13 @@
  "gold_values": 6,
  "gold_empties": 5,
  "counts": {
-  "value-correct": 5,
+  "value-correct": 6,
   "value-wrong": 0,
   "filled": 0,
   "blanked": 0,
   "empty-correct": 5,
   "empty-kind": 0,
-  "unread": 1
+  "unread": 0
  },
  "rows": [
   {
@@ -99,8 +99,8 @@
    "item": "deps",
    "slot": "p621",
    "gold": "value",
-   "given": "unread",
-   "outcome": "unread",
+   "given": "value",
+   "outcome": "value-correct",
    "answer": "Nothing: the record (cites null) says ¶6.21 was read in full and names no document, report or study",
    "reader": null
   },

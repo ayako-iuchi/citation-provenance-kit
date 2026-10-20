@@ -30,7 +30,7 @@
    "given": "not-established",
    "outcome": "empty-correct",
    "answer": "Not stated in the evidence. The excerpt quotes the proviso's wording but does not name the notification that brought it into force or give its date, so I cannot answer from what is provided.",
-   "reader": "independent agent, 2026-10-20"
+   "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim"
   },
   {
    "item": "bjr",
@@ -48,7 +48,7 @@
    "given": "not-established",
    "outcome": "empty-correct",
    "answer": "Not stated. The paragraph names no statute or case for India. It calls the rule a case-law-derived doctrine 'in most common law countries' and says only that in India it is not codified in the same language. The dependency record for ¶6.27 confirms that it names no work.",
-   "reader": "independent agent, 2026-10-20"
+   "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim"
   },
   {
    "item": "p632-status",
@@ -75,7 +75,7 @@
    "given": "no-record",
    "outcome": "empty-correct",
    "answer": "None. The log has no line for the World Justice Project's Rule of Law Index 2020, and its dependency record (dep-2026-10-20-12) names no status subject, so no status is recorded.",
-   "reader": "independent agent, 2026-10-20"
+   "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim"
   },
   {
    "item": "dpdp",
@@ -84,7 +84,7 @@
    "given": "expired",
    "outcome": "empty-correct",
    "answer": "Nothing from the log. The only line (2026-10-10-02, 'twelve months from publication, November 2026') expired on 2026-11-01, before the date asked (2026-11-02), so it may not be relied on. Its commencement needs to be checked again.",
-   "reader": "independent agent, 2026-10-20"
+   "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim"
   },
   {
    "item": "dpdp",
@@ -102,7 +102,7 @@
    "given": "value",
    "outcome": "value-correct",
    "answer": "Nothing. Record dep-2026-10-20-08 (cites null) says ¶6.21 was read in full and names no document, report or study. 'So many organizations' refers back to ¶6.20.",
-   "reader": "independent agent, 2026-10-20"
+   "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim"
   },
   {
    "item": "deps",
@@ -111,7 +111,7 @@
    "given": "no-record",
    "outcome": "empty-correct",
    "answer": "Unknown. There is no dependency record for ¶6.18, which means it has not been audited. The records do not say what it cites, or that it cites nothing.",
-   "reader": "independent agent, 2026-10-20"
+   "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim"
   }
  ]
 }

@@ -2,36 +2,36 @@
  "rule3-1/commenced-by": {
   "read_as": "empty",
   "kind": "not-established",
-  "reader": "independent agent, 2026-10-20",
-  "note": "'Not stated in the evidence ... I cannot answer from what is provided'"
+  "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim",
+  "note": "so I cannot answer from what is provided"
  },
  "bjr/basis": {
   "read_as": "empty",
   "kind": "not-established",
-  "reader": "independent agent, 2026-10-20",
-  "note": "'Not stated. The paragraph names no statute or case for India.'"
+  "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim",
+  "note": "Not stated. The paragraph names no statute or case for India."
  },
  "p632-status/index-status": {
   "read_as": "empty",
   "kind": "no-record",
-  "reader": "independent agent, 2026-10-20",
-  "note": "'The log has no line/entry for ... No status is recorded.'"
+  "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim",
+  "note": "so no status is recorded"
  },
  "dpdp/rule4": {
   "read_as": "empty",
   "kind": "expired",
-  "reader": "independent agent, 2026-10-20",
-  "note": "'expired on 2026-11-01, before ... 2026-11-02, so it may not be relied on'"
+  "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim",
+  "note": "expired on 2026-11-01, before the date asked (2026-11-02), so it may not be relied on"
  },
  "deps/p621": {
   "read_as": "value",
-  "reader": "independent agent, 2026-10-20",
-  "note": "'Nothing. ... read in full and names no document, report or study' (cites nothing)"
+  "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim",
+  "note": "says ¶6.21 was read in full and names no document, report or study"
  },
  "deps/p618": {
   "read_as": "empty",
   "kind": "no-record",
-  "reader": "independent agent, 2026-10-20",
-  "note": "'There is no dependency record for ¶6.18, which means it has not been audited'"
+  "reader": "independent agent (did not write the questions or answers), 2026-10-20; notes quoted verbatim",
+  "note": "There is no dependency record for ¶6.18, which means it has not been audited"
  }
 }

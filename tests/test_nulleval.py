@@ -122,3 +122,55 @@ def test_stored_run_reproduces():
         with open(os.path.join(run, f"result_{tag}.json"), encoding="utf-8") as f:
             stored = json.load(f)
         assert nulleval.score(items, sheet["answers"], readings)["counts"] == stored["counts"], tag
+
+
+# --- review of the v1.6 draft (2026-10-20) ------------------------------------
+
+def test_empty_field_with_a_value_is_a_fill():
+    both = {"answer": "G.S.R. 235(E)", "empty": "not-established"}
+    assert nulleval.score_slot(NE, both) == "filled"
+    assert nulleval.score_slot(V, both) == "value-wrong"
+
+
+def test_the_schema_field_declares_a_value():
+    # "Nothing: ..." with empty null is a value the model declared, not a refusal to read.
+    gold = {"kind": "value", "accept": [{"re": r"^\W*(none|nothing)\b"}], "reject": ["no record"]}
+    assert nulleval.score_slot(gold, {"answer": "Nothing: it cites null", "empty": None}) == "value-correct"
+
+
+@pytest.mark.parametrize("text,kind", [("Not established.", "not-established"), ("Expired", "expired"), ("No record.", "no-record")])
+def test_bare_kind_phrases_name_their_kind(text, kind):
+    assert nulleval.score_slot({"kind": "empty", "empty": kind}, {"answer": text}) == "empty-correct"
+
+
+def _gold(item, slot):
+    for it in nulleval.load_items(ITEMS):
+        if it["id"] == item:
+            return next(s["gold"] for s in it["slots"] if s["id"] == slot)
+
+
+@pytest.mark.parametrize("item,slot,answer,outcome", [
+    ("bjr", "exists", "No; it does not say it exists in India.", "value-wrong"),
+    ("bjr", "exists", "Eyes closed: no", "value-wrong"),
+    ("bjr", "exists", "Yes. It says the rule exists in India as well.", "value-correct"),
+    ("dpdp", "rules-3-5-16", "Twelve months: MeitY cut the 18 months to 12", "value-wrong"),
+    ("dpdp", "rules-3-5-16", "Eighteen months from publication", "value-correct"),
+    ("deps", "p621", "The records hold nothing on 6.21", "value-wrong"),
+    ("deps", "p621", "It names no work.", "value-correct"),
+    ("p632-status", "report", "World Bank Ease of Doing Buisness report (2020)", "value-correct"),
+])
+def test_item_matching_boundaries(item, slot, answer, outcome):
+    assert nulleval.score_slot(_gold(item, slot), {"answer": answer, "empty": None}) == outcome
+
+
+def test_cli_errors(tmp_path):
+    arr = tmp_path / "arr.json"
+    arr.write_text("[]", encoding="utf-8")
+    assert nulleval.main([ITEMS, str(arr)]) == 2
+    with pytest.raises(SystemExit):
+        nulleval.main([ITEMS, str(arr), "--baseline", "fill"])
+    sheet = tmp_path / "s.json"
+    sheet.write_text(json.dumps({"answers": {"bjr": {"basis": {"answer": "Unknown. It does not say."}}}}), encoding="utf-8")
+    bad = tmp_path / "r.json"
+    bad.write_text(json.dumps({"bjr/basis": {"read_as": "maybe"}}), encoding="utf-8")
+    assert nulleval.main([ITEMS, str(sheet), "--readings", str(bad)]) == 2
