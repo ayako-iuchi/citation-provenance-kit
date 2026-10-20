@@ -27,9 +27,10 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`schema/locus.schema.json`](schema/locus.schema.json)、[`schema/dependency.schema.json`](schema/dependency.schema.json) | 箇所（スナップショットをそのまま入れ子にする）と、依存の辺（キットv1.4） |
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4） |
 | [`tools/notation.py`](tools/notation.py)、[`schema/annotation.schema.json`](schema/annotation.schema.json) | 記法を、英語形と日本語形を1つの文法で読み、型付きの記録（成分、格付け、その成分が動くかどうか）にする。形を検査し（N0〜N7）、2つの形の間で書き換える（キットv1.5） |
-| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5） |
+| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5）と、公開されたキャッチログを番号・成分・結果・公開前後だけにしたもの（キットv1.7） |
 | [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6） |
-| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
+| [`tools/catchlog.py`](tools/catchlog.py) | 成分ごとに、公開前と公開後に分けて訂正と確認を別に数え、意味のないゼロを示す（キットv1.7、未リリース） |
+| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
@@ -100,6 +101,15 @@ python3 tools/nulleval.py evals/null/items.jsonl --baseline fill   # または e
 ```
 
 各スロットの正解は、問いと一緒に渡す証拠に対して決めます。値か、3種類の空（`not-established`、`expired`、`no-record`）のどれかです。採点は6つの結果を数え、合計しません。いちばん大事なのは `filled`（正解が空なのに値を答えた）と `blanked`（正解が値なのに空にした）です。断りの形で始まる散文は、読み手が何をしているかを記録するまで `unread` として残します。2026年10月20日の実行は `evals/null/README.md` にあります。
+
+## 2種類のゼロ（キットv1.7、未リリース）
+
+```
+python3 tools/catchlog.py LOG.csv            # ワークブックのキャッチログをCSVにしたもの、または no, component, outcome, phase の列を持つCSV
+python3 tools/catchlog.py examples/method_paper_v1.2/catch_log.csv
+```
+
+訂正だけを数えるログでは、確かめて問題がなかった成分も、一度も確かめていない成分も、同じゼロになります。`catchlog.py` は成分ごとに、公開前と公開後に分けて、訂正と確認を別に数え、各欄を `found`（訂正あり）、`clean`（訂正なし、確認あり）、`unexamined`（どちらもなし）と名付けます。2つを足し合わせることはしません。ワークブックの「結果」の選択肢には v1.0 から「confirmed (no error found)」があります。確認も訂正と同じログに記録してください。`examples/method_paper_v1.2/catch_log.csv` は、方法論文の公開されたログ（英語版#1〜#42、日本語版のみ#43〜#44）を、本文を除いて番号・成分・結果・公開前後だけで持ちます。公開前は頁が `clean`、数値が `unexamined`（§7-3）。公開後、数値には訂正2件と確認1件があります。
 
 ## このキットがしないこと
 

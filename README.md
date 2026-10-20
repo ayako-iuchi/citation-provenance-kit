@@ -25,9 +25,10 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`schema/locus.schema.json`](schema/locus.schema.json), [`schema/dependency.schema.json`](schema/dependency.schema.json) | A locus (with its snapshot nested unchanged) and a dependency edge (kit v1.4) |
 | [`examples/es2021_ch6/`](examples/es2021_ch6/) | The chapter #21 audited by hand, run through the pipeline. The chapter's words there are the Government of India's and are **not** CC0 (kit v1.4) |
 | [`tools/notation.py`](tools/notation.py), [`schema/annotation.schema.json`](schema/annotation.schema.json) | Reads the notation, English and Japanese forms, with one grammar into typed records (component, grade, whether the component is volatile), checks its form (N0–N7), and rewrites it between the two forms (kit v1.5) |
-| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | Every annotation in both editions of the paper, v1.2, as typed records (kit v1.5) |
+| [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | Every annotation in both editions of the paper, v1.2, as typed records (kit v1.5), and its published catch log as numbers, components, outcomes and phases (kit v1.7) |
 | [`tools/nulleval.py`](tools/nulleval.py), [`evals/null/`](evals/null/), [`schema/null_item.schema.json`](schema/null_item.schema.json) | A test where an empty answer can be right: five questions, a scorer that counts filled and blanked slots apart and three kinds of empty, and a recorded run (kit v1.6) |
-| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader and the null-answer scorer (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`tools/catchlog.py`](tools/catchlog.py) | Counts corrections and confirmations apart for each component, before and after release, and says which zeros mean nothing (kit v1.7, unreleased) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer and the catch-log tally (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
@@ -98,6 +99,15 @@ python3 tools/nulleval.py evals/null/items.jsonl --baseline fill   # or empty
 ```
 
 Each slot's right answer is set against the evidence given with the question: a value, or one of three kinds of empty (`not-established`, `expired`, `no-record`). The scorer counts six outcomes and never adds them up; the two that matter most are `filled` (a value where the right answer was empty) and `blanked` (an empty where it was a value). Prose that opens like a refusal is scored `unread` until a reader has recorded what it does. See `evals/null/README.md` for the run of 20 October 2026.
+
+## Two kinds of zero (kit v1.7, unreleased)
+
+```
+python3 tools/catchlog.py LOG.csv            # the workbook's catch log exported as CSV, or any CSV with no, component, outcome, phase
+python3 tools/catchlog.py examples/method_paper_v1.2/catch_log.csv
+```
+
+A log that counts only corrections shows zero both for a component that was checked and found sound and for one that was never checked. `catchlog.py` counts corrections and confirmations apart, for each component, before and after release, and names each cell `found`, `clean` (no correction, at least one confirmation) or `unexamined` (neither). It never adds the two together. The workbook's Outcome list has had "confirmed (no error found)" since v1.0; record confirmations in the same log as corrections. `examples/method_paper_v1.2/catch_log.csv` holds the method paper's published log (#1–#42 in English, #43–#44 in Japanese only) as numbers, components, outcomes and phases, without its text: before release, page is `clean` and figure `unexamined` (§7-3); after release, figure has two corrections and one confirmation.
 
 ## What this kit does not do
 

@@ -2,6 +2,11 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.7 — unreleased
+
+- Added `tools/catchlog.py`, `examples/method_paper_v1.2/catch_log.csv` and `tests/test_catchlog.py`. Standard library only, as before. The tool counts corrections and confirmations apart for each component, before and after release, and names each cell found, clean or unexamined. The example holds the method paper's published log as numbers, components, outcomes and phases only; the paper's text is CC BY 4.0 and is not copied. Entries #1–#25 have no outcome column in the paper (Appendix A-2); they are recorded as "corrected" because §7-2 calls all twenty-five corrections, and the row says so. The production-phase confirmations of page are one uncounted row, because the paper describes them (A-3) but does not count them. #35 ("rule sharpened") is neither a correction nor a confirmation and is counted as other. The test reproduces the paper's own tally (§7-2) and its post-release figure (§7-3).
+- Not used: `csv/example_log_v1.1.csv`, which still has the v1.1 wording of "How it came to notice" for #8, #9, #16 and #22, corrected in v1.2 by #37–#40.
+
 ## Kit v1.6 — 2026-10-20
 
 - **Released on 20 October 2026,** before Hypothetical Technical Blog #24 (*Not Established Is an Answer*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.6`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
