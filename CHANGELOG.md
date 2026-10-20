@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## README update — 2026-10-20 (no new version)
+
+- Both READMEs list Hypothetical Technical Blog #22, *The Chunk Is the Citation* (published on note on 20 October 2026, after kit v1.4 was released), among the posts that use the kit, and say that #22 names the version it describes. No file other than the READMEs and this one changed.
+
 ## Kit v1.4 — 2026-10-20
 
 - **Released on 20 October 2026,** before Hypothetical Technical Blog #22 (*The Chunk Is the Citation*), which cites it, is published: the order #20 and v1.3 got wrong. `main` was fast-forwarded to the branch `kit-v1.4`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.

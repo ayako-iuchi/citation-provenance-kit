@@ -90,8 +90,9 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 - #19 — [A Rule Is Not a Mechanism](https://note.com/ayako_iuchi/n/n5adfbe0c66f8)（linter、キットv1.2）
 - #20 — [Fixed Words, Moving Status](https://note.com/ayako_iuchi/n/ne5747d7bcd77)（状態ログ、キットv1.3）
 - #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
+- #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282)（箇所への分割、検索、検索後の依存の検査。キットv1.4）
 
-リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`）。#19と#20は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。
+リリースごとにタグを付けています（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`）。#19、#20、#22は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。#22はv1.4のリリースの後、2026年10月20日に公開されました。
 
 ## 出典
 
