@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## README update — 2026-10-20 (no new version)
+
+- Both READMEs list Hypothetical Technical Blog #23, *The Component Is the Type* (published in English on note and LinkedIn on 20 October 2026, after kit v1.5 was released), among the posts that use the kit, and say that it names the version it describes. No other file changed.
+
 ## Kit v1.5 — 2026-10-20
 
 - **Released on 20 October 2026,** before Hypothetical Technical Blog #23 (*The Component Is the Type*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.5`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.

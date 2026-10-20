@@ -103,8 +103,9 @@ Hypothetical Technical Blog, *Citation provenance* (English, on note):
 - #20 — [Fixed Words, Moving Status](https://note.com/ayako_iuchi/n/ne5747d7bcd77) (the status log, kit v1.3)
 - #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
 - #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282) (loci, retrieval and the dependency check after it, kit v1.4)
+- #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263) (the notation as typed records, kit v1.5)
 
-Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`). #19, #20 and #22 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22 was published on 20 October 2026, after v1.4 was released.
+Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`). #19, #20, #22 and #23 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22 and #23 were published on 20 October 2026, after v1.4 and v1.5 respectively were released.
 
 ## Sources
 
