@@ -20,7 +20,7 @@ Each edition has nine `citation` annotations, and they correspond one to one in 
 
 `catch_log.csv` is the paper's published correction log as numbers, components, outcomes and phases only, read from Appendix A-2 (#1–#25, before release), A-3 (the confirmations of page) and A-6 (#26–#42, after release; #43–#44 are in the Japanese edition only). None of the paper's text is copied.
 
-Two things are not in it. The paper's three abstentions (§7-5) have no number and no stated component (Appendix A-7 labels two of them; the third has no label). And the production-phase confirmations of every component except page: A-3 says they were recorded in the verification threads and not enumerated, and describes only page's. So a pre-release confirmation count of 0 in the output means "not enumerated", not "none"; only figure is stated to have had none.
+Two things are not in it. The paper's three abstentions (§7-5) have no number and no stated component (Appendix A-7 labels two of them; the third has no label). And the production-phase confirmations of every component except page: A-3 says they were recorded in the verification threads and not enumerated, and describes only page's. The two phases are not one document seen twice: the pre-release rows (#1–#25 and A-3) describe the production of the domain paper, *What Your Buyer Is Defending Against*; the post-release rows are mostly about the method paper itself (#34 is about the domain paper's ratio). So a pre-release confirmation count of 0 in the output means "not enumerated", not "none"; only figure is stated to have had none.
 
 | Column | What it is |
 | --- | --- |
