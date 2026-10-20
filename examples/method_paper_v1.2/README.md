@@ -20,6 +20,8 @@ Each edition has nine `citation` annotations, and they correspond one to one in 
 
 `catch_log.csv` is the paper's published correction log as numbers, components, outcomes and phases only, read from Appendix A-2 (#1–#25, before release), A-3 (the confirmations of page) and A-6 (#26–#42, after release; #43–#44 are in the Japanese edition only). None of the paper's text is copied.
 
+Two things are not in it. The paper's three abstentions (§7-5) have no number and no stated component (two are X-01 and X-02 in A-7; the third has no label). And the production-phase confirmations of every component except page: A-3 says they were recorded in the verification threads and not enumerated, and describes only page's. So a pre-release confirmation count of 0 in the output means "not enumerated", not "none"; only figure is stated to have had none.
+
 | Column | What it is |
 | --- | --- |
 | `no` | The entry's number in the log; `A-3` for the one row that stands for uncounted confirmations |
@@ -28,7 +30,7 @@ Each edition has nine `citation` annotations, and they correspond one to one in 
 | `outcome` | As printed in A-6; for #1–#25 "corrected", because A-2 has no outcome column and §7-2 calls all twenty-five corrections |
 | `outcome_basis` | Where the outcome comes from, and its grade where it is inferred |
 | `phase` | `pre` or `post` release |
-| `count` | Empty: one entry, or, on the A-3 row, confirmations recorded but not counted |
+| `count` | Empty: one entry. `uncounted` on the A-3 row: confirmations recorded but not counted |
 | `note` | The four contested assignments (§A-4), and why the A-3 row is not numbered |
 
 ```

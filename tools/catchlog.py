@@ -9,36 +9,46 @@ names each cell:
 
     found        at least one correction
     clean        no correction, and at least one confirmation
-    unexamined   no correction and no confirmation: zero means nothing here
+    other-only   no correction and no confirmation, but other rows (an
+                 abstention, a rule sharpened): something was looked at, and
+                 the log does not say it was sound
+    unexamined   no row at all: zero means nothing here
 
 It never adds corrections and confirmations together, and gives no rate.
 
 Outcomes (the workbook's list, kit v1.0):
     corrections    corrected, deleted, weakened, excluded, slipped
     confirmations  confirmed, "confirmed (no error found)"
-    other          abstained, and anything else (e.g. "rule sharpened"),
-                   counted and listed but in neither of the two
+    other          abstained, and anything else (e.g. "rule sharpened")
 
-Input: CSV with at least the columns
-    no         the entry's number (or a label for an uncounted row, e.g. "A-3")
-    component  one or more component names joined by "+" or "→"
-               ("outside" for an entry outside the provenance components)
+Input: CSV with the columns
+    no         the entry's number, or a label for a row that is not a numbered entry
+    component  one or more component names, joined by + ＋ → , / or ／; English
+               or Japanese names from csv/components.csv, or "outside" (対象外)
     outcome    as above
-    phase      "pre" or "post" (before or after release)
+    phase      pre, post, pre-release, post-release, 公開前 or 公開後
 and optionally
-    count      a whole number, or empty. Empty on a confirmation row means
-               "confirmations were recorded but not counted": the cell is clean,
-               and its count is shown as "uncounted".
-The workbook's own headers ("Component(s) / 成分", "Outcome / 結果",
-"Phase / 公開前／後", "Pre-release"/"Post-release") are also read.
+    count      how many checks or corrections the row stands for: a whole number
+               (default 1), or "uncounted" on a confirmation row, meaning
+               "confirmations were recorded but not counted" (the cell is clean,
+               and its count is shown as "uncounted")
+
+It also reads the workbook's Catch log sheet saved as CSV: the bilingual headers
+("Component(s)" + newline + "成分", or the template's "Component(s) / 成分"), the
+title rows above them, the grey "Ex." row (skipped) and the numbered empty rows
+(skipped). A file that is not UTF-8 is read as cp932 (Japanese Excel's default).
 
 Usage:
-    python3 catchlog.py LOG.csv [--components csv/components.csv] [--json]
+    python3 catchlog.py LOG.csv [--components csv/components.csv] [--strict] [--json]
+
+An unknown component name is reported on stderr; with --strict it is an error.
+Exit status: 0, or 2 on unreadable input.
 
 Standard library only. CC0 1.0. Part of the citation provenance kit (v1.7).
 """
 import argparse
 import csv
+import io
 import json
 import os
 import re
@@ -46,40 +56,73 @@ import sys
 
 CORRECTIONS = {"corrected", "deleted", "weakened", "excluded", "slipped"}
 CONFIRMATIONS = {"confirmed", "confirmed (no error found)"}
+PHASE_NAMES = {"pre": "pre", "pre-release": "pre", "公開前": "pre",
+               "post": "post", "post-release": "post", "公開後": "post"}
 PHASES = ("pre", "post")
 HEADERS = {
-    "no": ("no", "#"),
-    "component": ("component", "component(s) / 成分", "component(s)"),
-    "outcome": ("outcome", "outcome / 結果"),
-    "phase": ("phase", "phase / 公開前／後"),
-    "count": ("count",),
+    "no": {"no", "#"},
+    "component": {"component", "component(s)", "components", "成分"},
+    "outcome": {"outcome", "結果"},
+    "phase": {"phase", "公開前／後", "公開前/後"},
+    "count": {"count", "件数"},
 }
+OUTSIDE = {"outside", "対象外"}
+SPLIT = re.compile(r"\s*(?:\+|＋|→|->|,|、|/|／)\s*")
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
 def load_components(path=None):
+    """Return {name as written (casefolded), English or Japanese: English name}, in order."""
     path = path or os.path.join(HERE, "..", "csv", "components.csv")
     with open(path, encoding="utf-8-sig") as f:
         rows = list(csv.reader(f))
-    names = [r[0].strip() for r in rows[1:] if r and r[0].strip()]
+    names = {}
+    for r in rows[1:]:
+        if r and r[0].strip():
+            en = r[0].strip()
+            names[en.casefold()] = en
+            if len(r) > 1 and r[1].strip():
+                names[r[1].strip().casefold()] = en
+    if not names:
+        raise ValueError(f"{path}: no components")
     return names
 
 
 def _key(header):
-    h = header.strip().lstrip("﻿").casefold()
+    """Match a header cell, in any of its forms: one line, two lines, or "EN / JA"."""
+    h = re.sub(r"\s+", " ", (header or "").replace("﻿", "")).strip().casefold()
+    parts = {h} | {p.strip() for p in re.split(r"\n| / | ／ ", (header or "").replace("﻿", "").casefold())}
     for k, names in HEADERS.items():
-        if h in names:
+        if parts & names:
             return k
     return None
 
 
-def _phase(v):
-    v = (v or "").strip().casefold()
-    if v.startswith("pre"):
-        return "pre"
-    if v.startswith("post"):
-        return "post"
-    raise ValueError(f"phase must be pre or post, not {v!r}")
+def _decode(path):
+    with open(path, "rb") as f:
+        raw = f.read()
+    for enc in ("utf-8-sig", "cp932"):
+        try:
+            return raw.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    raise ValueError(f"{path}: neither UTF-8 nor cp932; save it as CSV UTF-8")
+
+
+def _count(v, kind, no):
+    v = v.strip()
+    if not v:
+        return 1
+    if v.casefold() == "uncounted":
+        if kind != "confirmation":
+            raise ValueError(f"entry {no!r}: only a confirmation can be uncounted")
+        return None
+    if not re.fullmatch(r"\d+", v):
+        raise ValueError(f"entry {no!r}: count must be a whole number or 'uncounted', not {v!r}")
+    n = int(v)
+    if n == 0:
+        raise ValueError(f"entry {no!r}: a count of 0 is not a row; leave the row out")
+    return n
 
 
 def _kind(outcome):
@@ -91,53 +134,81 @@ def _kind(outcome):
     return "other"
 
 
-def read_log(path):
-    with open(path, encoding="utf-8-sig", newline="") as f:
-        reader = csv.reader(f)
-        header = next(reader)
-        cols = {}
-        for i, h in enumerate(header):
+def read_log(path, components=None, strict=False, warn=None):
+    components = components or load_components()
+    rows_in = list(csv.reader(io.StringIO(_decode(path))))
+    if not rows_in:
+        raise ValueError(f"{path}: empty file")
+    cols, start = None, None
+    for i, line in enumerate(rows_in[:10]):
+        found = {}
+        for j, h in enumerate(line):
             k = _key(h)
-            if k and k not in cols:
-                cols[k] = i
-        missing = [k for k in ("no", "component", "outcome", "phase") if k not in cols]
-        if missing:
-            raise ValueError(f"missing column(s): {', '.join(missing)}")
-        rows = []
-        for line in reader:
-            if not any(c.strip() for c in line):
-                continue
-            get = lambda k: line[cols[k]].strip() if k in cols and cols[k] < len(line) else ""
-            comps = [c.strip() for c in re.split(r"\s*(?:\+|→|->)\s*", get("component")) if c.strip()]
-            if not comps:
-                raise ValueError(f"entry {get('no')!r}: no component")
-            cnt = get("count")
-            rows.append({"no": get("no"), "components": comps, "outcome": get("outcome"),
-                         "kind": _kind(get("outcome")), "phase": _phase(get("phase")),
-                         "count": int(cnt) if cnt else None})
+            if k:
+                if k in found:
+                    raise ValueError(f"{path}: two {k} columns")
+                found[k] = j
+        if {"component", "outcome"} <= set(found):
+            cols, start = found, i + 1
+            break
+    if cols is None:
+        raise ValueError(f"{path}: no header row with component and outcome columns in the first 10 rows")
+    missing = [k for k in ("no", "component", "outcome", "phase") if k not in cols]
+    if missing:
+        raise ValueError(f"missing column(s): {', '.join(missing)}")
+    rows, unknown = [], []
+    for line in rows_in[start:]:
+        get = lambda k: line[cols[k]].strip() if k in cols and cols[k] < len(line) else ""
+        no = get("no")
+        rest = [c for j, c in enumerate(line) if j != cols["no"] and c.strip()]
+        if not rest or no.casefold().rstrip(".") == "ex":
+            continue                      # an unused numbered row, or the template's example
+        comps = []
+        for c in (c for c in SPLIT.split(get("component")) if c.strip()):
+            cf = c.casefold()
+            if cf in OUTSIDE:
+                comps.append("outside")
+            elif cf in components:
+                comps.append(components[cf])
+            else:
+                comps.append(c)
+                unknown.append((no, c))
+        if not comps:
+            raise ValueError(f"entry {no!r}: no component")
+        ph = get("phase").casefold()
+        if ph not in PHASE_NAMES:
+            raise ValueError(f"entry {no!r}: phase must be pre or post (or 公開前／公開後), not {get('phase')!r}")
+        kind = _kind(get("outcome"))
+        rows.append({"no": no, "components": comps, "outcome": get("outcome"), "kind": kind,
+                     "phase": PHASE_NAMES[ph], "count": _count(get("count"), kind, no)})
+    if unknown:
+        msg = "; ".join(f"entry {n!r}: {c!r}" for n, c in unknown)
+        if strict:
+            raise ValueError(f"unknown component(s): {msg}")
+        (warn or (lambda m: print(m, file=sys.stderr)))(f"catchlog: unknown component(s), counted as written: {msg}")
     return rows
 
 
-def tally(rows, components):
-    """{component: {phase: {"corrections": n, "confirmations": n or "uncounted"/"n+",
-    "other": n, "status": found|clean|unexamined, "entries": {...}}}}"""
-    names = list(components) + sorted({c for r in rows for c in r["components"]} - set(components))
+def tally(rows, components=None):
+    """{component: {phase: {"corrections": int, "confirmations": int, "uncounted": bool,
+    "other": int, "status": found|clean|other-only|unexamined, "entries": {kind: [no, ...]}}}}"""
+    components = components or load_components()
+    order = list(dict.fromkeys(components.values()))
+    names = order + sorted({c for r in rows for c in r["components"]} - set(order))
     out = {c: {p: {"corrections": 0, "confirmations": 0, "uncounted": False, "other": 0,
                    "entries": {"correction": [], "confirmation": [], "other": []}}
                for p in PHASES} for c in names}
     for r in rows:
-        n = r["count"] if r["count"] is not None else 1
         for c in r["components"]:
             cell = out[c][r["phase"]]
-            if r["kind"] == "correction":
-                cell["corrections"] += n
+            if r["count"] is None:
+                cell["uncounted"] = True
+            elif r["kind"] == "correction":
+                cell["corrections"] += r["count"]
             elif r["kind"] == "confirmation":
-                if r["count"] is None and not re.fullmatch(r"#?\d+", r["no"]):
-                    cell["uncounted"] = True
-                else:
-                    cell["confirmations"] += n
+                cell["confirmations"] += r["count"]
             else:
-                cell["other"] += n
+                cell["other"] += r["count"]
             cell["entries"][r["kind"]].append(r["no"])
     for c in out:
         for p in PHASES:
@@ -146,6 +217,8 @@ def tally(rows, components):
                 cell["status"] = "found"
             elif cell["confirmations"] or cell["uncounted"]:
                 cell["status"] = "clean"
+            elif cell["other"]:
+                cell["status"] = "other-only"
             else:
                 cell["status"] = "unexamined"
     return out
@@ -161,17 +234,18 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("log")
     ap.add_argument("--components", help="components.csv (default: the kit's)")
+    ap.add_argument("--strict", action="store_true", help="an unknown component name is an error")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
     try:
         comps = load_components(a.components)
-        rows = read_log(a.log)
-    except (OSError, UnicodeDecodeError, ValueError, csv.Error, StopIteration) as e:
+        rows = read_log(a.log, comps, strict=a.strict)
+    except (OSError, ValueError, csv.Error) as e:
         print(f"catchlog: {e}", file=sys.stderr)
         return 2
     t = tally(rows, comps)
     if a.json:
-        print(json.dumps({"entries": len(rows), "components": t}, ensure_ascii=False, indent=1))
+        print(json.dumps({"rows": len(rows), "components": t}, ensure_ascii=False, indent=1))
         return 0
     print(f"{len(rows)} row(s). corrections / confirmations / status, before and after release")
     print(f"{'component':<14} {'pre':<34} post")
