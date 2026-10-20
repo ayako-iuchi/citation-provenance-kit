@@ -292,3 +292,19 @@ def test_component_named_but_nothing_graded_is_left_alone(text):
 
 def test_mixed_bracket_widths_are_malformed():
     assert codes("［wording: A | page: B]") == ["N0"]
+
+
+# --- third review (d164acf, 2026-10-20) --------------------------------------
+
+@pytest.mark.parametrize("text", ["[wording: E]", "[wording: a]", "[wording: Ａ]", "[wording: A+]"])
+def test_single_slot_with_a_wrong_grade_is_reported(text):
+    assert codes(text) == ["N2"]
+
+
+def test_wrong_grades_in_every_slot_are_reported():
+    assert codes("[wording: E | page: F]") == ["N2", "N2"]
+
+
+def test_double_backtick_code_with_a_single_backtick_inside():
+    text = "``a`b [wording: A | page: A]`` and [wording: A | page: —]"
+    assert [r["text"] for r in notation.parse(text, markdown=True)] == ["[wording: A | page: —]"]

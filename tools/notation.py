@@ -140,6 +140,13 @@ def _line_of(text, pos):
     return text.count("\n", 0, pos) + 1
 
 
+def _grade_like(value):
+    """A value meant as a grade, right or wrong: no digit, at most two
+    characters ([wording: E], [wording: Ａ], [wording: A+]). [page: 12] and
+    ［日付: 2024年］ are not."""
+    return not re.search(r"\d", value) and len(value) <= 2
+
+
 def _mask_fences(v):
     """Mask fenced code blocks as CommonMark reads them: the closing fence uses
     the opening character, at least as many times; an unclosed fence runs to
@@ -173,7 +180,7 @@ def _view(text, markdown=False):
         v = _mask_fences(v)
         # Inline code: a run of backticks closed by the same run, not across a
         # blank line. An unmatched backtick masks nothing.
-        v = re.sub(r"(`+)((?:(?!\n[ \t\r]*\n)[^`])+?)\1",
+        v = re.sub(r"(?<!`)(`+)(?!`)((?:(?!\1(?!`))(?!\n[ \t\r]*\n)[\s\S])+?)(?<!`)\1(?!`)",
                    lambda m: BARRIER * len(m.group(0)), v)
     v = re.sub(r"\n(?=[ \t\r]*\n)", BARRIER, v)
     return v.replace("\r", " ").replace("\n", " ")
@@ -221,7 +228,7 @@ def _scan(text, components, markdown=False):
                           "grade": grade, "volatile": known[1] if known else None})
         full = " ".join(text[m.start():m.end()].split())
         grade_like = r"[:：]\s*([A-D\u2014" + "".join(re.escape(c) for c in WRONG_DASHES) + r"])(?![A-Za-z0-9])"
-        if slots is not None and not any(s["grade"] in GRADES or s["grade"] in WRONG_DASHES for s in slots):
+        if slots is not None and not any(_grade_like(s["grade"]) for s in slots):
             continue  # names a component but grades nothing: [page: 12], ［日付: 2024年］
         if slots is None and not re.search(grade_like, inner):
             continue  # [edition: 3rd ed.]
