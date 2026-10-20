@@ -2,6 +2,13 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Unreleased (kit v1.4, in preparation)
+
+- Added `tools/pdflines.py`, `tools/loci.py`, `tools/retrieve.py`, `tools/depaudit.py`, `schema/locus.schema.json`, `schema/dependency.schema.json`, `examples/es2021_ch6/` and `tests/test_loci.py`, `tests/test_depaudit.py`. Standard library only, as before.
+- `register/status_log.jsonl` gains one line, `2026-10-20-01`: the World Bank's Doing Business report, discontinued (announced 16 September 2021). No expiry is stated, so a query reports `no-expiry-stated`. The earlier lines are unchanged (`statuslog.py --verify-append` against v1.3 says yes).
+- The example's chapter words are the Government of India's, reproduced in excerpt. They are not covered by the kit's CC0 dedication; `examples/es2021_ch6/README.md` says so.
+- Found while building the example, 2026-10-20: in the chapter, footnote 6 (attached to ¶6.20) is printed at the foot of p. 188, in the middle of ¶6.22; ¶6.22 runs across pp. 188–189; and ¶6.32 and ¶6.27 print "Buisness". Each is now a test.
+
 ## Kit v1.3 — 2026-10-20
 
 - **Released on 20 October 2026.** `main` was fast-forwarded to the branch `kit-v1.3`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written, except where marked.

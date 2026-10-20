@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/locus.schema.json",
+  "title": "Locus",
+  "description": "A place a citation can point to: a numbered paragraph, a section heading or a footnote, with the printed pages it spans. Its words are a kit v1.3 snapshot, nested unchanged. A locus carries no status and no dependencies; those are kept in the status log and the dependency file and joined after retrieval. Kit v1.4. CC0 1.0.",
+  "type": "object",
+  "required": [
+    "id",
+    "kind",
+    "label",
+    "printed_pages",
+    "footnotes",
+    "anchored_in",
+    "snapshot"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "kind": {
+      "enum": [
+        "paragraph",
+        "heading",
+        "footnote"
+      ]
+    },
+    "label": {
+      "type": "string",
+      "description": "How a citation names it: '¶6.22', 'Section heading (c)', 'footnote 6'."
+    },
+    "printed_pages": {
+      "type": "array",
+      "items": {
+        "type": "integer"
+      },
+      "minItems": 1,
+      "description": "Every printed page the locus appears on, in order. A paragraph that runs across a page has two."
+    },
+    "footnotes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Ids of the footnotes whose markers appear in this locus."
+    },
+    "anchored_in": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "For a footnote: the locus that carries its marker. null otherwise, or if no marker was found."
+    },
+    "snapshot": {
+      "$ref": "snapshot.schema.json"
+    }
+  }
+}

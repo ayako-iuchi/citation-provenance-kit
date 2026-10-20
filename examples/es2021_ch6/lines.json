@@ -1,0 +1,549 @@
+{
+ "source": {
+  "issuer": "Ministry of Finance, Government of India",
+  "title": "Economic Survey 2020-21, Volume 1, Chapter 6: Process Reforms: Enabling decision-making under uncertainty",
+  "url": "https://www.indiabudget.gov.in/budget2021-22/economicsurvey/doc/vol1chapter/echap06_vol1.pdf",
+  "file_sha256": "7baa01f3f3c64ff3bb0ecdf85e914427f829ba9f940d4aee59657f623d54d7d9"
+ },
+ "edition": "Economic Survey 2020-21, Volume 1 (January 2021)",
+ "extracted_with": "pdftotext 24.02.0 (poppler) -bbox-layout, then tools/pdflines.py",
+ "extracted_on": "2026-10-20",
+ "excerpt": "Only the lines this example needs: the page heads, ¶6.5 and footnote 2 (p. 181), all of p. 188, the rest of ¶6.22 (p. 189), heading (a) and ¶6.27 (p. 191), ¶6.32 (p. 194). Other lines of those pages are left out.",
+ "pages": [
+  {
+   "printed_page": 181,
+   "pdf_page": 3,
+   "lines_kept": "15 of 125",
+   "lines": [
+    {
+     "y": 34.4,
+     "h": 13.14,
+     "text": "Process Reforms: Enabling decision-making under uncertainty"
+    },
+    {
+     "y": 28.8,
+     "h": 21.89,
+     "text": "181"
+    },
+    {
+     "y": 300.9,
+     "h": 15.77,
+     "text": "6.5 The same conclusion can be derived from various World Bank studies. Its Regulatory"
+    },
+    {
+     "y": 315.9,
+     "h": 15.77,
+     "text": "Quality Index² shows that despite improvement in India’s regulatory quality since 2013"
+    },
+    {
+     "y": 330.9,
+     "h": 15.77,
+     "text": "(Figure 1), it is still much lower than UK, US, Singapore, Japan etc. (Figure 2). Similarly,"
+    },
+    {
+     "y": 345.9,
+     "h": 15.77,
+     "text": "the World Bank’s Ease of Doing Business (EoDB) report (2020) shows that despite making"
+    },
+    {
+     "y": 360.9,
+     "h": 15.77,
+     "text": "huge strides in the overall EoDB rank, India still lags behind in the sub-categories ‘Starting a"
+    },
+    {
+     "y": 375.9,
+     "h": 15.77,
+     "text": "business’ and ‘Registering Property’ where the country’s rank is 136 and 154 respectively. The"
+    },
+    {
+     "y": 390.9,
+     "h": 15.77,
+     "text": "report points out that this is due to the high number of procedures required to legally start and"
+    },
+    {
+     "y": 405.9,
+     "h": 15.77,
+     "text": "formally operate a company as well as the time and cost consumed to complete each procedure."
+    },
+    {
+     "y": 682.5,
+     "h": 13.14,
+     "text": "Regulatory Quality captures perceptions of the ability of the government to formulate and implement sound poli-"
+    },
+    {
+     "y": 694.5,
+     "h": 13.14,
+     "text": "cies and regulations that permit and promote private sector development. Estimate gives the country’s score on the"
+    },
+    {
+     "y": 706.5,
+     "h": 13.14,
+     "text": "aggregate indicator, in units of a standard normal distribution, i.e. ranging from approximately -2.5 to 2.5. This is"
+    },
+    {
+     "y": 718.5,
+     "h": 13.14,
+     "text": "a part of Worldwide Governance Indicators (WGI) of World Bank."
+    },
+    {
+     "y": 683.3,
+     "h": 7.66,
+     "text": "2"
+    }
+   ]
+  },
+  {
+   "printed_page": 188,
+   "pdf_page": 10,
+   "lines_kept": "45 of 45",
+   "lines": [
+    {
+     "y": 28.8,
+     "h": 21.89,
+     "text": "188"
+    },
+    {
+     "y": 34.0,
+     "h": 14.45,
+     "text": "Economic Survey 2020-21 Volume 1"
+    },
+    {
+     "y": 63.8,
+     "h": 16.0,
+     "text": "(b) Discretion is not provided or exercised even when there is a case to do so"
+    },
+    {
+     "y": 82.7,
+     "h": 15.77,
+     "text": "6.18 Since regulations are defined, they are easy to measure ex-ante. Bureaucracies will naturally"
+    },
+    {
+     "y": 97.7,
+     "h": 15.77,
+     "text": "tend to substitute supervision with mechanical regulations and will not exercise discretion even"
+    },
+    {
+     "y": 112.7,
+     "h": 15.77,
+     "text": "when it is available."
+    },
+    {
+     "y": 134.9,
+     "h": 15.77,
+     "text": "6.19 As an illustration, take the case of public procurement. As per the General Financial Rules"
+    },
+    {
+     "y": 149.9,
+     "h": 15.77,
+     "text": "(GFRs) guidelines, the Lowest Cost Method, or commonly known as ‘L1’ principle is the most"
+    },
+    {
+     "y": 164.9,
+     "h": 15.77,
+     "text": "prevalent bidding method used for Goods/Works and Non-Consultancy services."
+    },
+    {
+     "y": 187.1,
+     "h": 15.77,
+     "text": "6.20 There is a general agreement that solely relying on L1 does not work well and various"
+    },
+    {
+     "y": 202.1,
+     "h": 15.77,
+     "text": "organisations have advocated the need for reforming the current procurement system over the"
+    },
+    {
+     "y": 217.1,
+     "h": 15.77,
+     "text": "last few years. Central Vigilance Commission in its concept note ‘Alternative Procurement"
+    },
+    {
+     "y": 232.1,
+     "h": 15.77,
+     "text": "Strategy for Award of Works and Goods Contract’ noted that although L1 may still hold good"
+    },
+    {
+     "y": 247.1,
+     "h": 15.77,
+     "text": "for procurement of routine works, goods and non-consulting services; but not for high impact"
+    },
+    {
+     "y": 262.1,
+     "h": 15.77,
+     "text": "and technologically complex procurements. Quality Council of India (QCI) conducted a study⁶"
+    },
+    {
+     "y": 277.1,
+     "h": 15.77,
+     "text": "on highway development sector and found that the vendors who were all awarded contracts"
+    },
+    {
+     "y": 292.1,
+     "h": 15.77,
+     "text": "on the basis of competitive bidding vary widely in terms of quality of work and performance"
+    },
+    {
+     "y": 307.1,
+     "h": 15.77,
+     "text": "which was not covered under existing bid evaluation system. The report suggested incorporating"
+    },
+    {
+     "y": 322.1,
+     "h": 15.77,
+     "text": "Performance Rating in Competitive Bidding to provide a quality premium to superior bidder"
+    },
+    {
+     "y": 337.1,
+     "h": 15.77,
+     "text": "rather than simply awarding the contract to L1 bidder and gave a formula to calculate total score"
+    },
+    {
+     "y": 352.1,
+     "h": 15.77,
+     "text": "as the summation of financial score and performance rating score. NITI Aayog in the concept"
+    },
+    {
+     "y": 367.1,
+     "h": 15.77,
+     "text": "paper ‘Indian Public Procurement: Alternative Strategies and Way Forward’ argue that L1 is not"
+    },
+    {
+     "y": 382.1,
+     "h": 15.77,
+     "text": "suitable in all the scenarios and came up with a variety of alternatives to use in the procurement"
+    },
+    {
+     "y": 397.1,
+     "h": 15.77,
+     "text": "process. In fact, the report also mentions that new procurement frameworks of multilaterals like"
+    },
+    {
+     "y": 412.1,
+     "h": 15.77,
+     "text": "World Bank, Asian Development Bank, Japan International Cooperation Agency have suitable"
+    },
+    {
+     "y": 427.1,
+     "h": 15.77,
+     "text": "alternative strategies for selecting bidders pointing towards needs for change and reforms"
+    },
+    {
+     "y": 442.1,
+     "h": 15.77,
+     "text": "in current times. They have moved from ‘one size fits all’ to ‘fit to purpose’ approach and"
+    },
+    {
+     "y": 457.1,
+     "h": 15.77,
+     "text": "incorporated various alternatives such as Value for Money, Rated Criteria to consider non-price"
+    },
+    {
+     "y": 472.1,
+     "h": 15.77,
+     "text": "attributes etc in the procurement methods."
+    },
+    {
+     "y": 494.3,
+     "h": 15.77,
+     "text": "6.21 Despite so many organizations recommending a need for allowing more discretion in the"
+    },
+    {
+     "y": 509.3,
+     "h": 15.77,
+     "text": "bidding process on account of technical and quality based parameters, we still mostly use L1."
+    },
+    {
+     "y": 524.3,
+     "h": 15.77,
+     "text": "The L1 system persists because of the regulatory default problem. No decision maker wants"
+    },
+    {
+     "y": 539.3,
+     "h": 15.77,
+     "text": "to exercise discretion for the fear of future questioning. This criteria may appear simple and"
+    },
+    {
+     "y": 554.3,
+     "h": 15.77,
+     "text": "quantifiable, however, in a complex world where it may not be possible to define everything in the"
+    },
+    {
+     "y": 569.3,
+     "h": 15.77,
+     "text": "pre-procurement process, it is advisable to leave some discretion in the hands of administrators"
+    },
+    {
+     "y": 584.3,
+     "h": 15.77,
+     "text": "along with maintaining enough transparency and active supervision."
+    },
+    {
+     "y": 607.6,
+     "h": 16.0,
+     "text": "(c) Discretion is questioned with the benefit of hindsight"
+    },
+    {
+     "y": 626.5,
+     "h": 15.77,
+     "text": "6.22 Discretion exercised ex-ante in the Initial Public Offering (IPO) of publicly listed"
+    },
+    {
+     "y": 641.5,
+     "h": 15.77,
+     "text": "companies often gets questioned with the benefit of hindsight when the IPO is oversubscribed"
+    },
+    {
+     "y": 656.5,
+     "h": 15.77,
+     "text": "and/or the first day gain is large. However, the market value of an unlisted entity is unknown."
+    },
+    {
+     "y": 671.5,
+     "h": 15.77,
+     "text": "Even after employing the best of valuation techniques, effort, and resources, the actual value"
+    },
+    {
+     "y": 686.5,
+     "h": 15.77,
+     "text": "of an entity is uncertain until it is traded in the market. It is not uncommon to see stocks being"
+    },
+    {
+     "y": 708.9,
+     "h": 13.14,
+     "text": "QCI conducted a pilot study as a part of World Bank Technical Assessment with Ministry of Road Transport &"
+    },
+    {
+     "y": 720.9,
+     "h": 13.14,
+     "text": "Highways (MoRTH) to rate National Highway projects"
+    },
+    {
+     "y": 709.8,
+     "h": 7.66,
+     "text": "6"
+    }
+   ]
+  },
+  {
+   "printed_page": 189,
+   "pdf_page": 11,
+   "lines_kept": "13 of 79",
+   "lines": [
+    {
+     "y": 34.4,
+     "h": 13.14,
+     "text": "Process Reforms: Enabling decision-making under uncertainty"
+    },
+    {
+     "y": 28.8,
+     "h": 21.89,
+     "text": "189"
+    },
+    {
+     "y": 64.3,
+     "h": 15.77,
+     "text": "over-subscribed (or under-subscribed) and their prices move up (or down). As Figures 5 and 6"
+    },
+    {
+     "y": 79.3,
+     "h": 15.77,
+     "text": "show, oversubscription and first-day gains for IPOs in the private sector are quite significant for"
+    },
+    {
+     "y": 94.3,
+     "h": 15.77,
+     "text": "many years; at the same time, reflecting the uncertainty involved in predicting the listing price,"
+    },
+    {
+     "y": 109.3,
+     "h": 15.77,
+     "text": "losses are large too in some years. Figure 5 shows the number of times Indian IPO stocks listed"
+    },
+    {
+     "y": 124.3,
+     "h": 15.77,
+     "text": "on BSE and NSE between 2010-2020 were oversubscribed by different class of investors. In the"
+    },
+    {
+     "y": 139.3,
+     "h": 15.77,
+     "text": "last 5 years, average total subscription has been 20-40 times for these IPOs though it has been"
+    },
+    {
+     "y": 154.3,
+     "h": 15.77,
+     "text": "lower in previous years. Figure 6 shows that most private sector IPOs in the last 7-8 years have"
+    },
+    {
+     "y": 169.3,
+     "h": 15.77,
+     "text": "had positive listing gains though losses have been large too in previous years. Even in 2019,"
+    },
+    {
+     "y": 184.3,
+     "h": 15.77,
+     "text": "nearly 60 per cent IPOs had positive listing gains. Table 6 lists the information on some specific"
+    },
+    {
+     "y": 199.3,
+     "h": 15.77,
+     "text": "stocks to buttress this point that the expected listing price and the amount of subscription is quite"
+    },
+    {
+     "y": 214.1,
+     "h": 15.96,
+     "text": "uncertain apriori."
+    }
+   ]
+  },
+  {
+   "printed_page": 191,
+   "pdf_page": 13,
+   "lines_kept": "12 of 47",
+   "lines": [
+    {
+     "y": 34.4,
+     "h": 13.14,
+     "text": "Process Reforms: Enabling decision-making under uncertainty"
+    },
+    {
+     "y": 28.8,
+     "h": 21.89,
+     "text": "191"
+    },
+    {
+     "y": 316.8,
+     "h": 16.07,
+     "text": "(a) Strengthen ex-ante accountability"
+    },
+    {
+     "y": 340.7,
+     "h": 15.77,
+     "text": "6.27 The property rights literature based on incomplete contracts argues for the strengthening of"
+    },
+    {
+     "y": 355.7,
+     "h": 15.77,
+     "text": "governance in institutions by vesting more power in boards and then holding them accountable"
+    },
+    {
+     "y": 370.5,
+     "h": 15.96,
+     "text": "ex-ante. Instead of relying too much on ex-post audits, which anyway suffer from hindsight bias,"
+    },
+    {
+     "y": 385.5,
+     "h": 15.96,
+     "text": "ex-ante accountability needs to be entrusted with the boards of institutions. In most common"
+    },
+    {
+     "y": 400.7,
+     "h": 15.77,
+     "text": "law countries, there is a case law derived doctrine of Buisness Judgment Rule. The rule states"
+    },
+    {
+     "y": 415.7,
+     "h": 15.77,
+     "text": "that boards are presumed to act in good faith and protects companies from frivolous lawsuits by"
+    },
+    {
+     "y": 430.7,
+     "h": 15.77,
+     "text": "assuming that, unless proved otherwise, management is acting in the interests of shareholders."
+    },
+    {
+     "y": 445.7,
+     "h": 15.77,
+     "text": "It exists in India as well, however not exactly codified in the same language. But there is a great"
+    },
+    {
+     "y": 460.7,
+     "h": 15.77,
+     "text": "deal of apprehension that it is not taken into account in audits and post-facto investigations."
+    }
+   ]
+  },
+  {
+   "printed_page": 194,
+   "pdf_page": 16,
+   "lines_kept": "15 of 48",
+   "lines": [
+    {
+     "y": 28.8,
+     "h": 21.89,
+     "text": "194"
+    },
+    {
+     "y": 34.0,
+     "h": 14.45,
+     "text": "Economic Survey 2020-21 Volume 1"
+    },
+    {
+     "y": 205.3,
+     "h": 15.77,
+     "text": "6.32 Hence, there is a need for efficient legal systems (i.e., courts and institutions) such as"
+    },
+    {
+     "y": 221.3,
+     "h": 15.77,
+     "text": "Insolvency and Bankruptcy Code (IBC), Debt Recovery Tribunals etc. However, the court system"
+    },
+    {
+     "y": 237.1,
+     "h": 15.96,
+     "text": "remains the single most important way for ex-post resolution. The performance in the area of"
+    },
+    {
+     "y": 253.2,
+     "h": 15.77,
+     "text": "dispute resolution and contract enforcement in India remains a concern and needs to be focused"
+    },
+    {
+     "y": 269.2,
+     "h": 15.77,
+     "text": "on. As per the World Bank’ Ease of Doing Buisness report (2020), it takes 1445 days to resolve a"
+    },
+    {
+     "y": 285.2,
+     "h": 15.77,
+     "text": "commercial contract in India as compared to 589.6 days in OECD high income countries and 120"
+    },
+    {
+     "y": 301.2,
+     "h": 15.77,
+     "text": "days in Singapore. The report also shows that the cost of litigation in India is around 31 per cent"
+    },
+    {
+     "y": 317.2,
+     "h": 15.77,
+     "text": "of the claim value. This is significantly higher than in OECD countries (21 per cent) and Bhutan"
+    },
+    {
+     "y": 333.2,
+     "h": 15.77,
+     "text": "(0.1 per cent). The performance of India is enforcement of contracts is also seen in its ranking in"
+    },
+    {
+     "y": 349.2,
+     "h": 15.77,
+     "text": "World Rule of Law Index for 2020, where India ranks 69 out of 128 countries. Our performance"
+    },
+    {
+     "y": 365.2,
+     "h": 15.77,
+     "text": "is the worst in the category ‘Civil Justice not subject to unreasonable delay’ where we are"
+    },
+    {
+     "y": 381.2,
+     "h": 15.77,
+     "text": "placed at rank 123 falling just behind Venezuela, Guatemala, Peru, Bangladesh and Columbia"
+    },
+    {
+     "y": 396.2,
+     "h": 15.77,
+     "text": "(Table 7)."
+    }
+   ]
+  }
+ ]
+}

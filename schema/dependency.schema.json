@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/dependency.schema.json",
+  "title": "Dependency edge",
+  "description": "One recorded fact about what a locus cites, one level down. A record with cites null means the locus was read and names no work; a locus with no record at all has not been audited. Edges are recorded by a person and appended, never edited. Kit v1.4. CC0 1.0.",
+  "type": "object",
+  "required": [
+    "id",
+    "locus",
+    "cites",
+    "how",
+    "recorded_by",
+    "recorded_on"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Stable identifier of this record. Never reused."
+    },
+    "locus": {
+      "type": "string",
+      "description": "The id of the locus (paragraph, heading or footnote) that does the citing, as written by loci.py."
+    },
+    "cites": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The work cited, by issuer and title. null: the locus was read and cites no work."
+    },
+    "how": {
+      "type": "string",
+      "description": "How the citation was recognised, with the words as printed: named in the text, in a footnote, in a figure's source line."
+    },
+    "status_subject": {
+      "type": "string",
+      "description": "The subject under which the cited work's status is kept in the status log, if it is kept there."
+    },
+    "status_component": {
+      "enum": [
+        "commencement",
+        "edition",
+        "existence",
+        "dependency",
+        "identifier"
+      ],
+      "description": "Which status component to read. Defaults to existence."
+    },
+    "recorded_by": {
+      "type": "string"
+    },
+    "recorded_on": {
+      "type": "string",
+      "format": "date"
+    },
+    "note": {
+      "type": "string"
+    }
+  }
+}

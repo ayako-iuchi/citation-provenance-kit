@@ -21,6 +21,11 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`register/status_log.jsonl`](register/status_log.jsonl) | 動いている規定の登録簿を、追記だけのログにしたもの。v1.1の5行のあとに、2026年10月12日の発見を、置き換える行と並べて追加（キットv1.3） |
 | [`tools/statuslog.py`](tools/statuslog.py) | 「X日の時点で何を記録していたか」と「今日、何を頼れるか」に答える。期限切れの状態には値を返さない（キットv1.3） |
 | [`tools/migrate_register.py`](tools/migrate_register.py) | v1.1の登録簿CSVを状態ログの最初の行に変換する。有効期限を推測で作らない（キットv1.3） |
+| [`tools/pdflines.py`](tools/pdflines.py)、[`tools/loci.py`](tools/loci.py) | 頁の配置を使って、章を**箇所**（番号付きの段落、節見出し、脚注）に分ける。各箇所に印字頁の範囲と、スナップショットとしての文言を持たせる（キットv1.4、未リリース） |
+| [`tools/retrieve.py`](tools/retrieve.py) | 箇所の文言だけを対象にしたBM25。出すのは候補で、引用ではない（キットv1.4、未リリース） |
+| [`tools/depaudit.py`](tools/depaudit.py) | 検索の後の検査。文言をハッシュと照らし、記録した依存の辺を1段たどり、引かれた文献の状態を状態ログから指定日時点で付ける（キットv1.4、未リリース） |
+| [`schema/locus.schema.json`](schema/locus.schema.json)、[`schema/dependency.schema.json`](schema/dependency.schema.json) | 箇所（スナップショットをそのまま入れ子にする）と、依存の辺（キットv1.4、未リリース） |
+| [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4、未リリース） |
 | [`tests/`](tests/) | linterと状態ログのテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |

@@ -19,6 +19,11 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`register/status_log.jsonl`](register/status_log.jsonl) | The register of provisions in motion as an append-only log: the five v1.1 rows, then the finding of 12 October 2026 added beside the row it replaces (kit v1.3) |
 | [`tools/statuslog.py`](tools/statuslog.py) | Answers "what had I recorded as of day X?" and "what may I rely on today?", and returns no value once a status has expired (kit v1.3) |
 | [`tools/migrate_register.py`](tools/migrate_register.py) | Turns a v1.1 register CSV into the first lines of a status log, without inventing expiry dates (kit v1.3) |
+| [`tools/pdflines.py`](tools/pdflines.py), [`tools/loci.py`](tools/loci.py) | Split a chapter into **loci** — numbered paragraphs, section headings, footnotes — using the page geometry, each with the printed pages it spans and its words as a snapshot (kit v1.4, unreleased) |
+| [`tools/retrieve.py`](tools/retrieve.py) | BM25 over the words of the loci only: a proposal, not a citation (kit v1.4, unreleased) |
+| [`tools/depaudit.py`](tools/depaudit.py) | The check after retrieval: words against their hash, recorded dependency edges one level down, and each cited work's status from the status log, as of a given day (kit v1.4, unreleased) |
+| [`schema/locus.schema.json`](schema/locus.schema.json), [`schema/dependency.schema.json`](schema/dependency.schema.json) | A locus (with its snapshot nested unchanged) and a dependency edge (kit v1.4, unreleased) |
+| [`examples/es2021_ch6/`](examples/es2021_ch6/) | The chapter #21 audited by hand, run through the pipeline. The chapter's words there are the Government of India's and are **not** CC0 (kit v1.4, unreleased) |
 | [`tests/`](tests/) | Tests for the linter and the status log (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
