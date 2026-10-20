@@ -174,3 +174,20 @@ def test_cli_errors(tmp_path):
     bad = tmp_path / "r.json"
     bad.write_text(json.dumps({"bjr/basis": {"read_as": "maybe"}}), encoding="utf-8")
     assert nulleval.main([ITEMS, str(sheet), "--readings", str(bad)]) == 2
+
+
+# --- review of the #24 draft (2026-10-20) -------------------------------------
+
+@pytest.mark.parametrize("mode", ["fill", "empty"])
+def test_stored_baselines_are_what_the_tool_writes(mode):
+    items = nulleval.load_items(ITEMS)
+    path = os.path.join(os.path.dirname(ITEMS), "runs", "2026-10-20", f"answers_baseline_{mode}.json")
+    with open(path, encoding="utf-8") as f:
+        assert json.load(f) == nulleval.baseline(items, mode)
+
+
+def test_fill_baseline_gets_every_value_right():
+    items = nulleval.load_items(ITEMS)
+    r = nulleval.score(items, nulleval.baseline(items, "fill")["answers"])
+    assert r["counts"]["value-correct"] == r["gold_values"]
+    assert r["counts"]["filled"] == r["gold_empties"]

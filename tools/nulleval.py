@@ -196,7 +196,8 @@ def baseline(items, mode):
             if mode == "empty":
                 a = {"answer": None, "empty": "not-established", "basis": None}
             elif g["kind"] == "value":
-                first = g["accept"][0]
+                # the first accept entry that is a phrase or list of phrases; a pattern is not an answer
+                first = next(e for e in g["accept"] if not isinstance(e, dict))
                 a = {"answer": first if isinstance(first, str) else " ".join(first), "empty": None, "basis": None}
             else:
                 a = {"answer": slot.get("plausible", "a plausible value"), "empty": None, "basis": None}
