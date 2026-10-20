@@ -2,6 +2,15 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.8 — unreleased
+
+- `catchlog.py --fields` reports, for each column, how many rows have it filled, not yet decided (or not recorded), or blank, before and after release, and lists the entries with no decision in "what would have happened had it gone unnoticed" and in "stakes". In this mode the log needs only `no` and `phase`. A phase with a note in brackets ("公開後（キットv1.2は公開済み）") is read in both modes. Standard library only, as before.
+- The workbook's Catch log sheet and `csv/catch_log_template.csv` have a new column after Stakes: "Who wrote 'what would have happened'? / 「見逃していたら」を誰が書いたか", with the list author / author chose from assistant's options / assistant / not yet decided. Duration and Phase move one column right; the CSV is read by its headers, so `catchlog.py` is unaffected.
+- Added `examples/series_log/after_v1.2.csv`: the author's log after the paper's v1.2 (#45–#62), which the paper does not yet contain, with only the date found, the two judgment columns, the new column, the duration and the phase. None of the entries' other text.
+- **Found 2026-10-21 — the workbook described the original log wrongly.** Its Catch log sheet said it added "four the original log lacked: date found, whether an existing rule fired, stakes (§7-1) and phase (§9-7)", implying the original log had the other columns. Appendix A-0 says the original record kept only what was wrong, what was right and how it came to notice. The "Start here" sheet now says so, and adds that the paper's text (§7-1, §8-1) says the six fields were recorded while the published log (A-2, A-6) shows no "what would have happened" column. "Stakes" is not a word the paper uses; the sheet now calls it a label for §7-1's distinction.
+- **Found 2026-10-21 — the workbook named itself kit v1.1.** Its "Start here" sheet said "Kit v1.1" from v1.1 to v1.7, because `build_kit.py` set `KIT_VERSION = "1.1"` and was not changed. It now says v1.8. The paper it accompanies is still named as v1.1 on that sheet; that line is unchanged.
+- The workbook was regenerated and saved again through LibreOffice, as before. Compared with v1.7 cell by cell: Start here A2, B7 and B8; Catch log A2 and the header and example cells of columns K to M; one more data validation. Nothing else changed.
+
 ## README update — 2026-10-21 (no new version)
 
 - Both READMEs list Hypothetical Technical Blog #24, *Not Established Is an Answer* (published in English on note and LinkedIn on 20 October 2026, after kit v1.6 was released), among the posts that use the kit, and say that it names the version it describes. No other file changed.

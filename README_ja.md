@@ -29,7 +29,8 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`tools/notation.py`](tools/notation.py)、[`schema/annotation.schema.json`](schema/annotation.schema.json) | 記法を、英語形と日本語形を1つの文法で読み、型付きの記録（成分、格付け、その成分が動くかどうか）にする。形を検査し（N0〜N7）、2つの形の間で書き換える（キットv1.5） |
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5）と、公開されたキャッチログを番号・成分・結果・公開前後だけにしたもの（キットv1.7） |
 | [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6） |
-| [`tools/catchlog.py`](tools/catchlog.py) | 成分ごとに、公開前と公開後に分けて訂正と確認を別に数え、意味のないゼロを示す（キットv1.7） |
+| [`tools/catchlog.py`](tools/catchlog.py) | 成分ごとに、公開前と公開後に分けて訂正と確認を別に数え、意味のないゼロを示す（キットv1.7）。`--fields` で各欄の埋まり具合を示す（キットv1.8、未リリース） |
+| [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（#45〜#62）を、判断の欄だけにしたもの（キットv1.8、未リリース） |
 | [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
@@ -110,6 +111,15 @@ python3 tools/catchlog.py examples/method_paper_v1.2/catch_log.csv
 ```
 
 訂正だけを数えるログでは、確かめて問題がなかった成分も、一度も確かめていない成分も、同じゼロになります。`catchlog.py` は成分ごとに、公開前と公開後に分けて、訂正と確認を別に数え、各欄を `found`（訂正あり）、`clean`（訂正なし、確認あり）、`other-only`（不記載や規則の改善だけ）、`unexamined`（行がひとつもない）と名付けます。2つを足し合わせることはしません。ワークブックの「キャッチログ」シートをCSVで保存したもの（UTF-8、または日本語版Excelのcp932）と、英語・日本語の成分名を読みます。知らない成分名は報告します（`--strict` なら誤りとして止めます）。綴りを誤った成分があると、本来の成分が「unexamined」に見えてしまうからです。ワークブックの「結果」の選択肢には v1.0 から「confirmed (no error found)」があります。確認も訂正と同じログに記録してください。`examples/method_paper_v1.2/catch_log.csv` は、方法論文の公開されたログ（英語版#1〜#42、日本語版のみ#43〜#44）を、本文を除いて番号・成分・結果・公開前後だけで持ちます。公開前は頁（page）が `clean`、数値（figure）が `unexamined`（§7-3）。公開後、数値には訂正2件と確認1件があります。論文の3件の不記載（§7-5）は入れていません。論文が番号も成分も示していないためです。
+
+## ほかの誰にも書けない欄（キットv1.8、未リリース）
+
+```
+python3 tools/catchlog.py LOG.csv --fields
+python3 tools/catchlog.py examples/series_log/after_v1.2.csv --fields
+```
+
+`--fields` は、キャッチログの各欄がどれだけ埋まっているかを、公開前と公開後に分けて報告します。埋まっている、未判断（または記録なし）、空、の3つです。「見逃していたら何が起きたか」と「影響の大きさ」に判断のない項目を番号で挙げます。欄を埋めることはしません。ワークブックとCSVの雛形には、影響の大きさの次に「「見逃していたら」を誰が書いたか」の列を足しました（author、author chose from assistant's options、assistant、not yet decided）。論文はこの欄を委任できない項目と呼びます（§9-5）が、補助者が下書きすることはできてしまうからです。`examples/series_log/after_v1.2.csv` は、論文v1.2より後の著者のログ（#45〜#62、論文には未掲載）を、判断の欄、所要時間、公開前後だけで持ちます。18件のうち判断があるのは3件で、3件とも補助者の候補から選ばれています。
 
 ## このキットがしないこと
 
