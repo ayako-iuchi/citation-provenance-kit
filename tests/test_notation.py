@@ -257,3 +257,38 @@ def test_vocabulary_is_one_list():
     assert build == csv_names
     assert set(csv_names) | set(csv_names.values()) == citelint.COMPONENTS["ja"]
     assert set(csv_names) == citelint.COMPONENTS["en"]
+
+
+# --- second review (15c6fb6, 2026-10-20) -------------------------------------
+
+@pytest.mark.parametrize("text", ["[wording: A | page: —][1]", "[wording: A | page: —][^1]",
+                                  "[wording: A | page: —](see note)", "［語: A｜頁: —］(注)",
+                                  "[wording: A | page: —]: as printed"])
+def test_annotation_followed_by_link_syntax_is_still_read(text):
+    assert len(list(notation.parse(text))) == 1
+
+
+def test_reference_definition_needs_a_url():
+    assert list(notation.parse("[A]: https://example.com\n")) == []
+    assert len(list(notation.parse("[A]: the grade we gave\n"))) == 1
+
+
+def test_unmatched_backtick_masks_nothing():
+    text = "`stray\n\nreal [wording: A | page: —]\n\nlater `code`\n"
+    assert len(list(notation.parse(text, markdown=True))) == 1
+
+
+def test_fences_follow_commonmark():
+    longer = "````\n```\n[wording: A | page: A]\n````\nafter [wording: A | page: —]\n"
+    assert [r["text"] for r in notation.parse(longer, markdown=True)] == ["[wording: A | page: —]"]
+    unclosed = "before [wording: A | page: —]\n```\n[wording: A | page: A]\n"
+    assert [r["text"] for r in notation.parse(unclosed, markdown=True)] == ["[wording: A | page: —]"]
+
+
+@pytest.mark.parametrize("text", ["[page: 12]", "［日付: 2024年］", "[edition: 3rd ed.]"])
+def test_component_named_but_nothing_graded_is_left_alone(text):
+    assert list(notation.parse(text)) == []
+
+
+def test_mixed_bracket_widths_are_malformed():
+    assert codes("［wording: A | page: B]") == ["N0"]

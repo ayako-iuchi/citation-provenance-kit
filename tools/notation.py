@@ -25,15 +25,20 @@ be half- or full-width):
                  or an extension the document declares (--extend; §4-2)
     open = "[" | "［" ;  close = "]" | "］" ;  bar = "|" | "｜" ;  colon = ":" | "："
 
-A bracket is read only if it is a single grade or names a known component
-before a colon. Other brackets ([sic], [LINK], [Note: ...], [A — a source]) and
-Markdown links ([A](url), [A][ref], a line starting [A]:) are left alone. An
-annotation may run across a single line break, not across a blank line.
+A bracket is read only if it is a single grade, or names a known component
+before a colon and grades at least one slot (A-D or a dash of any kind). Other
+brackets ([sic], [LINK], [Note: ...], [page: 12], [A — a source]) are left
+alone, and so are Markdown links whose label is a single grade ([A](url),
+[A][ref], a line starting [A]: followed by a URL). A bare [B] in prose is read
+as a plain grade: the text cannot tell it from one. An annotation may run
+across a single line break, not across a blank line.
 
 Checks (what a machine can see in the text):
 
-    N0 malformed      a bracket names a component but does not follow the grammar
-                      ([wording: A, page: B], [wording: A |], [wording: A B])
+    N0 malformed      a bracket names a component and grades it but does not
+                      follow the grammar ([wording: A, page: B], [wording: A |],
+                      [wording: A B]), or opens and closes with brackets of
+                      different widths
                       (added in kit v1.5)
     N1 vocabulary    the component is not in the closed list (§4-2)
     N2 grade          the grade is not A-D or the em dash (§4-4)
@@ -68,7 +73,7 @@ Usage:
     --records   print every annotation as a JSON line (the typed records)
     --to        rewrite every well-formed annotation in the other language's
                 form; the rest of the text, line endings included, is left as it is
-    --markdown  skip fenced code blocks and inline code
+    --markdown  skip fenced code blocks and inline code (not indented code blocks)
     --extend    declare an extension component; repeatable
 
 Exit status, when checking (no --records, no --to): 1 if N0-N6 report
@@ -135,15 +140,41 @@ def _line_of(text, pos):
     return text.count("\n", 0, pos) + 1
 
 
+def _mask_fences(v):
+    """Mask fenced code blocks as CommonMark reads them: the closing fence uses
+    the opening character, at least as many times; an unclosed fence runs to
+    the end of the document. Indented code blocks are not recognised."""
+    out, pos, fence = [], 0, None
+    for line in v.splitlines(keepends=True):
+        stripped = line.lstrip(" ")
+        indent = len(line) - len(stripped)
+        m = re.match(r"(`{3,}|~{3,})", stripped) if indent <= 3 else None
+        if fence is None:
+            if m and not (m.group(1)[0] == "`" and "`" in stripped[len(m.group(1)):]):
+                fence = m.group(1)
+                out.append(BARRIER * len(line.rstrip("\r\n")) + line[len(line.rstrip("\r\n")):])
+            else:
+                out.append(line)
+        else:
+            body = line.rstrip("\r\n")
+            out.append(BARRIER * len(body) + line[len(body):])
+            if m and m.group(1)[0] == fence[0] and len(m.group(1)) >= len(fence) \
+                    and stripped[len(m.group(1)):].strip() == "":
+                fence = None
+    return "".join(out)
+
+
 def _view(text, markdown=False):
     """A copy of text, the same length, in which an annotation can be found
     across a single line break (as in text taken from a PDF) but not across a
     blank line, and, with markdown=True, not inside code."""
     v = text
     if markdown:
-        mask = lambda m: BARRIER * len(m.group(0))
-        v = re.sub(r"(?ms)^[ \t]*(```|~~~).*?^[ \t]*\1[^\n]*$", mask, v)
-        v = re.sub(r"(`+)[^`]*?\1", mask, v)
+        v = _mask_fences(v)
+        # Inline code: a run of backticks closed by the same run, not across a
+        # blank line. An unmatched backtick masks nothing.
+        v = re.sub(r"(`+)((?:(?!\n[ \t\r]*\n)[^`])+?)\1",
+                   lambda m: BARRIER * len(m.group(0)), v)
     v = re.sub(r"\n(?=[ \t\r]*\n)", BARRIER, v)
     return v.replace("\r", " ").replace("\n", " ")
 
@@ -152,16 +183,19 @@ def _scan(text, components, markdown=False):
     """Yield (start, end, record) for every annotation, including malformed ones."""
     view = _view(text, markdown)
     for m in CANDIDATE.finditer(view):
-        before = view[m.start() - 1] if m.start() else ""
-        after = view[m.end()] if m.end() < len(view) else ""
-        at_line_start = text[:m.start()].rsplit("\n", 1)[-1].strip() == ""
-        if (before and before in "]!") or (after and after in "([") or (after == ":" and at_line_start):
-            continue  # a Markdown link, image or reference definition
         inner = m.group(1)
         raw = " ".join(inner.split())
         line = _line_of(text, m.start())
         wide = text[m.start()] == "［"
         if raw in GRADES:
+            # Only a bracket this short can be a Markdown link label; one that
+            # names a component is read whatever follows it.
+            before = view[m.start() - 1] if m.start() else ""
+            rest = view[m.end():m.end() + 40]
+            at_line_start = text[:m.start()].rsplit("\n", 1)[-1].strip() == ""
+            if not wide and ((before and before in "]!") or rest[:1] in ("(", "[")
+                             or (at_line_start and re.match(r":\s*\S*[/.<]", rest))):
+                continue  # a Markdown link, image or reference definition
             text_ = ("［%s］" if wide else "[%s]") % raw
             yield m.start(), m.end(), {"line": line, "text": text_, "form": "plain",
                                        "slots": [{"component": None, "written": None, "grade": raw, "volatile": None}]}
@@ -186,7 +220,13 @@ def _scan(text, components, markdown=False):
             slots.append({"component": known[0] if known else None, "written": name,
                           "grade": grade, "volatile": known[1] if known else None})
         full = " ".join(text[m.start():m.end()].split())
-        if slots is None:
+        grade_like = r"[:：]\s*([A-D\u2014" + "".join(re.escape(c) for c in WRONG_DASHES) + r"])(?![A-Za-z0-9])"
+        if slots is not None and not any(s["grade"] in GRADES or s["grade"] in WRONG_DASHES for s in slots):
+            continue  # names a component but grades nothing: [page: 12], ［日付: 2024年］
+        if slots is None and not re.search(grade_like, inner):
+            continue  # [edition: 3rd ed.]
+        mixed = wide != (text[m.end() - 1] == "］")
+        if slots is None or mixed:
             yield m.start(), m.end(), {"line": line, "text": full, "form": "malformed", "slots": []}
             continue
         ja_shape = wide or any(c in inner for c in "｜：") or any(
