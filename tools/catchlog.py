@@ -38,8 +38,17 @@ It also reads the workbook's Catch log sheet saved as CSV: the bilingual headers
 title rows above them, the grey "Ex." row (skipped) and the numbered empty rows
 (skipped). A file that is not UTF-8 is read as cp932 (Japanese Excel's default).
 
+With --fields it reports, instead, how full each column is: for every column,
+how many rows have it filled, how many mark it as not yet decided (or not recorded), and how many
+leave it blank, before and after release, and which entries have no decision in
+"what would have happened" and "stakes". It fills nothing in. A value counts as
+"not yet decided" when it is "—" or "-", or begins with "—" or "(", or contains
+未判断, 著者が記入, 記録なし, "not yet decided", "to be decided", "not recorded" or "TBD". If the log has the
+column "Who wrote 'what would have happened'?" (kit v1.8), its values are counted.
+
 Usage:
     python3 catchlog.py LOG.csv [--components csv/components.csv] [--strict] [--json]
+    python3 catchlog.py LOG.csv --fields [--json]
 
 An unknown component name is reported on stderr; with --strict it is an error.
 Exit status: 0, or 2 on unreadable input.
@@ -134,7 +143,8 @@ def _kind(outcome):
     return "other"
 
 
-def read_log(path, components=None, strict=False, warn=None):
+def read_log(path, components=None, strict=False, warn=None, columns_only=False):
+    """Read a catch log. With columns_only (for --fields), component and outcome are optional."""
     components = components or load_components()
     rows_in = list(csv.reader(io.StringIO(_decode(path))))
     if not rows_in:
@@ -148,12 +158,12 @@ def read_log(path, components=None, strict=False, warn=None):
                 if k in found:
                     raise ValueError(f"{path}: two {k} columns")
                 found[k] = j
-        if {"component", "outcome"} <= set(found):
-            cols, start = found, i + 1
+        if ({"no", "phase"} if columns_only else {"component", "outcome"}) <= set(found):
+            cols, start, header = found, i + 1, line
             break
     if cols is None:
         raise ValueError(f"{path}: no header row with component and outcome columns in the first 10 rows")
-    missing = [k for k in ("no", "component", "outcome", "phase") if k not in cols]
+    missing = [k for k in (("no", "phase") if columns_only else ("no", "component", "outcome", "phase")) if k not in cols]
     if missing:
         raise ValueError(f"missing column(s): {', '.join(missing)}")
     rows, unknown = [], []
@@ -173,20 +183,52 @@ def read_log(path, components=None, strict=False, warn=None):
             else:
                 comps.append(c)
                 unknown.append((no, c))
-        if not comps:
+        if not comps and not columns_only:
             raise ValueError(f"entry {no!r}: no component")
-        ph = get("phase").casefold()
+        ph = re.sub(r"\s*[（(].*$", "", get("phase")).casefold()
         if ph not in PHASE_NAMES:
             raise ValueError(f"entry {no!r}: phase must be pre or post (or 公開前／公開後), not {get('phase')!r}")
         kind = _kind(get("outcome"))
         rows.append({"no": no, "components": comps, "outcome": get("outcome"), "kind": kind,
-                     "phase": PHASE_NAMES[ph], "count": _count(get("count"), kind, no)})
+                     "phase": PHASE_NAMES[ph], "count": _count(get("count"), kind, no),
+                     "fields": {_label(header[j]): (line[j].strip() if j < len(line) else "")
+                                for j in range(len(header)) if header[j].strip()}})
     if unknown:
         msg = "; ".join(f"entry {n!r}: {c!r}" for n, c in unknown)
         if strict:
             raise ValueError(f"unknown component(s): {msg}")
         (warn or (lambda m: print(m, file=sys.stderr)))(f"catchlog: unknown component(s), counted as written: {msg}")
     return rows
+
+
+def _label(h):
+    """A column's display name: its first line (the workbook writes "English\nJapanese")."""
+    return re.split(r"\n| / ", h.replace("\ufeff", "").strip())[0].strip()
+
+
+PENDING = re.compile(r"^\s*(?:[—-]\s*$|[—(（])|未判断|著者が記入|記録なし|not yet decided|to be decided|not recorded|\bTBD\b", re.I)
+WOULD = re.compile(r"^what would have happened|^見逃していたら何が", re.I)
+STAKES_COL = re.compile(r"^stakes$|影響の大きさ", re.I)
+WHO_COL = re.compile(r"^who wrote", re.I)
+
+
+def fields(rows):
+    """{column: {phase: {"filled": n, "pending": n, "blank": n}}}, the entries with no decision
+    in the two judgment columns, and the counts of the 'who wrote' column."""
+    cols = list(dict.fromkeys(k for r in rows for k in r["fields"]))
+    out = {c: {p: {"filled": 0, "pending": 0, "blank": 0} for p in PHASES} for c in cols}
+    undecided = {}
+    who = {}
+    for r in rows:
+        for c in cols:
+            v = r["fields"].get(c, "")
+            state = "blank" if not v else "pending" if PENDING.search(v) else "filled"
+            out[c][r["phase"]][state] += 1
+            if state != "filled" and (WOULD.search(c) or STAKES_COL.search(c)):
+                undecided.setdefault(c, []).append(r["no"])
+            if WHO_COL.search(c):
+                who[v or "(blank)"] = who.get(v or "(blank)", 0) + 1
+    return {"columns": out, "undecided": undecided, "who": who}
 
 
 def tally(rows, components=None):
@@ -235,14 +277,30 @@ def main(argv=None):
     ap.add_argument("log")
     ap.add_argument("--components", help="components.csv (default: the kit's)")
     ap.add_argument("--strict", action="store_true", help="an unknown component name is an error")
+    ap.add_argument("--fields", action="store_true", help="report how full each column is instead")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
     try:
         comps = load_components(a.components)
-        rows = read_log(a.log, comps, strict=a.strict)
+        rows = read_log(a.log, comps, strict=a.strict, columns_only=a.fields)
     except (OSError, ValueError, csv.Error) as e:
         print(f"catchlog: {e}", file=sys.stderr)
         return 2
+    if a.fields:
+        f = fields(rows)
+        if a.json:
+            print(json.dumps({"rows": len(rows), **f}, ensure_ascii=False, indent=1))
+            return 0
+        print(f"{len(rows)} row(s). filled / not yet decided / blank, before and after release")
+        w = max([len(c) for c in f["columns"]] + [6])
+        for c, cells in f["columns"].items():
+            parts = [f"{cells[p]['filled']} / {cells[p]['pending']} / {cells[p]['blank']}" for p in PHASES]
+            print(f"{c[:w]:<{w}}  pre {parts[0]:<14} post {parts[1]}")
+        for c, nos in f["undecided"].items():
+            print(f"no decision in '{c}': " + ", ".join(nos))
+        if f["who"]:
+            print("who wrote 'what would have happened': " + "; ".join(f"{k} {v}" for k, v in f["who"].items()))
+        return 0
     t = tally(rows, comps)
     if a.json:
         print(json.dumps({"rows": len(rows), "components": t}, ensure_ascii=False, indent=1))

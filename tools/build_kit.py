@@ -11,7 +11,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
 
-KIT_VERSION = "1.1"
+KIT_VERSION = "1.8"
 PAPER = "What Breaks in a Citation, v1.1 (26 July 2026)"
 
 F = "Arial"
@@ -138,6 +138,7 @@ OUTCOMES = ["corrected", "deleted", "weakened", "excluded", "abstained", "slippe
 STAKES = ["A step of the argument collapses", "A claim must be weakened", "One footnote dies", "No effect on the argument"]
 FIRED = ["Yes — the rule caught it", "No — rule existed but did not fire", "No rule existed yet"]
 PHASE = ["Pre-release", "Post-release"]
+WHO = ["author", "author chose from assistant's options", "assistant", "not yet decided"]
 
 CATCH_COLS = [
     ("#", 6),
@@ -150,6 +151,7 @@ CATCH_COLS = [
     ("Outcome\n結果", 18),
     ("What would have happened had it gone unnoticed\n見逃していたら何が起きたか", 40),
     ("Stakes\n影響の大きさ", 24),
+    ("Who wrote 'what would have happened'?\n「見逃していたら」を誰が書いたか", 22),
     ("Duration (minutes)\n所要時間（分）", 12),
     ("Phase\n公開前／後", 14),
 ]
@@ -160,7 +162,7 @@ CATCH_EXAMPLE = [
     "wording", "Opened the primary source at the printed page", "(none — this failure produced the rule)",
     "No rule existed yet", "corrected",
     "The comparison of evaluation criteria would have rested on words the regulator never wrote.",
-    "A step of the argument collapses", "", "Pre-release",
+    "A step of the argument collapses", "author", "", "Pre-release",
 ]
 
 # ---------------------------------------------------------------- workbook
@@ -174,8 +176,8 @@ lines = [
     ("What this is", "The working materials for the discipline described in What Breaks in a Citation: a catch log, a closed list of citation components, the grading and notation rules, a cost calculator, and the author's own 25-entry log (lightly condensed) as a worked example. The Note column on recurrences is added by the kit."),
     ("Where to type", "Yellow cells are inputs. Grey rows are examples — overwrite or delete them. Everything else is reference or formula."),
     ("Sheets", "Catch log — your record, one row per catch, confirmation or abstention.\nComponents — the ten components and the one sorting question.\nGrades & notation — A–D, the null slot, and the rules for writing them.\nCost calculator — actions × counts × your own unit times.\nExample log v1.1 — Appendix A of the paper, lightly condensed.\nRegister in motion — status components with an issuer\'s source and a next-check date (kit v1.1)."),
-    ("Three rules for the log", "1. Record confirmations and abstentions, not only corrections. Without them there is no denominator.\n2. Fill the 'what would have happened' column yourself. It is the one field nobody else can fill.\n3. Keep the log open after release. Publication is a marker in the log, not its end."),
-    ("Columns the original log lacked", "'Did an existing rule fire?': two rules failed to prevent their own failure from recurring, and the log could not show it (Appendix B, §9-1).\n'Duration': no effort was recorded and it cannot be reconstructed (§8-1).\n'Stakes': the distinction between a step of the argument collapsing and one footnote dying (§7-1), as a filterable field.\n'Phase': the log closed at release, so post-publication defects went unnumbered (§9-7)."),
+    ("Three rules for the log", "1. Record confirmations and abstentions, not only corrections. Without them there is no denominator.\n2. Fill the 'what would have happened' column yourself. It is the one field nobody else can fill. If an assistant drafted it, or you chose from its options, say so in the 'Who wrote' column (kit v1.8).\n3. Keep the log open after release. Publication is a marker in the log, not its end."),
+    ("Columns the original log lacked", "The original log kept three things for each entry: what was wrong, what was right, and how it came to notice (Appendix A-0). Every other column here was added afterwards. The paper says the six fields of §7-1 were recorded for each correction (§7-1, §8-1); the published log (Appendix A-2, A-6) shows no 'what would have happened' column.\n'Did an existing rule fire?': two rules failed to prevent their own failure from recurring, and the log could not show it (Appendix B, §9-1).\n'Duration': no effort was recorded and it cannot be reconstructed (§8-1).\n'Stakes': the distinction between a step of the argument collapsing and one footnote dying (§7-1), as a filterable field.\n'Phase': the log closed at release, so post-publication defects went unnumbered (§9-7).\n'Who wrote what would have happened?': the field cannot be delegated (§9-5), so record when it was drafted by an assistant or chosen from an assistant's options (kit v1.8)."),
     ("What this kit does not do", "It does not verify anything. It records what your verification acts produced. A perfectly graded document can still be misread."),
     ("Licence", "CC0 1.0 Universal. Copy, modify and use it for any purpose without asking or attributing. https://creativecommons.org/publicdomain/zero/1.0/"),
     ("Source papers", "What Breaks in a Citation (EN) https://lnkd.in/p/giTfeMUh · (JA) https://lnkd.in/p/gFUXFv2w\nWhat Your Buyer Is Defending Against (EN) https://lnkd.in/p/gHNjBuCd · (JA) https://lnkd.in/p/gF-kd9DF"),
@@ -191,7 +193,7 @@ ws.column_dimensions["B"].width = 100
 
 # Catch log
 cl = wb.create_sheet("Catch log")
-title(cl, "Catch log", "One row per correction, confirmation or abstention. The seven fields of §10-4, plus four the original log lacked: date found, whether an existing rule fired, stakes (§7-1) and phase (§9-7).")
+title(cl, "Catch log", "One row per correction, confirmation or abstention. The seven fields of §10-4, and five more: date found, whether an existing rule fired, stakes (the distinction of §7-1), who wrote the 'what would have happened' field (§9-5), and phase (§9-7).")
 header(cl, 4, [c for c, _ in CATCH_COLS], [w for _, w in CATCH_COLS])
 for j, v in enumerate(CATCH_EXAMPLE, start=1):
     body(cl.cell(row=5, column=j, value=v), fill=EX_FILL, color="52606D")
@@ -219,9 +221,10 @@ dv_list(cl, "=Components!$A$5:$A$20", "D", explicit=False)
 dv_list(cl, [f.replace(",", "") for f in FIRED], "G")
 dv_list(cl, OUTCOMES, "H")
 dv_list(cl, STAKES, "J")
-dv_list(cl, PHASE, "L")
+dv_list(cl, WHO, "K")
+dv_list(cl, PHASE, "M")
 dvn = DataValidation(type="whole", operator="greaterThanOrEqual", formula1="0", allow_blank=True)
-cl.add_data_validation(dvn); dvn.add(f"K5:K{5 + N_ROWS}")
+cl.add_data_validation(dvn); dvn.add(f"L5:L{5 + N_ROWS}")
 
 # Components
 cp = wb.create_sheet("Components")

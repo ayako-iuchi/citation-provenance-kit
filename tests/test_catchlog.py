@@ -116,7 +116,10 @@ def test_workbook_export_is_read(tmp_path):
     openpyxl = pytest.importorskip("openpyxl")
     wb = openpyxl.load_workbook(os.path.join(ROOT, "kit", "citation-provenance-kit.xlsx"))
     ws = wb["Catch log"]
-    ws["D6"], ws["H6"], ws["L6"] = "figure", "confirmed (no error found)", "Post-release"
+    col = {str(c.value).split("\n")[0]: c.column_letter for c in ws[4] if c.value}
+    ws[col["Component(s)"] + "6"] = "figure"
+    ws[col["Outcome"] + "6"] = "confirmed (no error found)"
+    ws[col["Phase"] + "6"] = "Post-release"
     import csv as _csv
     p = tmp_path / "export.csv"
     with open(p, "w", newline="", encoding="utf-8") as f:
@@ -189,3 +192,53 @@ def test_empty_file_and_duplicate_columns(tmp_path, capsys):
     assert "empty" in capsys.readouterr().err
     assert catchlog.main([write(tmp_path, "no,component,outcome,outcome,phase\n1,page,corrected,corrected,pre\n")]) == 2
     assert catchlog.main([write(tmp_path, "1,page,corrected,pre\n"), "--components", write(tmp_path, "component,ja\n", "c.csv")]) == 2
+
+
+# --- kit v1.8: --fields ------------------------------------------------------
+
+SERIES = os.path.join(ROOT, "examples", "series_log", "after_v1.2.csv")
+
+
+def test_fields_counts_the_continuing_log():
+    f = catchlog.fields(catchlog.read_log(SERIES, columns_only=True))
+    would = f["columns"]["What would have happened had it gone unnoticed"]["post"]
+    assert (would["filled"], would["pending"], would["blank"]) == (3, 15, 0)
+    assert f["undecided"]["What would have happened had it gone unnoticed"] == [str(n) for n in [45] + list(range(49, 63))]
+    assert f["who"] == {"not yet decided": 15, "author chose from assistant's options": 3}
+    assert f["columns"]["Duration (minutes)"]["post"]["pending"] == 18
+
+
+def test_who_column_is_not_the_judgment_column(tmp_path):
+    p = write(tmp_path, "no,phase,What would have happened had it gone unnoticed,Who wrote 'what would have happened'?\n1,pre,,author\n")
+    f = catchlog.fields(catchlog.read_log(p, columns_only=True))
+    assert list(f["undecided"]) == ["What would have happened had it gone unnoticed"]
+
+
+@pytest.mark.parametrize("value,state", [("", "blank"), ("—", "pending"), ("-", "pending"), ("—（未判断、2026-10-20）", "pending"),
+                                          ("（著者が記入）", "pending"), ("TBD", "pending"), ("記録なし", "pending"),
+                                          ("A footnote dies", "filled"), ("誤りではなく古い値（著者の判断）", "filled")])
+def test_pending_values(tmp_path, value, state):
+    p = write(tmp_path, f"no,phase,Stakes\n1,post,{value}\n")
+    cell = catchlog.fields(catchlog.read_log(p, columns_only=True))["columns"]["Stakes"]["post"]
+    assert cell[state] == 1
+
+
+def test_fields_cli_and_template(capsys):
+    assert catchlog.main([SERIES, "--fields"]) == 0
+    out = capsys.readouterr().out
+    assert "no decision in 'Stakes': 45, 49" in out
+    assert catchlog.main([os.path.join(ROOT, "csv", "catch_log_template.csv"), "--fields", "--json"]) == 0
+    assert json.loads(capsys.readouterr().out)["rows"] == 0
+
+
+def test_phase_with_a_note_in_brackets(tmp_path):
+    p = write(tmp_path, "no,component,outcome,phase\n1,page,corrected,公開後（キットv1.2は公開済み）\n")
+    assert catchlog.read_log(p)[0]["phase"] == "post"
+
+
+def test_template_has_the_who_column():
+    import csv as _csv
+    with open(os.path.join(ROOT, "csv", "catch_log_template.csv"), encoding="utf-8-sig") as f:
+        head = next(_csv.reader(f))
+    assert "Who wrote 'what would have happened'? / 「見逃していたら」を誰が書いたか" in head
+    assert head.index("Stakes / 影響の大きさ") + 1 == head.index("Who wrote 'what would have happened'? / 「見逃していたら」を誰が書いたか")
