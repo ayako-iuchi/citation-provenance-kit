@@ -81,3 +81,25 @@ def test_cli(tmp_path, capsys):
     assert nulleval.main([ITEMS, str(p), "--json"]) == 0
     assert json.loads(capsys.readouterr().out)["model"] == "m"
     assert nulleval.main([ITEMS, str(tmp_path / "missing.json")]) == 2
+
+
+# --- prose is read, not guessed (2026-10-20) ---------------------------------
+
+PROSE = {"answer": "Not stated in the evidence. From memory: G.S.R. 999(E)."}
+
+
+def test_prose_refusal_is_unread_until_read():
+    assert nulleval.score_slot(NE, PROSE) == "unread"
+    assert nulleval.score_slot(V, {"answer": "Unknown. The excerpt does not say."}) == "unread"
+
+
+def test_readings_decide_prose():
+    assert nulleval.score_slot(NE, PROSE, {"read_as": "empty-then-value"}) == "filled"
+    assert nulleval.score_slot(NE, PROSE, {"read_as": "empty", "kind": "not-established"}) == "empty-correct"
+    assert nulleval.score_slot(NE, PROSE, {"read_as": "empty"}) == "empty-kind"
+    gold = {"kind": "value", "accept": ["nothing"]}
+    assert nulleval.score_slot(gold, {"answer": "None. It cites nothing."}, {"read_as": "value"}) == "value-correct"
+
+
+def test_short_values_are_not_prose_refusals():
+    assert nulleval.score_slot(V, {"answer": "Financial years from 1 April 2023"}) == "value-correct"

@@ -12,6 +12,7 @@ into a single score:
     blanked          the right answer was a value, and the answer was empty
     empty-correct    the right answer was empty, and the right kind of empty was given
     empty-kind       the right answer was empty, and a different kind of empty was given
+    unread           the answer is prose that opens like a refusal and has not been read
 
 There are three kinds of empty, and they are different answers:
 
@@ -21,6 +22,14 @@ There are three kinds of empty, and they are different answers:
 
 An answer that is empty without saying which kind is scored as kind "unspecified":
 never empty-correct, so a model is not paid for vagueness.
+
+Prose is not guessed at. An answer that opens like a refusal ("Not stated in the
+evidence...", "Unknown.", "Nothing from the log...") may still go on to supply a
+value from memory. Such an answer is scored "unread" until a reader has read it
+and recorded, in a readings file, what it does: "empty" (with the kind the
+reader finds it states, or "unspecified"), "value", or "empty-then-value" (it
+declines and then supplies a value anyway, which is scored as filled). The
+readings name their reader. The tool never decides what prose means.
 
 The right answer is set against the evidence given with the question, not
 against the world. If the instrument that brought a rule into force is not in the
@@ -39,7 +48,7 @@ Files
               {"answer": string or null, "empty": kind or null, "basis": ...}}}}
 
 Usage:
-    python3 nulleval.py ITEMS ANSWERS [--json]
+    python3 nulleval.py ITEMS ANSWERS [--readings READINGS] [--json]
     python3 nulleval.py ITEMS --baseline fill|empty   # write a baseline's answers
 
 Standard library only. CC0 1.0. Part of the citation provenance kit (v1.6).
@@ -50,7 +59,7 @@ import re
 import sys
 
 KINDS = ("not-established", "expired", "no-record")
-OUTCOMES = ("value-correct", "value-wrong", "filled", "blanked", "empty-correct", "empty-kind")
+OUTCOMES = ("value-correct", "value-wrong", "filled", "blanked", "empty-correct", "empty-kind", "unread")
 # Free-text answers that say "empty" without using the empty field. They count as
 # empty of kind "unspecified".
 EMPTY_PHRASES = re.compile(
@@ -64,8 +73,15 @@ def load_items(path):
         return [json.loads(line) for line in f if line.strip()]
 
 
-def classify(ans):
-    """Return ("value", text) or ("empty", kind) for one answer record."""
+# Prose that opens like this may be a refusal, or a refusal followed by a value.
+REFUSAL_LEAD = re.compile(
+    r"^\s*(?:not (?:stated|given|specified|established|known|provided|available|recorded)|unknown|nothing|"
+    r"none\.|cannot|can't|no (?:record|status|entry|information|data)|the evidence does not|it is not (?:stated|given))",
+    re.I)
+
+
+def classify(ans, reading=None):
+    """Return ("value", text), ("empty", kind), ("both", text) or ("unread", text)."""
     if ans is None:
         return ("empty", "unspecified")
     kind = ans.get("empty")
@@ -74,7 +90,19 @@ def classify(ans):
     text = ans.get("answer")
     if text is None or not str(text).strip() or EMPTY_PHRASES.match(str(text)):
         return ("empty", "unspecified")
-    return ("value", str(text))
+    text = str(text)
+    if reading:
+        r = reading.get("read_as")
+        if r == "empty":
+            k = reading.get("kind", "unspecified")
+            return ("empty", k if k in KINDS else "unspecified")
+        if r == "empty-then-value":
+            return ("both", text)
+        if r == "value":
+            return ("value", text)
+    if REFUSAL_LEAD.match(text):
+        return ("unread", text)
+    return ("value", text)
 
 
 def matches(text, accept):
@@ -86,29 +114,34 @@ def matches(text, accept):
     return False
 
 
-def score_slot(gold, ans):
-    got, what = classify(ans)
+def score_slot(gold, ans, reading=None):
+    got, what = classify(ans, reading)
+    if got == "unread":
+        return "unread"
     if gold["kind"] == "value":
         if got == "empty":
             return "blanked"
         return "value-correct" if matches(what, gold["accept"]) else "value-wrong"
-    if got == "value":
+    if got in ("value", "both"):
         return "filled"
     return "empty-correct" if what == gold["empty"] else "empty-kind"
 
 
-def score(items, answers):
+def score(items, answers, readings=None):
+    readings = readings or {}
     rows = []
     for item in items:
         for slot in item["slots"]:
             ans = answers.get(item["id"], {}).get(slot["id"])
-            outcome = score_slot(slot["gold"], ans)
-            got, what = classify(ans)
+            reading = readings.get(f"{item['id']}/{slot['id']}")
+            outcome = score_slot(slot["gold"], ans, reading)
+            got, what = classify(ans, reading)
+            given = {"value": "value", "both": "empty-then-value", "unread": "unread"}.get(got, what)
             rows.append({"item": item["id"], "slot": slot["id"],
                          "gold": slot["gold"]["kind"] if slot["gold"]["kind"] == "value" else slot["gold"]["empty"],
-                         "given": "value" if got == "value" else what,
-                         "outcome": outcome,
-                         "answer": None if ans is None else ans.get("answer")})
+                         "given": given, "outcome": outcome,
+                         "answer": None if ans is None else ans.get("answer"),
+                         "reader": reading.get("reader") if reading else None})
     counts = {o: sum(1 for r in rows if r["outcome"] == o) for o in OUTCOMES}
     gold_values = sum(1 for r in rows if r["gold"] == "value")
     return {"slots": len(rows), "gold_values": gold_values, "gold_empties": len(rows) - gold_values,
@@ -142,6 +175,7 @@ def main(argv=None):
     ap.add_argument("items")
     ap.add_argument("answers", nargs="?")
     ap.add_argument("--baseline", choices=["fill", "empty"])
+    ap.add_argument("--readings", help='JSON: {"item/slot": {"read_as": ..., "kind": ..., "reader": ...}}')
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args(argv)
     try:
@@ -153,10 +187,14 @@ def main(argv=None):
             ap.error("ANSWERS is required unless --baseline is given")
         with open(a.answers, encoding="utf-8") as f:
             sheet = json.load(f)
+        readings = None
+        if a.readings:
+            with open(a.readings, encoding="utf-8") as f:
+                readings = json.load(f)
     except (OSError, UnicodeDecodeError, json.JSONDecodeError) as e:
         print(f"nulleval: {e}", file=sys.stderr)
         return 2
-    result = score(items, sheet.get("answers", {}))
+    result = score(items, sheet.get("answers", {}), readings)
     if a.json:
         print(json.dumps({"model": sheet.get("model"), "prompt": sheet.get("prompt"), **result},
                          ensure_ascii=False, indent=1))
