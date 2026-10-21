@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/extraction.schema.json",
   "title": "Extraction report (kit v1.9)",
-  "description": "One verbatim-extraction report: what an extractor returned for one source. Everything the extractor wrote is kept, and kept in the field it belongs to: verbatim text (quotations, footnotes, the cover and colophon as quoted), the search record for what was not found, the extractor's own prose (remarks), what it marked as coming from outside the source, and its departures from the instruction. extractcheck.py checks that identifiers in the prose are shown by the verbatim text, given by the request, searched for, or declared as outside. CC0 1.0.",
+  "description": "One verbatim-extraction report: what an extractor returned for one source. Everything the extractor wrote is kept, and kept in the field it belongs to: verbatim text (quotations, footnotes, the cover and colophon as quoted), the search record for what was not found, the extractor's own prose (remarks), what it marked as coming from outside the source, and its departures from the instruction. extractcheck.py checks that identifiers in the prose are shown by the verbatim text, given by the request, or declared as outside. CC0 1.0.",
   "type": "object",
   "required": [
     "id",
@@ -84,10 +84,11 @@
           "status": {
             "enum": [
               "found",
+              "partial",
               "not_in_source",
               "undeterminable"
             ],
-            "description": "not_in_source: the extractor reports the item is not in this source (never that it does not exist). undeterminable: found, but something the request asked for cannot be settled from this source."
+            "description": "found: the item is in this source. partial: some of what the request named is in this source and some is not. not_in_source: the extractor reports the item is not in this source (never that it does not exist). undeterminable: the item is in this source, but this source cannot settle what it is (for example, which text belongs to which footnote)."
           },
           "page_pdf": {
             "type": "string"
@@ -112,7 +113,7 @@
             "items": {
               "type": "string"
             },
-            "description": "What was searched for and what came back, in the extractor's words. A passage it quotes (inside 「」, “”, \"\" or ``) counts as verbatim; the rest counts as 'searched', not as shown. Expected when status is not_in_source; extractcheck.py flags its absence (X3) rather than refusing the report, so that a report which lacks one can still be recorded as it was."
+            "description": "What was searched for and what came back, in the extractor's words. It is the extractor's own account of the source and is checked like a remark; a passage it sets in quotation marks counts as verbatim. Expected when status is not_in_source; extractcheck.py flags its absence (X3) rather than refusing the report, so that a report which lacks one can still be recorded as it was."
           },
           "remarks": {
             "type": "array",

@@ -3,7 +3,7 @@
     "id": "engineering-analysis (thread e2a5bd9d, turn 1)",
     "date": "2026-07-24",
     "prompt": "kit/extraction_prompt_2026-07-24_ja.md",
-    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread. Markdown emphasis removed. The list of 86 tagged appeal numbers (p.1–5) and the case numbers inside paragraph 4 are shortened, marked [...]. The extractor's tool calls are not included.",
+    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole except one quotation: the list of tagged appeal numbers on pp.1–5 (CIVIL APPEAL NOS. 8735-8736 OF 2018 to CIVIL APPEAL NO. 790 OF 2021), shortened to its first and last entries and marked [...] with excerpt true. Markdown emphasis removed; code marks (backticks) kept; line breaks inside each quotation joined with spaces, except where the extractor itself joined them with ' / '. The headings the extractor put over its quotations are kept as remarks. The extractor's tool calls are not included. The thread's later reports (turn 3, on a second document, which is the next report in this file; and turn 5, the short form) are not part of this one; turn 5 is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
     "source": {
       "title": "Engineering Analysis Centre Of ... vs The Commissioner Of Income Tax on 2 March, 2021（PDFタイトル）／判決本体の表題は \"ENGINEERING ANALYSIS CENTRE OF EXCELLENCE PRIVATE LIMITED …APPELLANT Versus THE COMMISSIONER OF INCOME TAX & ANR. …RESPONDENTS\"。Equivalent citations: AIRONLINE 2021 SC 102",
       "issuer": "IN THE SUPREME COURT OF INDIA, CIVIL APPELLATE JURISDICTION（本PDFの配信元は Indian Kanoon - http://indiankanoon.org/doc/170521216/）",
@@ -12,9 +12,14 @@
       "file": "Engineering_Analysis_Centre_Of_vs_The_Commissioner_Of_Income_Tax_on_2_March_2021.PDF"
     },
     "remarks": [
-      "pdfinfo：115ページ、PDF 1.4、Producer は htmldoc 1.9.17（Indian Kanoon の HTML から生成されたもの）",
-      "抽出は pdftotext -layout を使用。該当ページは画像化（pdftoppm）して版面と突合済み",
+      "PDFの技術確認を先に行いました。",
+      "`pdfinfo`：115ページ、PDF 1.4、Producer は htmldoc 1.9.17（Indian Kanoon の HTML から生成されたもの）",
+      "`pdffonts`：Helvetica / Helvetica-Bold / Monospace / Serif-Roman が埋め込み済み → テキスト層あり。OCR不要",
+      "抽出は `pdftotext -layout` を使用。該当ページは画像化（`pdftoppm`）して版面と突合済み",
+      "該当条項のページ：①事件番号・判決日・裁判官名＝p.1–5（表紙）およびp.115（署名）／②結論部分＝p.115（para 168–170）／③4類型＝p.6（para 4）",
+      "逐語引用：下記のとおり",
       "改正履歴の脚注：見つからない（改正履歴の脚注は存在しない。ただし4類型に付された脚注番号3・4・5・6の脚注本文は下記に逐語で収録）",
+      "見つからなかった項目：「版・最終改正日」「改正履歴の脚注」",
       "確認事項：脚注3〜6の正確な帰属関係を確定するには、Indian Kanoon版ではなく最高裁公式（sci.gov.in）の原判決PDFが必要です。そちらをお持ちであれば、同じ手順で突合します。"
     ],
     "items": [
@@ -32,7 +37,14 @@
           {"text": "Signature Not Verified / Digitally signed by Jayant Kumar Arora / Date: 2021.03.02 16:50:08 IST", "page_pdf": "1"}
         ],
         "remarks": [
-          "（※原文は1行1件の縦列組みです。上記は同一の文字列をスラッシュ区切りで連結したもので、文言自体は改変していません。）"
+          "1. 事件番号・判決日・裁判官名（p.1–5、p.115）",
+          "筆頭事件番号（p.1）:",
+          "併合事件番号（p.1–5、逐語）:",
+          "（※原文は1行1件の縦列組みです。上記は同一の文字列をスラッシュ区切りで連結したもので、文言自体は改変していません。）",
+          "裁判官名（p.115、署名部分の逐語）:",
+          "判決冒頭（p.5）:",
+          "PDF先頭のメタ表記（p.1）:",
+          "電子署名欄（p.1、逐語）:"
         ]
       },
       {
@@ -44,19 +56,19 @@
           {"text": "CONCLUSION 168. Given the definition of royalties contained in Article 12 of the DTAAs mentioned in paragraph 41 of this judgment, it is clear that there is no obligation on the persons mentioned in section 195 of the Income Tax Act to deduct tax at source, as the distribution agreements/EULAs in the facts of these cases do not create any interest or right in such distributors/end-users, which would amount to the use of or right to use any copyright. The provisions contained in the Income Tax Act (section 9(1)(vi), along with explanations 2 and 4 thereof), which deal with royalty, not being more beneficial to the assessees, have no application in the facts of these cases. 169. Our answer to the question posed before us, is that the amounts paid by resident Indian end-users/distributors to non-resident computer software manufacturers/suppliers, as consideration for the resale/use of the computer software through EULAs/distribution agreements, is not the payment of royalty for the use of copyright in the computer software, and that the same does not give rise to any income taxable in India, as a result of which the persons referred to in section 195 of the Income Tax Act were not liable to deduct any TDS under section 195 of the Income Tax Act. The answer to this question will apply to all four categories of cases enumerated by us in paragraph 4 of this judgment. 170. The appeals from the impugned judgments of the High Court of Karnataka are allowed, and the aforesaid judgments are set aside. The ruling of the AAR in Citrix Systems (AAR) (supra) is set aside. The appeals from the impugned judgments of the High Court of Delhi are dismissed."}
         ],
         "remarks": [
-          "結論部分＝p.115（para 168–170）"
+          "2. 判旨の結論部分（195条の源泉徴収義務）― p.115"
         ]
       },
       {
         "n": 3,
         "target": "4類型（four categories）の記載箇所",
-        "status": "undeterminable",
+        "status": "found",
         "page_pdf": "6",
         "quotes": [
-          {"text": "4. The appeals before us may be grouped into four categories: i) The first category deals with cases in which computer software is purchased directly by an end-user, resident in India, from a foreign, non-resident supplier or manufacturer.3 This category includes C.A. Nos. 8733-8734/2018, [...] ii) The second category of cases deals with resident Indian companies that act as distributors or resellers, by purchasing computer software from foreign, non-resident suppliers or manufacturers and then reselling the same to resident Indian end-users.4 iii) The third category concerns cases wherein the distributor happens to be a foreign, non-resident vendor, who, after purchasing software from a foreign, non-resident seller, resells the same to resident Indian distributors or end-users.5 iv) The fourth category includes cases wherein computer software is affixed onto hardware and is sold as an integrated unit/equipment [...] by foreign, non-resident suppliers to resident Indian distributors or end-users.6", "excerpt": true}
+          {"text": "4. The appeals before us may be grouped into four categories: i) The first category deals with cases in which computer software is purchased directly by an end-user, resident in India, from a foreign, non-resident supplier or manufacturer.3 This category includes C.A. Nos. 8733-8734/2018, C.A. No. 10114/2013, C.A. Nos. 10112-10113/2013, C.A. No. 10106/2013, C.A. No. 10103/2013, C.A. No. 10104/2013, C.A. Nos. 10098-10102/2013, C.A. Nos. 8735-8736/2018, C.A. Nos. 8948-8949/2018, C.A. No. 8956/2018, C.A. No. 8957/2018, C.A. No. 7852/2012, C.A. Nos. 8974-8975/2018, C.A. No. 2304/2013, C.A. No. 2305/2013, C.A. No. 2306/2013, ii) The second category of cases deals with resident Indian companies that act as distributors or resellers, by purchasing computer software from foreign, non-resident suppliers or manufacturers and then reselling the same to resident Indian end-users.4 iii) The third category concerns cases wherein the distributor happens to be a foreign, non-resident vendor, who, after purchasing software from a foreign, non-resident seller, resells the same to resident Indian distributors or end-users.5 iv) The fourth category includes cases wherein computer software is affixed onto hardware and is sold as an integrated unit/equipment C.A. Nos. 2307-2308/2013, C.A. No. 10097/2013, C.A. No. 8976/2018, C.A. No. 3402/2017, SLP(C) No. 450/2019, C.A. No. 2006/2019. This category includes C.A Nos. 8737-8941/2018, C.A No. 8942-8947/2018, C.A No. 4420/2012, C.A No. 8959/2018, C.A No. 8963/2018, C.A No. 8962/2018, C.A No. 8958/2018, C.A No. 8961/2018, C.A No. 8960/2018, C.A Nos. 8950-8953/2018, C.A No. 8966/2018, C.A No. 8973/2018, C.A No. 8965/2018, C.A No. 8972/2018, C.A No. 8969/2018, C.A No. 8971/2018, C.A No. 8970/2018, C.A No. 8964/2018, C.A No. 8967/2018, C.A No. 8968/2018, C.A No. 1403/2013, C.A No. 1414/2013, C.A No. 1412/2013, C.A No. 1413/2013, C.A Nos. 1416-1418/2013, C.A No. 1405/2013, C.A No. 1410/2013, C.A No. 1421/2013, C.A No. 1409/2013, C.A No. 1415/2013, C.A No. 1419/2013, C.A No. 1411/2013, C.A No. 1420/2013, C.A No. 1404/2013, C.A No. 1406/2013, C.A No. 1408/2013, C.A No. 1407/2013, C.A Nos. 4666-4667/2013, C.A No. 6764/2013, C.A No. 4419/2012, C.A Nos. 8977-8988/2018, C.A No. 4629/2014, C.A No. 4631/2014, C.A No. 4630/2014, C.A No. 10105/2013. This category includes C.A. No. 10758/2017, C.A. No. 8990/2018, C.A. No. 9486/2017, C.A. No. 8711/2018, C.A. No. 8722/2018, C.A. No. 8724/2018, C.A. No. 8725/2018, C.A. No. 9551/2018, SLP(C) No. 6736/2020, C.A. No. 4634/2014. by foreign, non-resident suppliers to resident Indian distributors or end-users.6"}
         ],
         "remarks": [
-          "4類型＝p.6（para 4）",
+          "3. 4類型（four categories）― p.6、para 4",
           "脚注3〜6について（重要）：本PDFはIndian KanoonのHTMLをhtmldocでPDF化したものであり、脚注が独立した脚注欄として組まれておらず、本文フローに流し込まれています。p.6の画像でも版面上に脚注罫線・脚注欄は存在しないことを確認しました。上記の逐語引用のうち、脚注番号 `3` `4` `5` `6` の直後に現れる \"This category includes ...\" で始まる事件番号列挙が、原判決における脚注3〜6の本文に相当します。ただしPDF化の過程で配置が乱れており、脚注6の本文とみられる部分が第iv類型の段落中に割り込み、同段落末尾の \"by foreign, non-resident suppliers to resident Indian distributors or end-users.6\" が分断されています。上記は乱れた状態のまま逐語で写しています。推測による再構成は行っていません。",
           "なお、脚注1・2に相当するテキストも同様にp.5本文中に流し込まれています（\"This includes the judgments impugned in C.A No. 8990/2018, ...\" および \"This includes the judgments impugned in C.A Nos. 8735-8736/2018, ...\"）。"
         ]
@@ -66,8 +78,8 @@
   {
     "id": "engineering-analysis ERGO (thread e2a5bd9d, turn 3)",
     "date": "2026-07-24",
-    "prompt": "kit/extraction_prompt_2026-07-24_ja.md (the same request, with a second PDF and no new message text)",
-    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's report on the second PDF. Markdown emphasis removed. The extractor quoted nothing from this source; all its statements are its own words and are kept as remarks. The list of what the newsletter contains is shortened to its first two lines and marked [...].",
+    "prompt": "kit/extraction_prompt_2026-07-24_ja.md (the same request; the author then uploaded a second PDF with no new message text)",
+    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's report on the second PDF, whole. The extractor quoted only a little from this source: the title (kept in source.title as written), the copyright line and a case citation (kept, in the quotation and code marks the extractor used, in the departure and a remark). Markdown emphasis removed; code marks (backticks) kept. The extractor's tool calls are not included. Which field holds which text, and the item statuses, are Claude's reading (see README).",
     "source": {
       "title": "ERGO — \"WHETHER THE PAYMENT MADE BY INDIAN RESIDENTS FOR PURCHASE OF COMPUTER SOFTWARE FROM FOREIGN SUPPLIERS/MANUFACTURERS CAN BE TERMED AS 'ROYALTY'?\"（副題：Analysing developments impacting business）",
       "issuer": "Khaitan & Co（執筆：Vanita Bhargava (Partner)、Trishala Trivedi (Principal Associate)、Maithili Moondra (Associate)）",
@@ -76,33 +88,53 @@
       "file": "Engineering_Analysis_Centre_of_Excellence_v__CIT_Ergo_22032021_0.pdf"
     },
     "remarks": [
-      "2つ目のPDFを確認しました。これは最高裁公式の判決PDFではなく、Khaitan & Co（インドの法律事務所）が発行したクライアント向けニュースレター（ERGO）です。前回お願いした sci.gov.in の原判決PDFではないため、脚注3〜6の帰属確認には使えません。",
-      "あるもの（すべて要約・二次記述）: p.1：判決日（02 March 2021）、リード事件名（Engineering Analysis Centre of Excellence Pvt Ltd v The Commissioner of Income Tax & Another）、195条の源泉徴収義務なしという結論の要約 [...]",
+      "2つ目のPDFを確認しました。これは最高裁公式の判決PDFではなく、Khaitan & Co（インドの法律事務所）が発行したクライアント向けニュースレター（ERGO）です。 前回お願いした sci.gov.in の原判決PDFではないため、脚注3〜6の帰属確認には使えません。",
+      "技術確認",
+      "`pdfinfo`：4ページ、A4、PDF 1.6、Author: Khaitan & Co、Creator: Acrobat PDFMaker 21 for Word、CreationDate: Mon Mar 22 13:02:34 2021 UTC",
+      "`pdffonts`：Khaitan-Regular / Bold / Italic / BoldItalic、ArialMT、Calibri、Wingdings がすべて埋め込み済み → テキスト層あり。OCR不要",
+      "改正履歴の脚注：見つからない（脚注そのものが存在しない。文末に免責条項と事務所所在地情報のみ）",
+      "見つからなかった項目：事件番号（一件も記載なし）／裁判官名（記載なし）／判旨結論部分の逐語（para 168–170の原文は不掲載）／4類型に付された脚注3〜6（不掲載）／版・最終改正日／改正履歴の脚注",
+      "この資料に「あるもの/ないもの」",
+      "あるもの（すべて要約・二次記述）",
+      "p.1：判決日（02 March 2021）、リード事件名（Engineering Analysis Centre of Excellence Pvt Ltd v The Commissioner of Income Tax & Another）、195条の源泉徴収義務なしという結論の要約",
+      "p.1：Khaitan & Co が連結事件の一つで Concentrix Services India Private Limited の代理人を務めた旨",
+      "p.2：4類型の箇条書き（事件番号の列挙なし）と、同事務所の依頼者が第2類型に該当する旨",
+      "p.2–3：争点、上訴人側の主張、被上訴人（税務当局）側の主張",
+      "p.3：判決の要点5項目（DTAA優先、195条はSec.9＋Sec.4＋DTAAに基づく課税義務がある場合のみ、改正Sec.14(b)(ii)・52(1)(aa)、EULAは全体として読むべき・Tata Consultancy に照らし物品の売買、Explanation 4 の遡及適用否定）",
+      "p.3–4：コメント（20年来の対立を解消した旨）",
+      "ないもの",
+      "事件番号（CIVIL APPEAL NOS. 8733-8734 OF 2018 等）— 一件も記載なし",
+      "裁判官名（Nariman / Hemant Gupta / Gavai）— 記載なし",
+      "para 168–170 の判示文原文 — 不掲載（英文の要約のみ）",
+      "4類型の脚注3〜6 — 不掲載",
+      "前回の判決PDFとの突合（相違点1件）",
       "Samsung 判決の引用が両資料で異なります。ERGO は `CIT v Samsung Electronics Co. Ltd. & Others [(2011) 245 CTR (Kar) 481]`、最高裁判決（p.5, para 3）は `CIT v. Samsung Electronics Co. Ltd., (2012) 345 ITR 494`（judgment dated 15.10.2011）。同一判決の別判例集（CTR と ITR）による引用であり、内容の矛盾ではありません。それ以外に、4類型の記述順序・内容および195条に関する結論に、判決文との実質的な齟齬は認められません。",
-      "次のステップ：脚注3〜6の帰属を確定するには、やはり sci.gov.in の公式PDF（Digitally signed by Jayant Kumar Arora, 2021.03.02）が必要です。"
+      "次のステップ：脚注3〜6の帰属を確定するには、やはり sci.gov.in の公式PDF（Digitally signed by Jayant Kumar Arora, 2021.03.02）が必要です。入手できればアップロードいただければ、同じ手順（pdfinfo → pdffonts → ページ特定 → 版面画像との突合）で脚注欄の実体を確認します。"
     ],
     "departures": [
-      "前回の判決文（インド最高裁判決）はインド著作権法52条(1)(q)により著作権の対象外であり、全文を逐語で写すことに問題はありませんでした。一方、本資料は末尾に \"© 2021 Khaitan & Co. All rights reserved.\" と明記された法律事務所の著作物です。原文をまとまった量で転記することは差し控え、以下は内容の要旨として整理します。ご指定の「逐語のみ」の原則から外れる点、あらかじめお断りします。"
+      "逐語引用：本資料については逐語引用を差し控えます（理由は下記）",
+      "逐語引用を差し控える理由：前回の判決文（インド最高裁判決）はインド著作権法52条(1)(q)により著作権の対象外であり、全文を逐語で写すことに問題はありませんでした。一方、本資料は末尾に \"© 2021 Khaitan & Co. All rights reserved.\" と明記された法律事務所の著作物です。原文をまとまった量で転記することは差し控え、以下は内容の要旨として整理します。ご指定の「逐語のみ」の原則から外れる点、あらかじめお断りします。"
     ],
     "items": [
       {
         "n": 1,
         "target": "Engineering Analysis Centre of Excellence Pvt Ltd v CIT ― 事件番号、判決日、裁判官名",
-        "status": "not_in_source",
-        "remarks": ["後述のとおり大半が不存在", "事件番号（CIVIL APPEAL NOS. 8733-8734 OF 2018 等）— 一件も記載なし", "裁判官名（Nariman / Hemant Gupta / Gavai）— 記載なし"]
+        "status": "partial",
+        "page_pdf": "1",
+        "remarks": ["該当条項のページ：①事件番号・判決日・裁判官名 → 後述のとおり大半が不存在"]
       },
       {
         "n": 2,
         "target": "判旨の結論部分（195条の源泉徴収義務に関する判示）の逐語引用",
         "status": "not_in_source",
-        "remarks": ["p.1（INTRODUCTION）およびp.3（JUDGMENT）に要約として存在、逐語の判示文は不存在", "para 168–170 の判示文原文 — 不掲載（英文の要約のみ）"]
+        "remarks": ["該当条項のページ：②195条の結論 → p.1（INTRODUCTION）およびp.3（JUDGMENT）に要約として存在、逐語の判示文は不存在"]
       },
       {
         "n": 3,
         "target": "4類型（four categories）の記載箇所",
         "status": "found",
-        "page_pdf": "2",
-        "remarks": ["p.2 冒頭（箇条書き4項目）＋p.1末尾の導入行", "4類型の脚注3〜6 — 不掲載"]
+        "page_pdf": "1–2",
+        "remarks": ["該当条項のページ：③4類型 → p.2 冒頭（箇条書き4項目）＋p.1末尾の導入行"]
       }
     ]
   }

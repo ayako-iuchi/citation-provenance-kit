@@ -261,14 +261,17 @@ def test_the_four_threads_as_published():
     assert ("title", "companies (accounts) amendment rules, 2021") in flagged(acc)
     assert ("gazette", "G.S.R. 205(E)") not in flagged(acc)
     ergo = results["engineering-analysis ERGO"]
-    assert ("report", "(2011) 245 CTR 481") in flagged(ergo)
+    assert ("report", "(2011) 245 CTR 481") not in flagged(ergo)  # set in code marks by the extractor
+    assert ("section", "section 14(b)(ii)") in flagged(ergo)
     assert ("rule", "rule 192") in flagged(results["gfr-2017"])
+    assert ("file number", "F.7/10/2021-PPD") in flagged(results["gfr-2017"])
+    assert ("file number", "F./1/9/2021-PPD") not in flagged(results["gfr-2017"])
     assert ("gazette", "G.S.R. 846(E)") in flagged(results["dpdp-rules"])
     assert flagged(results["engineering-analysis"]) == {("report", "AIRONLINE 2021 SC 102")}
     assert ("条", "52(1)(q)") in flagged(ergo)
     assert {k: v["identifiers"]["not shown"] for k, v in results.items()} == {
-        "companies-accounts-rules": 7, "dpdp-rules": 3, "engineering-analysis": 1,
-        "engineering-analysis ERGO": 10, "gfr-2017": 5}
+        "companies-accounts-rules": 7, "dpdp-rules": 4, "engineering-analysis": 1,
+        "engineering-analysis ERGO": 11, "gfr-2017": 11}
 
 
 @pytest.mark.parametrize("text", ["本PDFはRule 3(1)を含む", "但書はG.S.R. 205(E)が挿入", "改正はF.1/1/2021-PPDによる",
@@ -337,16 +340,36 @@ def test_more_identifier_forms(text, ident):
     assert ident in extractcheck.identifiers(text)
 
 
-def test_the_search_record_is_not_verbatim_text_except_where_it_quotes():
+def test_the_search_record_is_the_extractors_own_account():
     r = report(items=[{"n": 1, "target": "Rule 11(g)", "status": "not_in_source",
-                       "search_record": ["searched 'G.S.R. 206(E)': 0 hits"],
+                       "search_record": ["searched for G.S.R. 206(E): 0 hits"],
                        "remarks": ["Rule 11(g) was inserted by G.S.R. 206(E)"]}])
     result = extractcheck.check(r)
-    assert not result["flags"] and result["identifiers"]["searched"] == 1
-    assert result["searched_only"][0]["identifier"] == "G.S.R. 206(E)"
+    assert {f["where"] for f in result["flags"]} == {"item 1 remark 1", "item 1 search 1"}
     r["items"][0]["search_record"] = ["one hit: 「Inserted vide G.S.R. 206(E)」"]
     result = extractcheck.check(r)
-    assert result["identifiers"]["shown"] == 1 and not result["searched_only"]
+    assert not result["flags"] and result["identifiers"]["shown"] == 1
+
+
+def test_a_passage_in_quotation_marks_counts_as_shown():
+    for marks in ("「{}」", "“{}”", '"{}"', "`{}`"):
+        r = report(remarks=["the note reads " + marks.format("Deleted vide OM No. F.1/26/2018-PPD"),
+                            "so F.1/26/2018-PPD deleted it"], items=[])
+        assert not extractcheck.check(r)["flags"], marks
+
+
+def test_reports_are_checked_one_at_a_time(tmp_path):
+    a = report(id="a", items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "1",
+                                "quotes": [{"text": "168. Given that"}]}])
+    b = report(id="b", remarks=["para 168"], items=[])
+    p = tmp_path / "ab.json"
+    p.write_text(json.dumps([a, b]), encoding="utf-8")
+    results = [extractcheck.check(r) for r in extractcheck.load(str(p))]
+    assert not results[0]["flags"] and flagged(results[1]) == {("paragraph", "para 168")}
+
+
+def test_circled_numbers_are_labels():
+    assert extractcheck.identifiers("②195条の結論") == {("条", "195")}
 
 
 def test_expected_is_not_given():

@@ -2,7 +2,7 @@
   "id": "companies-accounts-rules (thread 9bea3f84, turn 1)",
   "date": "2026-07-24",
   "prompt": "kit/extraction_prompt_2026-07-24_ja.md",
-  "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread. Markdown emphasis removed. The Hindi note on PDF p.25 is left out (its text layer was garbled, as the extractor said); the extractor's remark about it is kept. The extractor's tool calls are not included. The thread's second report (the short form) repeats the same statements and is not transcribed.",
+  "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole except one quotation: the Hindi note on PDF p.25, whose text layer was garbled (the extractor said so); it is recorded as [...] with excerpt true, and the extractor's remark about it is kept. Markdown emphasis removed; line breaks inside each quotation joined with spaces. The headings the extractor put over its quotations (naming the page and the notification) are kept as remarks. The extractor's tool calls are not included. The thread's second report (the short form, turn 3) is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
   "source": {
     "title": "Companies (Accounts) Rules, 2014 — G.S.R. 239(E)（The Gazette of India : EXTRAORDINARY, PART II—Section 3—Sub-section (i)）。後続の改正官報4件を合本した非公式PDF",
     "issuer": "MINISTRY OF CORPORATE AFFAIRS（インド企業省）／ Published by the Controller of Publications, Delhi-110054",
@@ -11,8 +11,7 @@
     "file": "Companies__Accounts__Rules__2014_.pdf"
   },
   "remarks": [
-    "Rule 3 全文：PDF p.1（官報頁 30）。Rule 3(1) の但書に言及する改正条項：PDF p.34（G.S.R. 235(E) 英文）、Rule 3 を改正する条項：PDF p.38（G.S.R. 624(E) 英文）。監査人規則 Rule 11(g)：収録なし",
-    "（p.25 のヒンディー語脚注は、PDFのテキスト層でフォントエンコーディングが崩れており、上記は抽出された文字列そのままです。正確な原文確認が必要な場合はページのラスタライズによる目視照合を推奨します。）",
+    "該当条項のページ：Rule 3 全文：PDF p.1（官報頁 30）。Rule 3(1) の但書に言及する改正条項：PDF p.34（G.S.R. 235(E) 英文）、Rule 3 を改正する条項：PDF p.38（G.S.R. 624(E) 英文）。監査人規則 Rule 11(g)：収録なし",
     "両項目の逐語取得には、G.S.R. 205(E), dated 24.03.2021（但書本文）および Companies (Audit and Auditors) Rules, 2014 の最新統合版／G.S.R. 206(E), dated 24.03.2021（Rule 11(g) 挿入）の原本が別途必要です。"
   ],
   "items": [
@@ -23,22 +22,31 @@
       "page_pdf": "1",
       "page_printed": "30",
       "quotes": [
-        {"text": "3. Manner of books of account to be kept in electronic mode.- (1) The books of account and other relevant books and papers maintained in electronic mode shall remain accessible in India so as to be usable for subsequent reference.", "page_pdf": "1"},
+        {"text": "3. Manner of books of account to be kept in electronic mode.- (1) The books of account and other relevant books and papers maintained in electronic mode shall remain accessible in India so as to be usable for subsequent reference.", "page_pdf": "1", "page_printed": "30"},
         {"text": "2. In the Companies (Accounts) Rules, 2014,- (i) in the proviso to sub-rule (1) of rule 3, for the figures, letters and words \"1st day of April, 2022\", the figures, letters and words \"1st day of April, 2023\" shall be substituted;", "page_pdf": "34"},
         {"text": "2. In the Companies (Accounts) Rules, 2014, in rule 3,- (i) in sub-rule (1), for the words \"accessible in India\", the words \"accessible in India, at all times,\" shall be substituted; (ii) in sub-rule (5), in the proviso, for the words \"periodic basis\", the words \"daily basis\" shall be substituted; (iii) in sub-rule (6), after clause (d), the following clause shall be inserted, namely:- \"(e) where the service provider is located outside India, the name and address of the person in control of the books of account and other books and papers in India.\".", "page_pdf": "38"}
       ],
       "footnotes": [
         {"text": "Note : The principal rules were published in the Gazette of India vide number G.S.R. 239(E), dated the 31st March, 2014 and was subsequently amended vide notifications number G.S.R. 723(E), dated the 14th October, 2014, G.S.R. 37(E), dated the 16th January, 2015, G.S.R. 680(E), dated the 4th September, 2015, G.S.R. 742(E), dated the 27th July, 2016, G.S.R. 1371(E), dated the 7th November, 2017, G.S.R. 191(E), dated the 27th February, 2018, G.S.R. 725(E), dated the 31st July, 2018, G.S.R. 803 (E), dated the 22nd October, 2019, G.S.R. 60(E), dated the 30th January, 2020, G.S.R. 205(E), dated the 24th March, 2021, G.S.R. 247(E), dated the 1st April, 2021 and G.S.R. 107(E), dated the 11th February, 2022.", "page_pdf": "34"},
         {"text": "Note : The principal rules were published in the Gazette of India, extraordinary, Part II, Section 3, Sub-section (i) vide number G.S.R. 239(E), dated the 31st March, 2014 and lastly amended, vide notification number G.S.R. 235(E), dated 31st March, 2022.", "page_pdf": "36"},
-        {"text": "Note : The principal rules were published in the Gazette of India, Extraordinary, Part II, Section 3, Sub-section (i) vide number G.S.R. 239(E), dated the 31st March, 2014 and lastly amended, notification number G.S.R. 407(E), dated the 31st May, 2022.", "page_pdf": "38"}
+        {"text": "Note : The principal rules were published in the Gazette of India, Extraordinary, Part II, Section 3, Sub-section (i) vide number G.S.R. 239(E), dated the 31st March, 2014 and lastly amended, notification number G.S.R. 407(E), dated the 31st May, 2022.", "page_pdf": "38"},
+        {"text": "[...]", "page_pdf": "25", "excerpt": true}
       ],
       "search_record": [
         "監査証跡（audit trail／edit log／無効化不可）に関する文言は、38ページ全文検索（\"audit trail\" / \"edit log\" / \"accounting software\"）で0件でした。"
       ],
       "remarks": [
+        "① Companies (Accounts) Rules, 2014, Rule 3(1) ― PDF p.1（官報 p.30）",
         "※ 本PDFの Rule 3(1) には但書（proviso）が存在しません。",
         "本PDFに収録されているのは、その但書を参照して日付のみを差し替える改正条項のみです（但書本文は非収録）。",
-        "見つからない。本PDFの Rule 3(1)（p.1）に但書は存在しない。当該但書を挿入したのは G.S.R. 205(E), dated the 24th March, 2021（Companies (Accounts) Amendment Rules, 2021）だが、この官報は本PDFに収録されていない（脚注での言及のみ）。日付を「1st day of April, 2023」に改める G.S.R. 235(E) の改正文のみ収録（上記引用）。"
+        "PDF p.34（G.S.R. 235(E), New Delhi, the 31st March, 2022）逐語：",
+        "PDF p.38（G.S.R. 624(E), New Delhi, the 5th August, 2022）逐語：",
+        "改正履歴の脚注（逐語） PDF p.34 末尾：",
+        "PDF p.36 末尾（G.S.R. 407(E) 分）：",
+        "PDF p.38 末尾（G.S.R. 624(E) 分）：",
+        "PDF p.25 末尾（G.S.R. 107(E) 分、ヒンディー語のみ・英文脚注なし）：",
+        "（p.25 のヒンディー語脚注は、PDFのテキスト層でフォントエンコーディングが崩れており、上記は抽出された文字列そのままです。正確な原文確認が必要な場合はページのラスタライズによる目視照合を推奨します。）",
+        "見つからない。 本PDFの Rule 3(1)（p.1）に但書は存在しない。当該但書を挿入したのは G.S.R. 205(E), dated the 24th March, 2021（Companies (Accounts) Amendment Rules, 2021）だが、この官報は本PDFに収録されていない（脚注での言及のみ）。日付を「1st day of April, 2023」に改める G.S.R. 235(E) の改正文のみ収録（上記引用）。"
       ]
     },
     {
@@ -49,7 +57,7 @@
         "全文検索で \"Audit and Auditors\" は0件。"
       ],
       "remarks": [
-        "見つからない。本PDFは Companies (Accounts) Rules, 2014 のみを収録しており、Companies (Audit and Auditors) Rules, 2014 は一切含まれない。"
+        "見つからない。 本PDFは Companies (Accounts) Rules, 2014 のみを収録しており、Companies (Audit and Auditors) Rules, 2014 は一切含まれない。"
       ]
     }
   ]

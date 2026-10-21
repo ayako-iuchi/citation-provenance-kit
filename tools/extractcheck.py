@@ -14,27 +14,28 @@ and checks:
     X1  a quotation is not on the page given for it (only with --source)
     X2  an identifier in the extractor's own words is not shown by the report's
         verbatim text, not given by the request, not in the source text (with
-        --source), not among what the extractor says it searched for, and not
-        declared under "outside"
+        --source), and not declared under "outside"
     X3  an item reported not in the source has no search record
-    X4  an item reported found (or undeterminable) has no page, on the item or on
-        every one of its quotations
+    X4  an item reported found (or partly found, or undeterminable) has no page,
+        on the item or on every one of its quotations
 
 Where each identifier stands:
 
-    shown       in a quotation, a footnote, the cover and colophon as quoted, or
-                a passage the search record quotes (inside 「」, “”, "" or ``)
+    shown       in a quotation, a footnote, the cover and colophon as quoted, or a
+                passage the extractor sets in quotation marks or code marks (「」, “”, "", ‘’, ``)
+                anywhere in its own words: it presents that passage as the
+                source's. Each report is checked on its own; a quotation in one
+                report does not show an identifier in another.
     given       in an item as the request named it (not in what the requester
                 expected; that is the "expected" field, and is not counted)
     in source   in the source text given with --source
-    searched    elsewhere in the search record: what the extractor says it
-                searched for or found by searching. This is still the
-                extractor's own account, so it is listed, not passed silently.
     declared    under "outside", where the extractor itself put it
     not shown   none of these: flagged X2
 
 "The extractor's own words" are the remarks (per item and for the report), the
-description of the source (title, issuer, edition, pages) and the departures.
+search record outside its quotation marks (what the extractor says it searched
+for and found is its own account of the source), the description of the source
+(title, issuer, edition, pages) and the departures.
 
 Identifiers: gazette numbers (G.S.R. 205(E), GSR 205(E), S.O. 5458(E)), file
 numbers of office memoranda (F.1/1/2021-PPD, F. No. 1/1/2021-PPD); rule, section,
@@ -110,12 +111,13 @@ LEADING = re.compile(r"^(?:(?:In|IN|Under|UNDER|The|THE|Of|OF|By|BY|And|AND|See|
 PARA_START = re.compile(r"(?:^|(?<=\s))(\d{1,4})\.\s+(?=[A-Z“\"(])")
 PARA_START_NOT_AFTER = re.compile(r"(?:[Rr]ules?|[Ss]ections?|[Pp]aras?|[Pp]aragraphs?|[Aa]rticles?|No|Nos|p|pp)\.?\s*$")
 
-QUOTED = re.compile(r"「([^」]*)」|“([^”]*)”|\"([^\"]*)\"|`([^`]*)`|‘([^’]*)’")
+QUOTED = re.compile(r"「([^」]*)」|“([^”]*)”|\"([^\"]*)\"|‘([^’]*)’|`([^`]*)`")
 
 
 def normalise(text, soft=False):
     """Fold full-width forms, quotes and dashes, and collapse whitespace, for matching only."""
-    text = unicodedata.normalize("NFKC", text or "")
+    text = re.sub("[\u2460-\u2473\u24f5-\u24fe\u2776-\u277f]", " ", text or "")  # circled numbers are labels, not digits
+    text = unicodedata.normalize("NFKC", text)
     text = text.replace("­", "")
     for a, b in (("’", "'"), ("‘", "'"), ("“", '"'), ("”", '"')):
         text = text.replace(a, b)
@@ -266,7 +268,7 @@ ALLOWED = {
     "quote": {"text", "page_pdf", "page_printed", "excerpt"},
     "outside": {"text", "origin"},
 }
-STATUSES = ("found", "not_in_source", "undeterminable")
+STATUSES = ("found", "partial", "not_in_source", "undeterminable")
 
 
 def validate(r, where):
@@ -344,6 +346,8 @@ def prose_fields(report):
     for item in report["items"]:
         for i, text in enumerate(item.get("remarks", []), 1):
             yield "item {} remark {}".format(item["n"], i), text
+        for i, text in enumerate(item.get("search_record", []), 1):
+            yield "item {} search {}".format(item["n"], i), text
     for i, text in enumerate(report.get("departures", []), 1):
         yield "departure {}".format(i), text
 
@@ -426,18 +430,18 @@ def on_pages(seg, pages):
 
 def check(report, source=None):
     flags = []
-    shown, given, declared, searched = set(), set(), set(), set()
+    shown, given, declared = set(), set(), set()
     for q in report["source"].get("cover", []):
         shown |= identifiers(q.get("text", ""), verbatim=True)
     for item in report["items"]:
         given |= identifiers(item.get("target", ""))
         for q in item.get("quotes", []) + item.get("footnotes", []):
             shown |= identifiers(q.get("text", ""), verbatim=True)
-        for text in item.get("search_record", []):
-            inside = [g for m in QUOTED.finditer(text) for g in m.groups() if g]
-            for part in inside:
-                shown |= identifiers(part, verbatim=True)
-            searched |= identifiers(QUOTED.sub(" ", text))
+    for _, text in prose_fields(report):
+        for m in QUOTED.finditer(text):
+            for part in m.groups():
+                if part:
+                    shown |= identifiers(part, verbatim=True)
     for entry in report.get("outside", []):
         declared |= identifiers(entry.get("text", ""))
     in_source = set()
@@ -447,12 +451,11 @@ def check(report, source=None):
 
     places = {}
     for where, text in prose_fields(report):
-        for ident in sorted(identifiers(text)):
+        for ident in sorted(identifiers(QUOTED.sub(" ", text))):
             places.setdefault(ident, [])
             if where not in places[ident]:
                 places[ident].append(where)
-    counts = {"shown": 0, "given": 0, "in source": 0, "searched": 0, "declared": 0, "not shown": 0}
-    searched_only = []
+    counts = {"shown": 0, "given": 0, "in source": 0, "declared": 0, "not shown": 0}
     for ident in sorted(places):
         if covered(ident, shown):
             counts["shown"] += 1
@@ -460,16 +463,13 @@ def check(report, source=None):
             counts["given"] += 1
         elif covered(ident, in_source):
             counts["in source"] += 1
-        elif covered(ident, searched):
-            counts["searched"] += 1
-            searched_only.append({"kind": ident[0], "identifier": ident[1], "where": places[ident]})
         elif covered(ident, declared):
             counts["declared"] += 1
         else:
             counts["not shown"] += 1
             for where in places[ident]:
                 flags.append({"check": "X2", "where": where, "kind": ident[0], "identifier": ident[1],
-                              "message": "{} {!r} is not shown by the report's verbatim text, given by the request{}, searched for, or declared as outside".format(
+                              "message": "{} {!r} is not shown by the report's verbatim text, given by the request{}, or declared as outside".format(
                                   ident[0], ident[1], ", found in the source" if source else "")})
 
     for item in report["items"]:
@@ -478,7 +478,7 @@ def check(report, source=None):
         if item["status"] == "not_in_source" and not item.get("search_record"):
             flags.append({"check": "X3", "where": "item {}".format(n),
                           "message": "reported not in the source, with no search record"})
-        if item["status"] in ("found", "undeterminable") and not (item.get("page_pdf") or item.get("page_printed")):
+        if item["status"] in ("found", "partial", "undeterminable") and not (item.get("page_pdf") or item.get("page_printed")):
             if not all_quotes or not all(q.get("page_pdf") or q.get("page_printed") for q in all_quotes):
                 flags.append({"check": "X4", "where": "item {}".format(n),
                               "message": "reported {} with no page".format(item["status"].replace("_", " "))})
@@ -502,7 +502,7 @@ def check(report, source=None):
         status[item["status"]] += 1
     return {"id": report["id"], "title": report["source"].get("title", ""),
             "items": len(report["items"]), "status": status, "identifiers": counts,
-            "searched_only": searched_only, "flags": flags}
+            "flags": flags}
 
 
 def load(path):
@@ -518,17 +518,15 @@ def render(result):
     s = result["status"]
     c = result["identifiers"]
     out = ["report {}  {}".format(result["id"], result["title"][:60]).rstrip(),
-           "  items {}: found {} / not in source {} / undeterminable {}".format(
-               result["items"], s["found"], s["not_in_source"], s["undeterminable"]),
-           "  identifiers in the extractor's own words: shown {} / given {} / in source {} / searched {} / declared {} / not shown {}".format(
-               c["shown"], c["given"], c["in source"], c["searched"], c["declared"], c["not shown"])]
+           "  items {}: found {} / partial {} / not in source {} / undeterminable {}".format(
+               result["items"], s["found"], s["partial"], s["not_in_source"], s["undeterminable"]),
+           "  identifiers in the extractor's own words: shown {} / given {} / in source {} / declared {} / not shown {}".format(
+               c["shown"], c["given"], c["in source"], c["declared"], c["not shown"])]
     for f in result["flags"]:
         if f["check"] == "X2":
             out.append("  X2 {}: {} {}".format(f["where"], f["kind"], f["identifier"]))
         else:
             out.append("  {} {}: {}".format(f["check"], f["where"], f["message"]))
-    for s in result["searched_only"]:
-        out.append("  (searched only) {}: {} {}".format(", ".join(s["where"]), s["kind"], s["identifier"]))
     return "\n".join(out)
 
 
