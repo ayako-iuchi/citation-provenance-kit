@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.8 (21 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
+Kit v1.8 (21 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -162,7 +162,12 @@ The example log is the author's English translation. The original log was kept i
 
 ## Licence
 
-The kit is dedicated to the public domain under CC0 1.0, with one exception: the words of the Economic Survey 2020-21 in `examples/es2021_ch6/lines.json` and `examples/es2021_ch6/loci.jsonl` are a publication of the Government of India, reproduced in excerpt (kit v1.4). They are not covered by CC0, and the kit grants no permission to reuse them. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
+The kit is dedicated to the public domain under CC0 1.0, except for text it quotes from others, which is not covered by CC0 and which the kit grants no permission to reuse:
+
+- the words of the Economic Survey 2020-21, a publication of the Government of India, in `examples/es2021_ch6/` (kit v1.4) and in the tests and `evals/null/` that use them (kit v1.4–v1.6);
+- the quotations inside the extraction reports in `examples/extraction_2026-07-24/` (kit v1.9): Indian statutory instruments, the General Financial Rules, a judgment of the Supreme Court of India, and a few lines of a law firm's newsletter (its title, copyright line and one case citation), reproduced as the extractor quoted them.
+
+The transcriptions around those quotations are CC0. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
 
 ## Corrections
 
