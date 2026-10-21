@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.7 (20 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
+Kit v1.8 (21 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (One exception, from kit v1.4: see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -27,8 +27,8 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/notation.py`](tools/notation.py), [`schema/annotation.schema.json`](schema/annotation.schema.json) | Reads the notation, English and Japanese forms, with one grammar into typed records (component, grade, whether the component is volatile), checks its form (N0–N7), and rewrites it between the two forms (kit v1.5) |
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | Every annotation in both editions of the paper, v1.2, as typed records (kit v1.5), and its published catch log as numbers, components, outcomes and phases (kit v1.7) |
 | [`tools/nulleval.py`](tools/nulleval.py), [`evals/null/`](evals/null/), [`schema/null_item.schema.json`](schema/null_item.schema.json) | A test where an empty answer can be right: five questions, a scorer that counts filled and blanked slots apart and three kinds of empty, and a recorded run (kit v1.6) |
-| [`tools/catchlog.py`](tools/catchlog.py) | Counts corrections and confirmations apart for each component, before and after release, and says which zeros mean nothing (kit v1.7); with `--fields`, how full each column is (kit v1.8, unreleased) |
-| [`examples/series_log/`](examples/series_log/) | The author's log after the paper's v1.2 (#45–#62): date found, judgment columns, duration and phase only (kit v1.8, unreleased) |
+| [`tools/catchlog.py`](tools/catchlog.py) | Counts corrections and confirmations apart for each component, before and after release, and says which zeros mean nothing (kit v1.7); with `--fields`, how full each column is (kit v1.8) |
+| [`examples/series_log/`](examples/series_log/) | The author's log after the paper's v1.2 (#45–#62): date found, judgment columns, duration and phase only (kit v1.8) |
 | [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer and the catch-log tally (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
@@ -110,7 +110,7 @@ python3 tools/catchlog.py examples/method_paper_v1.2/catch_log.csv
 
 A log that counts only corrections shows zero both for a component that was checked and found sound and for one that was never checked. `catchlog.py` counts corrections and confirmations apart, for each component, before and after release, and names each cell `found`, `clean` (no correction, at least one confirmation), `other-only` (only an abstention or a rule sharpened) or `unexamined` (no row at all). It never adds the two together. It reads the workbook's Catch log sheet saved as CSV (UTF-8, or cp932 from Japanese Excel), English or Japanese component names, and reports a name it does not know (`--strict` makes that an error), because a misspelled component would otherwise show its real one as unexamined. The workbook's Outcome list has had "confirmed (no error found)" since v1.0; record confirmations in the same log as corrections. `examples/method_paper_v1.2/catch_log.csv` holds the method paper's published log (#1–#42 in English, #43–#44 in Japanese only) as numbers, components, outcomes and phases, without its text: before release, page is `clean` and figure `unexamined` (§7-3); after release, figure has two corrections and one confirmation. The paper's three abstentions (§7-5) are not in it, because the paper does not number them or give their components.
 
-## The field nobody else can fill (kit v1.8, unreleased)
+## The field nobody else can fill (kit v1.8)
 
 ```
 python3 tools/catchlog.py LOG.csv --fields
@@ -136,7 +136,7 @@ Hypothetical Technical Blog, *Citation provenance* (English, on note):
 - #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263) (the notation as typed records, kit v1.5)
 - #24 — [Not Established Is an Answer](https://note.com/ayako_iuchi/n/n7d7ca5a8837b) (a test where an empty answer can be right, kit v1.6)
 
-Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`, `v1.6`, `v1.7`). #19, #20 and #22–#24 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22, #23 and #24 were published on 20 October 2026, after v1.4, v1.5 and v1.6 respectively were released.
+Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`, `v1.6`, `v1.7`, `v1.8`). #19, #20 and #22–#24 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22, #23 and #24 were published on 20 October 2026, after v1.4, v1.5 and v1.6 respectively were released.
 
 ## Sources
 

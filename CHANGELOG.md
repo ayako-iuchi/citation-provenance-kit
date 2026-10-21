@@ -2,8 +2,9 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
-## Kit v1.8 — unreleased
+## Kit v1.8 — 2026-10-21
 
+- **Released on 21 October 2026,** before Hypothetical Technical Blog #26 (*The Field Nobody Else Can Fill*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.8`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
 - `catchlog.py --fields` reports, for each column, how many rows have it filled, not yet decided (or not recorded), or blank, before and after release, and lists the entries with no decision in "what would have happened had it gone unnoticed" and in "stakes". In this mode the log needs only `no` and `phase`. A phase with a note in brackets ("公開後（キットv1.2は公開済み）") is read in both modes. Standard library only, as before.
 - The workbook's Catch log sheet and `csv/catch_log_template.csv` have a new column after Stakes: "Who wrote 'what would have happened'? / 「見逃していたら」を誰が書いたか", with the list author / author chose from assistant's options / assistant / not yet decided. Duration and Phase move one column right; the CSV is read by its headers, so `catchlog.py` is unaffected.
 - Added `examples/series_log/after_v1.2.csv`: the author's log after the paper's v1.2 (#45–#62), which the paper does not yet contain, with only the date found, the two judgment columns, the duration and the phase as recorded, and the new column, derived from the notes. None of the entries' other text.

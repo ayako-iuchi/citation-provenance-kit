@@ -5,8 +5,8 @@ type: dataset
 authors:
   - family-names: Iuchi
     given-names: Ayako
-version: "1.7"
-date-released: "2026-10-20"
+version: "1.8"
+date-released: "2026-10-21"
 license: CC0-1.0
 references:
   - type: report
