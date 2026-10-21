@@ -2,9 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
-## Kit v1.9 — unreleased (branch `kit-v1.9`)
+## Kit v1.9 — 2026-10-21
 
-- To be released before Hypothetical Technical Blog #27 (*Not in This PDF*), which cites it, is published.
+- **Released on 21 October 2026,** before Hypothetical Technical Blog #27 (*Not in This PDF*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.9`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
+- Known issue, carried over: `citelint.py --lang ja` can report check C5 on code blocks (kit v1.4, v1.5). It did not fire on #27.
 - **Found 2026-10-21 — the Licence section named one exception.** From v1.6 the Economic Survey excerpts were also in the tests and `evals/null/` (the v1.6 entry above says so), and the Licence section still named only `examples/es2021_ch6/`. Both READMEs now list the quoted text that is not CC0, including the new examples.
 - Added `kit/extraction_prompt_2026-07-24_ja.md` (the verbatim-extraction instruction of the source project, as used on 24 July 2026) and its English translation, and `kit/extraction_prompt_v2_ja.md` / `_en.md`, a revision: "not in this PDF" with a search record, PDF and printed pages, a separate field for anything from outside the source, a separate report for each document, and a field for departures from the instruction.
 - Added `tools/extractcheck.py`, `schema/extraction.schema.json`, `examples/extraction_2026-07-24/` and `tests/test_extractcheck.py`. Standard library only, as before. The examples are the four extraction reports of 24 July 2026 (five reports: one thread had a second document), transcribed by Claude on 21 October 2026; which fields hold which text, and the item statuses, are Claude's reading and are marked as such. The quotations inside them are Indian statutory and judicial text and are not CC0.

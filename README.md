@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.8 (21 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
+Kit v1.9 (21 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -151,7 +151,7 @@ Hypothetical Technical Blog, *Citation provenance* (English, on note):
 - #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263) (the notation as typed records, kit v1.5)
 - #24 — [Not Established Is an Answer](https://note.com/ayako_iuchi/n/n7d7ca5a8837b) (a test where an empty answer can be right, kit v1.6)
 
-Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`, `v1.6`, `v1.7`, `v1.8`). #19, #20 and #22–#24 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22, #23 and #24 were published on 20 October 2026, after v1.4, v1.5 and v1.6 respectively were released.
+Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`, `v1.6`, `v1.7`, `v1.8`, `v1.9`). #19, #20 and #22–#24 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22, #23 and #24 were published on 20 October 2026, after v1.4, v1.5 and v1.6 respectively were released.
 
 ## Sources
 
