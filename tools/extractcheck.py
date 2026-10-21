@@ -22,10 +22,12 @@ and checks:
 Where each identifier stands:
 
     shown       in a quotation, a footnote, the cover and colophon as quoted, or a
-                passage the extractor sets in quotation marks or code marks (「」, “”, "", ‘’, ``)
-                anywhere in its own words: it presents that passage as the
-                source's. Each report is checked on its own; a quotation in one
-                report does not show an identifier in another.
+                passage the extractor sets in quotation marks in its own words
+                (「」, “”, "" or ‘’; in the search record, only 「」 or “”, since a
+                search term is usually written in "" or code marks). That counts
+                on the extractor's word that the passage is the source's. Code
+                marks (``) never count. Each report is checked on its own; a
+                quotation in one report does not show an identifier in another.
     given       in an item as the request named it (not in what the requester
                 expected; that is the "expected" field, and is not counted)
     in source   in the source text given with --source
@@ -38,7 +40,8 @@ for and found is its own account of the source), the description of the source
 (title, issuer, edition, pages) and the departures.
 
 Identifiers: gazette numbers (G.S.R. 205(E), GSR 205(E), S.O. 5458(E)), file
-numbers of office memoranda (F.1/1/2021-PPD, F. No. 1/1/2021-PPD); rule, section,
+numbers of office memoranda (F.1/1/2021-PPD, F. No. 1/1/2021-PPD); case numbers
+(CIVIL APPEAL NOS. 8733-8734 OF 2018, C.A. No. 8990/2018, SLP(C) No. 450/2019); rule, section,
 paragraph and article numbers, with lists and ranges expanded ("Rules 1, 2 and 17
 to 21", "para 168–170") and "sub-rule (1) of rule 3" read as rule 3(1); Japanese
 条 numbers (52条(1)(q), 第52条第1項, 3条の2), which match a section or an article
@@ -55,7 +58,9 @@ character that is not a Latin letter or digit, including Japanese text.
 X2 says "not shown", not "wrong". Most of what it flags may be true, and some may
 be printed in the source and simply not quoted. What it marks is a statement the
 report asks the reader to take on trust. Counts are of distinct identifiers per
-report; the flags list each place one occurs.
+report found in the extractor's own words outside quotation marks; the flags
+list each place one occurs. It checks identifiers, not what is said about them:
+"inserted by G.S.R. 205(E)" passes if a quotation shows 205(E) at all.
 
 Usage:
     python3 extractcheck.py REPORT.json [REPORT.json ...] [--json]
@@ -100,7 +105,7 @@ DATE_PATTERNS = [
 ]
 
 PROVISION_TAIL = r"\d+[A-Z]?(?:\s*\(\s*[0-9A-Za-z]+\s*\))*"
-LIST_TAIL = r"(?:\s*(?:,|and|&|to|[-–—~〜])\s*" + PROVISION_TAIL + r")*"
+LIST_TAIL = r"(?:\s*(?:,|、|・|and|&|to|[-–—~〜])\s*" + PROVISION_TAIL + r")*"
 TITLE_KEY = r"(?:Rules|RULES|Act|ACT|Regulations|REGULATIONS)"
 TITLE_WORD = r"(?:[A-Z][A-Za-z&'’.\-]*|\([A-Z][A-Za-z&'’ ,.\-]*\))"
 TITLE_RE = re.compile(
@@ -111,7 +116,9 @@ LEADING = re.compile(r"^(?:(?:In|IN|Under|UNDER|The|THE|Of|OF|By|BY|And|AND|See|
 PARA_START = re.compile(r"(?:^|(?<=\s))(\d{1,4})\.\s+(?=[A-Z“\"(])")
 PARA_START_NOT_AFTER = re.compile(r"(?:[Rr]ules?|[Ss]ections?|[Pp]aras?|[Pp]aragraphs?|[Aa]rticles?|No|Nos|p|pp)\.?\s*$")
 
-QUOTED = re.compile(r"「([^」]*)」|“([^”]*)”|\"([^\"]*)\"|‘([^’]*)’|`([^`]*)`")
+QUOTED = re.compile(r"「([^」]*)」|“([^”]*)”|\"([^\"]*)\"|‘([^’]*)’")
+QUOTED_IN_SEARCH = re.compile(r"「([^」]*)」|“([^”]*)”")   # a search term is often in "" or ``; a passage of the source in 「」
+CODE = re.compile(r"`[^`]*`")
 
 
 def normalise(text, soft=False):
@@ -129,7 +136,7 @@ def normalise(text, soft=False):
 def expand_numbers(tail):
     """'1, 2 and 17 to 21' -> ['1', '2', '17', ..., '21']; '3(1)' -> ['3(1)']."""
     tail = re.sub(r"\s+", "", tail)
-    parts = re.split(r",|and|&", tail)
+    parts = re.split(r",|、|・|and|&", tail)
     out = []
     for part in parts:
         if not part:
@@ -179,8 +186,10 @@ PATTERNS = [
      lambda m: ["rule " + n for n in expand_numbers(m.group(1))]),
     ("rule", re.compile(L + r"sub-rule\s*\(\s*(\w+)\s*\)\s*of\s+rule\s+(\d+[A-Z]?)" + R, re.I),
      lambda m: ["rule {}({})".format(m.group(2).lower(), m.group(1).lower())]),
-    ("section", re.compile(L + r"(?:[Ss]ections?|SECTIONS?|[Ss]ec\.|[Ss]s?\.|u/s)\s*(?!\d{4}" + R + r")(" + PROVISION_TAIL + LIST_TAIL + r")(?!\s*[—–-]\s*[Ss]ub)"),
+    ("section", re.compile(L + r"(?:[Ss]ections?|SECTIONS?|[Ss]ec\.|SEC\.|[Ss]s?\.|u/s)\s*(?!\d{4}" + R + r")(" + PROVISION_TAIL + LIST_TAIL + r")(?!\s*[—–-]\s*[Ss]ub)"),
      lambda m: ["section " + n for n in expand_numbers(m.group(1))]),
+    ("case number", re.compile(L + r"(CIVIL\s+APPEAL|C\.\s*A\.?|SLP\s*\(\s*C\s*\)|S\.L\.P\.\s*\(\s*C\s*\))\s*(?:NOS?\.?|Nos?\.?)\s*(\d+(?:\s*-\s*\d+)?)\s*(?:OF\s+|of\s+|/\s*)(\d{4})" + R),
+     lambda m: ["{} {}/{}".format("SLP(C)" if m.group(1).upper().startswith("S") else "C.A.", re.sub(r"\s", "", m.group(2)), m.group(3))]),
     ("article", re.compile(L + r"(?:[Aa]rticles?|ARTICLES?|[Aa]rt\.)\s*(" + PROVISION_TAIL + LIST_TAIL + r")"),
      lambda m: ["article " + n for n in expand_numbers(m.group(1))]),
     ("paragraph", re.compile(r"(?:" + L + r"(?:[Pp]aras?|PARAS?|[Pp]aragraphs?|PARAGRAPHS?)\.?\s*|¶\s*)(\d+(?:\.\d+)?" + LIST_TAIL.replace(PROVISION_TAIL, r"\d+(?:\.\d+)?") + r")"),
@@ -209,6 +218,8 @@ def identifiers(text, verbatim=False):
     found = dates(text) | titles(text)
     for kind, pat, norm in PATTERNS:
         for m in pat.finditer(text):
+            if kind == "section" and GAZETTE_PART.search(text[:m.start()]):
+                continue
             for value in norm(m):
                 found.add((kind, value))
     for m in JO_RE.finditer(text):
@@ -220,6 +231,7 @@ def identifiers(text, verbatim=False):
     return found
 
 
+GAZETTE_PART = re.compile(r"PART\s+[IVX]+\s*[—–-]\s*$")
 PROVISION_KINDS = {"rule", "section", "article", "paragraph", "条"}
 
 
@@ -437,8 +449,9 @@ def check(report, source=None):
         given |= identifiers(item.get("target", ""))
         for q in item.get("quotes", []) + item.get("footnotes", []):
             shown |= identifiers(q.get("text", ""), verbatim=True)
-    for _, text in prose_fields(report):
-        for m in QUOTED.finditer(text):
+    for where, text in prose_fields(report):
+        pattern = QUOTED_IN_SEARCH if " search " in where else QUOTED
+        for m in pattern.finditer(CODE.sub(" ", text)):
             for part in m.groups():
                 if part:
                     shown |= identifiers(part, verbatim=True)
@@ -451,7 +464,8 @@ def check(report, source=None):
 
     places = {}
     for where, text in prose_fields(report):
-        for ident in sorted(identifiers(QUOTED.sub(" ", text))):
+        pattern = QUOTED_IN_SEARCH if " search " in where else QUOTED
+        for ident in sorted(identifiers(pattern.sub(" ", text))):
             places.setdefault(ident, [])
             if where not in places[ident]:
                 places[ident].append(where)

@@ -253,7 +253,7 @@ def test_examples_fit_the_schema():
 
 
 def test_the_four_threads_as_published():
-    """The counts Hypothetical Technical Blog #27 reports. If a transcription changes, this changes."""
+    """The flags and counts Hypothetical Technical Blog #27 reports. If a transcription changes, this changes."""
     results = {r["id"].split(" ")[0] + (" ERGO" if "ERGO" in r["id"] else ""): extractcheck.check(r)
                for path in EXAMPLES for r in extractcheck.load(path)}
     acc = results["companies-accounts-rules"]
@@ -261,7 +261,8 @@ def test_the_four_threads_as_published():
     assert ("title", "companies (accounts) amendment rules, 2021") in flagged(acc)
     assert ("gazette", "G.S.R. 205(E)") not in flagged(acc)
     ergo = results["engineering-analysis ERGO"]
-    assert ("report", "(2011) 245 CTR 481") not in flagged(ergo)  # set in code marks by the extractor
+    assert ("report", "(2011) 245 CTR 481") in flagged(ergo)  # in code marks, which do not count
+    assert ("case number", "C.A. 8733-8734/2018") in flagged(ergo)
     assert ("section", "section 14(b)(ii)") in flagged(ergo)
     assert ("rule", "rule 192") in flagged(results["gfr-2017"])
     assert ("file number", "F.7/10/2021-PPD") in flagged(results["gfr-2017"])
@@ -271,7 +272,7 @@ def test_the_four_threads_as_published():
     assert ("条", "52(1)(q)") in flagged(ergo)
     assert {k: v["identifiers"]["not shown"] for k, v in results.items()} == {
         "companies-accounts-rules": 7, "dpdp-rules": 4, "engineering-analysis": 1,
-        "engineering-analysis ERGO": 11, "gfr-2017": 11}
+        "engineering-analysis ERGO": 15, "gfr-2017": 11}
 
 
 @pytest.mark.parametrize("text", ["本PDFはRule 3(1)を含む", "但書はG.S.R. 205(E)が挿入", "改正はF.1/1/2021-PPDによる",
@@ -352,10 +353,46 @@ def test_the_search_record_is_the_extractors_own_account():
 
 
 def test_a_passage_in_quotation_marks_counts_as_shown():
-    for marks in ("「{}」", "“{}”", '"{}"', "`{}`"):
+    for marks in ("「{}」", "“{}”", '"{}"'):
         r = report(remarks=["the note reads " + marks.format("Deleted vide OM No. F.1/26/2018-PPD"),
                             "so F.1/26/2018-PPD deleted it"], items=[])
         assert not extractcheck.check(r)["flags"], marks
+
+
+def test_code_marks_do_not_count_as_shown():
+    r = report(remarks=["the citation is `(2012) 345 ITR 494`"], items=[])
+    assert flagged(extractcheck.check(r)) == {("report", "(2012) 345 ITR 494")}
+
+
+def test_a_search_term_in_quotation_or_code_marks_is_not_shown():
+    for term in ('"G.S.R. 205(E)"', "`G.S.R. 205(E)`"):
+        r = report(items=[{"n": 1, "target": "x", "status": "not_in_source",
+                           "search_record": ["string search for {} → 0 hits".format(term)],
+                           "remarks": ["it was inserted by G.S.R. 205(E)"]}])
+        assert ("gazette", "G.S.R. 205(E)") in flagged(extractcheck.check(r)), term
+    r = report(items=[{"n": 1, "target": "x", "status": "not_in_source",
+                       "search_record": ["one hit: 「Inserted vide G.S.R. 205(E)」"],
+                       "remarks": ["it was inserted by G.S.R. 205(E)"]}])
+    assert not extractcheck.check(r)["flags"]
+
+
+def test_case_numbers():
+    assert extractcheck.identifiers("CIVIL APPEAL NOS. 8733-8734 OF 2018") == {("case number", "C.A. 8733-8734/2018")}
+    assert extractcheck.identifiers("C.A. No. 8990/2018") == {("case number", "C.A. 8990/2018")}
+    assert extractcheck.identifiers("SLP(C) No. 450/2019") == {("case number", "SLP(C) 450/2019")}
+
+
+def test_lists_with_japanese_separators_and_capital_sec():
+    assert ("section", "section 52(1)(aa)") in extractcheck.identifiers("改正Sec.14(b)(ii)・52(1)(aa)")
+    assert ("section", "section 3(i)") in extractcheck.identifiers("SEC. 3(i)")
+    assert not extractcheck.identifiers("PART II—SEC. 3(i)")
+
+
+def test_partial_needs_a_page():
+    r = report(items=[{"n": 1, "target": "x", "status": "partial"}])
+    assert extractcheck.check(r)["flags"][0]["message"] == "reported partial with no page"
+    r["items"][0]["page_pdf"] = "1"
+    assert not extractcheck.check(r)["flags"]
 
 
 def test_reports_are_checked_one_at_a_time(tmp_path):

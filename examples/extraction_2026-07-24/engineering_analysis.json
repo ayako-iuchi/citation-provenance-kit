@@ -3,7 +3,7 @@
     "id": "engineering-analysis (thread e2a5bd9d, turn 1)",
     "date": "2026-07-24",
     "prompt": "kit/extraction_prompt_2026-07-24_ja.md",
-    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole except one quotation: the list of tagged appeal numbers on pp.1–5 (CIVIL APPEAL NOS. 8735-8736 OF 2018 to CIVIL APPEAL NO. 790 OF 2021), shortened to its first and last entries and marked [...] with excerpt true. Markdown emphasis removed; code marks (backticks) kept; line breaks inside each quotation joined with spaces, except where the extractor itself joined them with ' / '. The headings the extractor put over its quotations are kept as remarks. The extractor's tool calls are not included. The thread's later reports (turn 3, on a second document, which is the next report in this file; and turn 5, the short form) are not part of this one; turn 5 is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
+    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole (a table row is written as one line, label：cell) except one quotation: the list of 86 tagged appeal-number entries on pp.1–5 (CIVIL APPEAL NOS. 8735-8736 OF 2018 to CIVIL APPEAL NO. 790 OF 2021), shortened to its first and last entries and marked [...] with excerpt true. Markdown emphasis removed; code marks (backticks) kept; line breaks inside each quotation joined with spaces, except where the extractor itself joined them with ' / '. The headings the extractor put over its quotations are kept as remarks. The extractor's tool calls are not included. The thread's later reports (turn 3, on a second document, which is the next report in this file; and turn 5, the short form) are not part of this one; turn 5 is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
     "source": {
       "title": "Engineering Analysis Centre Of ... vs The Commissioner Of Income Tax on 2 March, 2021（PDFタイトル）／判決本体の表題は \"ENGINEERING ANALYSIS CENTRE OF EXCELLENCE PRIVATE LIMITED …APPELLANT Versus THE COMMISSIONER OF INCOME TAX & ANR. …RESPONDENTS\"。Equivalent citations: AIRONLINE 2021 SC 102",
       "issuer": "IN THE SUPREME COURT OF INDIA, CIVIL APPELLATE JURISDICTION（本PDFの配信元は Indian Kanoon - http://indiankanoon.org/doc/170521216/）",
@@ -29,12 +29,31 @@
         "status": "found",
         "page_pdf": "1–5, 115",
         "quotes": [
-          {"text": "CIVIL APPEAL NOS. 8733-8734 OF 2018", "page_pdf": "1"},
-          {"text": "WITH CIVIL APPEAL NOS. 8735-8736 OF 2018 [...] CIVIL APPEAL NO. 790 OF 2021 (@ SLP(C) NO. 6736 OF 2020)", "excerpt": true, "page_pdf": "1–5"},
-          {"text": "…………………..………………J. (R. F. Nariman) ……………..……………………J. (Hemant Gupta) ……………..……………………J. (B.R. Gavai) New Delhi. March 02, 2021.", "page_pdf": "115"},
-          {"text": "JUDGMENT R.F. Nariman, J. 1. Leave granted.", "page_pdf": "5"},
-          {"text": "Author: R.F. Nariman Bench: B.R. Gavai, Hemant Gupta, R. F. Nariman", "page_pdf": "1"},
-          {"text": "Signature Not Verified / Digitally signed by Jayant Kumar Arora / Date: 2021.03.02 16:50:08 IST", "page_pdf": "1"}
+          {
+            "text": "CIVIL APPEAL NOS. 8733-8734 OF 2018",
+            "page_pdf": "1"
+          },
+          {
+            "text": "WITH CIVIL APPEAL NOS. 8735-8736 OF 2018 [...] CIVIL APPEAL NO. 790 OF 2021 (@ SLP(C) NO. 6736 OF 2020)",
+            "excerpt": true,
+            "page_pdf": "1–5"
+          },
+          {
+            "text": "…………………..………………J. (R. F. Nariman) ……………..……………………J. (Hemant Gupta) ……………..……………………J. (B.R. Gavai) New Delhi. March 02, 2021.",
+            "page_pdf": "115"
+          },
+          {
+            "text": "JUDGMENT R.F. Nariman, J. 1. Leave granted.",
+            "page_pdf": "5"
+          },
+          {
+            "text": "Author: R.F. Nariman Bench: B.R. Gavai, Hemant Gupta, R. F. Nariman",
+            "page_pdf": "1"
+          },
+          {
+            "text": "Signature Not Verified / Digitally signed by Jayant Kumar Arora / Date: 2021.03.02 16:50:08 IST",
+            "page_pdf": "1"
+          }
         ],
         "remarks": [
           "1. 事件番号・判決日・裁判官名（p.1–5、p.115）",
@@ -53,7 +72,9 @@
         "status": "found",
         "page_pdf": "115",
         "quotes": [
-          {"text": "CONCLUSION 168. Given the definition of royalties contained in Article 12 of the DTAAs mentioned in paragraph 41 of this judgment, it is clear that there is no obligation on the persons mentioned in section 195 of the Income Tax Act to deduct tax at source, as the distribution agreements/EULAs in the facts of these cases do not create any interest or right in such distributors/end-users, which would amount to the use of or right to use any copyright. The provisions contained in the Income Tax Act (section 9(1)(vi), along with explanations 2 and 4 thereof), which deal with royalty, not being more beneficial to the assessees, have no application in the facts of these cases. 169. Our answer to the question posed before us, is that the amounts paid by resident Indian end-users/distributors to non-resident computer software manufacturers/suppliers, as consideration for the resale/use of the computer software through EULAs/distribution agreements, is not the payment of royalty for the use of copyright in the computer software, and that the same does not give rise to any income taxable in India, as a result of which the persons referred to in section 195 of the Income Tax Act were not liable to deduct any TDS under section 195 of the Income Tax Act. The answer to this question will apply to all four categories of cases enumerated by us in paragraph 4 of this judgment. 170. The appeals from the impugned judgments of the High Court of Karnataka are allowed, and the aforesaid judgments are set aside. The ruling of the AAR in Citrix Systems (AAR) (supra) is set aside. The appeals from the impugned judgments of the High Court of Delhi are dismissed."}
+          {
+            "text": "CONCLUSION 168. Given the definition of royalties contained in Article 12 of the DTAAs mentioned in paragraph 41 of this judgment, it is clear that there is no obligation on the persons mentioned in section 195 of the Income Tax Act to deduct tax at source, as the distribution agreements/EULAs in the facts of these cases do not create any interest or right in such distributors/end-users, which would amount to the use of or right to use any copyright. The provisions contained in the Income Tax Act (section 9(1)(vi), along with explanations 2 and 4 thereof), which deal with royalty, not being more beneficial to the assessees, have no application in the facts of these cases. 169. Our answer to the question posed before us, is that the amounts paid by resident Indian end-users/distributors to non-resident computer software manufacturers/suppliers, as consideration for the resale/use of the computer software through EULAs/distribution agreements, is not the payment of royalty for the use of copyright in the computer software, and that the same does not give rise to any income taxable in India, as a result of which the persons referred to in section 195 of the Income Tax Act were not liable to deduct any TDS under section 195 of the Income Tax Act. The answer to this question will apply to all four categories of cases enumerated by us in paragraph 4 of this judgment. 170. The appeals from the impugned judgments of the High Court of Karnataka are allowed, and the aforesaid judgments are set aside. The ruling of the AAR in Citrix Systems (AAR) (supra) is set aside. The appeals from the impugned judgments of the High Court of Delhi are dismissed."
+          }
         ],
         "remarks": [
           "2. 判旨の結論部分（195条の源泉徴収義務）― p.115"
@@ -65,7 +86,9 @@
         "status": "found",
         "page_pdf": "6",
         "quotes": [
-          {"text": "4. The appeals before us may be grouped into four categories: i) The first category deals with cases in which computer software is purchased directly by an end-user, resident in India, from a foreign, non-resident supplier or manufacturer.3 This category includes C.A. Nos. 8733-8734/2018, C.A. No. 10114/2013, C.A. Nos. 10112-10113/2013, C.A. No. 10106/2013, C.A. No. 10103/2013, C.A. No. 10104/2013, C.A. Nos. 10098-10102/2013, C.A. Nos. 8735-8736/2018, C.A. Nos. 8948-8949/2018, C.A. No. 8956/2018, C.A. No. 8957/2018, C.A. No. 7852/2012, C.A. Nos. 8974-8975/2018, C.A. No. 2304/2013, C.A. No. 2305/2013, C.A. No. 2306/2013, ii) The second category of cases deals with resident Indian companies that act as distributors or resellers, by purchasing computer software from foreign, non-resident suppliers or manufacturers and then reselling the same to resident Indian end-users.4 iii) The third category concerns cases wherein the distributor happens to be a foreign, non-resident vendor, who, after purchasing software from a foreign, non-resident seller, resells the same to resident Indian distributors or end-users.5 iv) The fourth category includes cases wherein computer software is affixed onto hardware and is sold as an integrated unit/equipment C.A. Nos. 2307-2308/2013, C.A. No. 10097/2013, C.A. No. 8976/2018, C.A. No. 3402/2017, SLP(C) No. 450/2019, C.A. No. 2006/2019. This category includes C.A Nos. 8737-8941/2018, C.A No. 8942-8947/2018, C.A No. 4420/2012, C.A No. 8959/2018, C.A No. 8963/2018, C.A No. 8962/2018, C.A No. 8958/2018, C.A No. 8961/2018, C.A No. 8960/2018, C.A Nos. 8950-8953/2018, C.A No. 8966/2018, C.A No. 8973/2018, C.A No. 8965/2018, C.A No. 8972/2018, C.A No. 8969/2018, C.A No. 8971/2018, C.A No. 8970/2018, C.A No. 8964/2018, C.A No. 8967/2018, C.A No. 8968/2018, C.A No. 1403/2013, C.A No. 1414/2013, C.A No. 1412/2013, C.A No. 1413/2013, C.A Nos. 1416-1418/2013, C.A No. 1405/2013, C.A No. 1410/2013, C.A No. 1421/2013, C.A No. 1409/2013, C.A No. 1415/2013, C.A No. 1419/2013, C.A No. 1411/2013, C.A No. 1420/2013, C.A No. 1404/2013, C.A No. 1406/2013, C.A No. 1408/2013, C.A No. 1407/2013, C.A Nos. 4666-4667/2013, C.A No. 6764/2013, C.A No. 4419/2012, C.A Nos. 8977-8988/2018, C.A No. 4629/2014, C.A No. 4631/2014, C.A No. 4630/2014, C.A No. 10105/2013. This category includes C.A. No. 10758/2017, C.A. No. 8990/2018, C.A. No. 9486/2017, C.A. No. 8711/2018, C.A. No. 8722/2018, C.A. No. 8724/2018, C.A. No. 8725/2018, C.A. No. 9551/2018, SLP(C) No. 6736/2020, C.A. No. 4634/2014. by foreign, non-resident suppliers to resident Indian distributors or end-users.6"}
+          {
+            "text": "4. The appeals before us may be grouped into four categories: i) The first category deals with cases in which computer software is purchased directly by an end-user, resident in India, from a foreign, non-resident supplier or manufacturer.3 This category includes C.A. Nos. 8733-8734/2018, C.A. No. 10114/2013, C.A. Nos. 10112-10113/2013, C.A. No. 10106/2013, C.A. No. 10103/2013, C.A. No. 10104/2013, C.A. Nos. 10098-10102/2013, C.A. Nos. 8735-8736/2018, C.A. Nos. 8948-8949/2018, C.A. No. 8956/2018, C.A. No. 8957/2018, C.A. No. 7852/2012, C.A. Nos. 8974-8975/2018, C.A. No. 2304/2013, C.A. No. 2305/2013, C.A. No. 2306/2013, ii) The second category of cases deals with resident Indian companies that act as distributors or resellers, by purchasing computer software from foreign, non-resident suppliers or manufacturers and then reselling the same to resident Indian end-users.4 iii) The third category concerns cases wherein the distributor happens to be a foreign, non-resident vendor, who, after purchasing software from a foreign, non-resident seller, resells the same to resident Indian distributors or end-users.5 iv) The fourth category includes cases wherein computer software is affixed onto hardware and is sold as an integrated unit/equipment C.A. Nos. 2307-2308/2013, C.A. No. 10097/2013, C.A. No. 8976/2018, C.A. No. 3402/2017, SLP(C) No. 450/2019, C.A. No. 2006/2019. This category includes C.A Nos. 8737-8941/2018, C.A No. 8942-8947/2018, C.A No. 4420/2012, C.A No. 8959/2018, C.A No. 8963/2018, C.A No. 8962/2018, C.A No. 8958/2018, C.A No. 8961/2018, C.A No. 8960/2018, C.A Nos. 8950-8953/2018, C.A No. 8966/2018, C.A No. 8973/2018, C.A No. 8965/2018, C.A No. 8972/2018, C.A No. 8969/2018, C.A No. 8971/2018, C.A No. 8970/2018, C.A No. 8964/2018, C.A No. 8967/2018, C.A No. 8968/2018, C.A No. 1403/2013, C.A No. 1414/2013, C.A No. 1412/2013, C.A No. 1413/2013, C.A Nos. 1416-1418/2013, C.A No. 1405/2013, C.A No. 1410/2013, C.A No. 1421/2013, C.A No. 1409/2013, C.A No. 1415/2013, C.A No. 1419/2013, C.A No. 1411/2013, C.A No. 1420/2013, C.A No. 1404/2013, C.A No. 1406/2013, C.A No. 1408/2013, C.A No. 1407/2013, C.A Nos. 4666-4667/2013, C.A No. 6764/2013, C.A No. 4419/2012, C.A Nos. 8977-8988/2018, C.A No. 4629/2014, C.A No. 4631/2014, C.A No. 4630/2014, C.A No. 10105/2013. This category includes C.A. No. 10758/2017, C.A. No. 8990/2018, C.A. No. 9486/2017, C.A. No. 8711/2018, C.A. No. 8722/2018, C.A. No. 8724/2018, C.A. No. 8725/2018, C.A. No. 9551/2018, SLP(C) No. 6736/2020, C.A. No. 4634/2014. by foreign, non-resident suppliers to resident Indian distributors or end-users.6"
+          }
         ],
         "remarks": [
           "3. 4類型（four categories）― p.6、para 4",
@@ -79,7 +102,7 @@
     "id": "engineering-analysis ERGO (thread e2a5bd9d, turn 3)",
     "date": "2026-07-24",
     "prompt": "kit/extraction_prompt_2026-07-24_ja.md (the same request; the author then uploaded a second PDF with no new message text)",
-    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's report on the second PDF, whole. The extractor quoted only a little from this source: the title (kept in source.title as written), the copyright line and a case citation (kept, in the quotation and code marks the extractor used, in the departure and a remark). Markdown emphasis removed; code marks (backticks) kept. The extractor's tool calls are not included. Which field holds which text, and the item statuses, are Claude's reading (see README).",
+    "transcribed": "Copied by Claude on 2026-10-21 from the extractor's report on the second PDF, whole. A table row is written as one line, label：cell. The cell that gives the pages of the three items is split at its ／ and each part put on its item; the heading of the paragraph giving the reason for the departure is joined to it with ：. The extractor quoted only a little from this source: the title (kept in source.title as written), the copyright line (kept, in the quotation marks the extractor used, in the departure) and a case citation (kept in the code marks the extractor used, in a remark). Markdown emphasis removed; code marks (backticks) kept. The extractor's tool calls are not included. Which field holds which text, and the item statuses, are Claude's reading (see README).",
     "source": {
       "title": "ERGO — \"WHETHER THE PAYMENT MADE BY INDIAN RESIDENTS FOR PURCHASE OF COMPUTER SOFTWARE FROM FOREIGN SUPPLIERS/MANUFACTURERS CAN BE TERMED AS 'ROYALTY'?\"（副題：Analysing developments impacting business）",
       "issuer": "Khaitan & Co（執筆：Vanita Bhargava (Partner)、Trishala Trivedi (Principal Associate)、Maithili Moondra (Associate)）",
@@ -121,20 +144,26 @@
         "target": "Engineering Analysis Centre of Excellence Pvt Ltd v CIT ― 事件番号、判決日、裁判官名",
         "status": "partial",
         "page_pdf": "1",
-        "remarks": ["該当条項のページ：①事件番号・判決日・裁判官名 → 後述のとおり大半が不存在"]
+        "remarks": [
+          "該当条項のページ：①事件番号・判決日・裁判官名 → 後述のとおり大半が不存在"
+        ]
       },
       {
         "n": 2,
         "target": "判旨の結論部分（195条の源泉徴収義務に関する判示）の逐語引用",
         "status": "not_in_source",
-        "remarks": ["該当条項のページ：②195条の結論 → p.1（INTRODUCTION）およびp.3（JUDGMENT）に要約として存在、逐語の判示文は不存在"]
+        "remarks": [
+          "該当条項のページ：②195条の結論 → p.1（INTRODUCTION）およびp.3（JUDGMENT）に要約として存在、逐語の判示文は不存在"
+        ]
       },
       {
         "n": 3,
         "target": "4類型（four categories）の記載箇所",
         "status": "found",
         "page_pdf": "1–2",
-        "remarks": ["該当条項のページ：③4類型 → p.2 冒頭（箇条書き4項目）＋p.1末尾の導入行"]
+        "remarks": [
+          "該当条項のページ：③4類型 → p.2 冒頭（箇条書き4項目）＋p.1末尾の導入行"
+        ]
       }
     ]
   }

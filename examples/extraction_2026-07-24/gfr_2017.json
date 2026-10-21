@@ -2,7 +2,7 @@
   "id": "gfr-2017 (thread 593a8ba7, turn 1)",
   "date": "2026-07-24",
   "prompt": "kit/extraction_prompt_2026-07-24_ja.md",
-  "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole. Markdown emphasis removed; code marks (backticks) kept; line breaks inside each quotation joined with spaces. The extractor's tool calls are not included. The thread's second report (the short form, turn 3) is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
+  "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole: every heading, table cell, paragraph and quotation. A table row is written as one line, label：cell. The headings over the items go first among the remarks of their item. Markdown emphasis removed; code marks (backticks) kept; line breaks inside each quotation joined with spaces. The extractor's tool calls are not included. The thread's second report (the short form, turn 3) is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
   "source": {
     "title": "GENERAL FINANCIAL RULES 2017 / Updated up to 31.07.2024（表紙記載のとおり）",
     "issuer": "表紙・奥付に発行主体の明記なし。本文脚注ではすべての改正が Department of Expenditure (DoE), Ministry of Finance (MoF) の OM による旨が記載されている",
@@ -17,6 +17,7 @@
     "`pdffonts`: 埋め込みフォント多数あり → テキスト層あり。OCR不要",
     "本文は2段組のため、`pdftotext -layout` でページ単位に分割抽出して条項位置を特定",
     "印刷ページ番号とPDFページ番号は該当箇所（p.34〜46）で一致",
+    "共通情報",
     "見つからなかった項目：抽出対象 5（DoE OM No. F.1/1/2021-PPD, 29.10.2021 全文）",
     "ご指定のOM全文が必要な場合は、別ファイル（doe.gov.in 掲載のOM PDF）をアップロードいただくか、Web検索での取得をご指示ください。"
   ],
@@ -28,9 +29,12 @@
       "page_pdf": "45",
       "page_printed": "45",
       "quotes": [
-        {"text": "(xi) Criteria for determining responsiveness are to be taken into account for evaluating the bids such as: ( a ) time of delivery. ( b ) Performance/ efficiency/ environmental characteristics. ( c ) the terms of payment and of guarantees in respect of the subject matter of procurement (d) price. (e) cost of operating, maintaining and repairing etc."}
+        {
+          "text": "(xi) Criteria for determining responsiveness are to be taken into account for evaluating the bids such as: ( a ) time of delivery. ( b ) Performance/ efficiency/ environmental characteristics. ( c ) the terms of payment and of guarantees in respect of the subject matter of procurement (d) price. (e) cost of operating, maintaining and repairing etc."
+        }
       ],
       "remarks": [
+        "1. Rule 173(xi) ― 入札評価基準の列挙",
         "該当条項のページ：p.45（PDF 45ページ目）",
         "改正履歴の脚注：(xi) に脚注記号の付記なし。同ページの脚注40は (xv) に対応するもので、原文は「Deleted vide DoE OM No. F.1/26/2018-PPD dated 02.04.2019.」"
       ]
@@ -42,9 +46,12 @@
       "page_pdf": "46",
       "page_printed": "46",
       "quotes": [
-        {"text": "(xix) Rejection of all Bids is justified when a. effective competition is lacking. b. all Bids and Proposals are not substantially responsive to the requirements of the Procurement Documents. c. the Bids'/Proposals' prices are substantially higher that the updated cost estimate or available budget; or d. none of the technical Proposals meets the minimum technical qualifying score."}
+        {
+          "text": "(xix) Rejection of all Bids is justified when a. effective competition is lacking. b. all Bids and Proposals are not substantially responsive to the requirements of the Procurement Documents. c. the Bids'/Proposals' prices are substantially higher that the updated cost estimate or available budget; or d. none of the technical Proposals meets the minimum technical qualifying score."
+        }
       ],
       "remarks": [
+        "2. Rule 173(xix) ― 全入札拒否の正当事由",
         "該当条項のページ：p.46（PDF 46ページ目）",
         "改正履歴の脚注：(xix) に脚注記号の付記なし",
         "※ c. の \"higher that\" は原文どおり（原文の表記をそのまま転記）。"
@@ -57,9 +64,12 @@
       "page_pdf": "46",
       "page_printed": "46",
       "quotes": [
-        {"text": "(xx) Lack of competition in rule 173(xix) shall not be determined solely on the basis of the number of Bidders. Even when only one Bid is submitted, the process may be considered valid provided following conditions are satisfied: a. the procurement was satisfactorily advertised and sufficient time was given for submission of bids. b. the qualification criteria were not unduly restrictive; and c. prices are reasonable in comparison to market values"}
+        {
+          "text": "(xx) Lack of competition in rule 173(xix) shall not be determined solely on the basis of the number of Bidders. Even when only one Bid is submitted, the process may be considered valid provided following conditions are satisfied: a. the procurement was satisfactorily advertised and sufficient time was given for submission of bids. b. the qualification criteria were not unduly restrictive; and c. prices are reasonable in comparison to market values"
+        }
       ],
       "remarks": [
+        "3. Rule 173(xx) ― 競争の欠如の判断",
         "該当条項のページ：p.46（PDF 46ページ目）",
         "改正履歴の脚注：(xx) に脚注記号の付記なし"
       ]
@@ -71,16 +81,32 @@
       "page_pdf": "34〜35",
       "page_printed": "34〜35",
       "quotes": [
-        {"text": "Rule 149. Government e-Market place (GeM). Government of India has established the Government e-Marketplace (GeM) for common use Goods and Services. GeM SPV will ensure adequate publicity including periodic advertisement of the items to be procured through GeM for the prospective suppliers. The Procurement of Goods and Services by Ministries or Departments will be mandatory for Goods or Services available on GeM. The credentials of suppliers on GeM shall be certified by GeM SPV. The procuring authorities will certify the reasonability of rates. The GeM portal shall be utilized by the Government buyers for direct on-line purchases as under: (i) Up to [Rs.50,000/-]¹² through any of the available suppliers on the GeM, meeting the requisite quality, specification and delivery period. Note: In case of automobiles, procurement under this sub-rule is permitted without any ceiling limit. (ii) Above [Rs.50,000/- and up to Rs.10,00,000/-]¹³ through the GeM Seller having lowest price amongst the available sellers of at least three different manufacturers, on GeM, meeting the requisite quality, specification and delivery period. The tools for online bidding and online reverse auction available on GeM can be used by the Buyer even for procurements less than [Rs 10,00,000]¹⁴. (iii) Above [Rs.10,00,000/-]¹⁵ through the supplier having lowest price meeting the requisite quality, specification and delivery period after mandatorily obtaining bids, using online bidding or reverse auction tool provided on GeM. (iv) The invitation for the online e-bidding/reverse auction will be available to all the existing Sellers or other Sellers registered on the portal and who have offered their goods/services under the particular product/service category, as per terms and conditions of GeM. (v) The above mentioned monetary ceiling is applicable only for purchases made through GeM. For purchases, if any, outside GeM, relevant GFR Rules shall apply. (vi) The Ministries/Departments shall work out their procurement requirements of Goods and Services on either \"OPEX\" model or \"CAPEX\" model as per their requirement/ suitability at the time of preparation of Budget Estimates (BE) and shall project their Annual Procurement Plan of goods and services on GeM portal within 30 days of Budget approval. (vii) The Government Buyers may ascertain the reasonableness of prices before placement of order using the Business Analytics (BA) tools available on GeM including the Last Purchase Price on GeM, Department's own Last Purchase Price etc. (viii) A demand for goods shall not be divided into small quantities to make piecemeal purchases to avoid procurement through L-1 Buying / bidding / reverse auction on GeM or the necessity of obtaining the sanction of higher authorities required with reference to the estimated value of the total demand."}
+        {
+          "text": "Rule 149. Government e-Market place (GeM). Government of India has established the Government e-Marketplace (GeM) for common use Goods and Services. GeM SPV will ensure adequate publicity including periodic advertisement of the items to be procured through GeM for the prospective suppliers. The Procurement of Goods and Services by Ministries or Departments will be mandatory for Goods or Services available on GeM. The credentials of suppliers on GeM shall be certified by GeM SPV. The procuring authorities will certify the reasonability of rates. The GeM portal shall be utilized by the Government buyers for direct on-line purchases as under: (i) Up to [Rs.50,000/-]¹² through any of the available suppliers on the GeM, meeting the requisite quality, specification and delivery period. Note: In case of automobiles, procurement under this sub-rule is permitted without any ceiling limit. (ii) Above [Rs.50,000/- and up to Rs.10,00,000/-]¹³ through the GeM Seller having lowest price amongst the available sellers of at least three different manufacturers, on GeM, meeting the requisite quality, specification and delivery period. The tools for online bidding and online reverse auction available on GeM can be used by the Buyer even for procurements less than [Rs 10,00,000]¹⁴. (iii) Above [Rs.10,00,000/-]¹⁵ through the supplier having lowest price meeting the requisite quality, specification and delivery period after mandatorily obtaining bids, using online bidding or reverse auction tool provided on GeM. (iv) The invitation for the online e-bidding/reverse auction will be available to all the existing Sellers or other Sellers registered on the portal and who have offered their goods/services under the particular product/service category, as per terms and conditions of GeM. (v) The above mentioned monetary ceiling is applicable only for purchases made through GeM. For purchases, if any, outside GeM, relevant GFR Rules shall apply. (vi) The Ministries/Departments shall work out their procurement requirements of Goods and Services on either \"OPEX\" model or \"CAPEX\" model as per their requirement/ suitability at the time of preparation of Budget Estimates (BE) and shall project their Annual Procurement Plan of goods and services on GeM portal within 30 days of Budget approval. (vii) The Government Buyers may ascertain the reasonableness of prices before placement of order using the Business Analytics (BA) tools available on GeM including the Last Purchase Price on GeM, Department's own Last Purchase Price etc. (viii) A demand for goods shall not be divided into small quantities to make piecemeal purchases to avoid procurement through L-1 Buying / bidding / reverse auction on GeM or the necessity of obtaining the sanction of higher authorities required with reference to the estimated value of the total demand."
+        }
       ],
       "footnotes": [
-        {"text": "¹² Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.", "page_pdf": "34"},
-        {"text": "¹³ Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.", "page_pdf": "34"},
-        {"text": "¹⁴ Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.", "page_pdf": "34"},
-        {"text": "¹⁵ Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.", "page_pdf": "34"}
+        {
+          "text": "¹² Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.",
+          "page_pdf": "34"
+        },
+        {
+          "text": "¹³ Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.",
+          "page_pdf": "34"
+        },
+        {
+          "text": "¹⁴ Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.",
+          "page_pdf": "34"
+        },
+        {
+          "text": "¹⁵ Amended vide Department of Expenditure (DoE), Ministry of Finance (MoF) OM No. F.1/3/2024-PPD dated 10.07.2024.",
+          "page_pdf": "34"
+        }
       ],
       "remarks": [
+        "4. Rule 149 ― GeM経由調達の義務",
         "該当条項のページ：p.34〜p.35（PDF 34〜35ページ目）",
+        "逐語引用（原文のまま）",
         "改正履歴の脚注（p.34 脚注欄、原文のまま）",
         "参考として、同ページの Rule 147 末尾の角括弧部分（\"…are required to be procured mandatorily through GeM as per Rule 149.\"）には脚注10が付されており、原文は「Amended vide DoE OM No. F.1/26/2018-PPD dated 02.04.2019.」。また Rule 148 の脚注11は「Deleted vide DoE OM No. F.1/26/2018-PPD dated 02.04.2019.」。"
       ]
@@ -97,6 +123,7 @@
         "本PDFは巻末（p.174 印刷番号まで）まで確認しましたが、OMを収録した附属書（Annexure/Appendix）は含まれていません"
       ],
       "remarks": [
+        "5. DoE OM No. F.1/1/2021-PPD（2021年10月29日）全文",
         "該当条項のページ：該当なし",
         "逐語引用：見つからない",
         "改正履歴の脚注：―",

@@ -2,7 +2,7 @@
   "id": "dpdp-rules (thread 0e5e3636, turn 1)",
   "date": "2026-07-24",
   "prompt": "kit/extraction_prompt_2026-07-24_ja.md",
-  "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole: every table cell, paragraph and quotation. Markdown emphasis (bold) removed; code marks (backticks) kept, and the code block of the pre-check written as two remarks; the line breaks inside each quotation joined with spaces. The extractor's tool calls are not included. The thread's second report (the short form, turn 3) is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
+  "transcribed": "Copied by Claude on 2026-10-21 from the extractor's first report in the thread, whole: every heading, table cell, paragraph and quotation. A table row is written as one line, label：cell, and line breaks inside a cell as ／. The headings over the quotations go first among the remarks of their item. In the extractor's report, (f) of Rule 6 and (3) of Rule 13 were in bold, as its remarks say. Markdown emphasis (bold) removed; code marks (backticks) kept, and the code block of the pre-check written as two remarks; the line breaks inside each quotation joined with spaces. The extractor's tool calls are not included. The thread's second report (the short form, turn 3) is not transcribed. Which field holds which text, and the item statuses, are Claude's reading (see README).",
   "source": {
     "title": "Digital Personal Data Protection Rules, 2025（官報告示番号 G.S.R. 846(E)）",
     "issuer": "Ministry of Electronics and Information Technology, Government of India／The Gazette of India : Extraordinary, PART II—SEC. 3(i)／署名: AJIT KUMAR, Jt. Secy.（F. No. AA-11038/1/2025-CLandES）",
@@ -19,7 +19,8 @@
     "該当条項のページ：Rule 1（施行規定）: PDF p.1 / 官報 p.24 ／ Rule 6: PDF p.3 / 官報 p.26 ／ Rule 7: PDF p.3 / 官報 p.26 ／ Rule 13: PDF p.6 / 官報 p.29",
     "逐語引用：下記のとおり",
     "改正履歴の脚注：なし（本文書内に脚注は存在しない）",
-    "見つからなかった項目：なし（1〜4すべて特定）"
+    "見つからなかった項目：なし（1〜4すべて特定）",
+    "逐語引用"
   ],
   "items": [
     {
@@ -29,9 +30,12 @@
       "page_pdf": "3",
       "page_printed": "26",
       "quotes": [
-        {"text": "6. Reasonable security safeguards. — (1) A Data Fiduciary shall protect personal data in its possession or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach, which shall include, at the minimum, — (a) appropriate data security measures, such as securing of personal data through encryption, obfuscation, masking or the use of virtual tokens mapped to that personal data; (b) appropriate measures to control access to the computer resources used by such Data Fiduciary or such a Data Processor, wherever applicable; (c) visibility on the accessing of such personal data, through appropriate logs, monitoring and review, for enabling detection of unauthorised access, its investigation and remediation to prevent recurrence; (d) reasonable measures for continued processing in the event of confidentiality, integrity or availability of such personal data being compromised as a result of destruction or loss of access to personal data or otherwise, such as by way of data-backups; (e) for enabling the detection of unauthorised access, its investigation, remediation to prevent recurrence and continued processing in the event of such a compromise, retain such logs and personal data for a period of one year, unless compliance with any law for the time being in force requires otherwise; (f) appropriate provision in the contract entered into between such Data Fiduciary and such a Data Processor, wherever applicable, for taking reasonable security safeguards; and (g) appropriate technical and organisational measures to ensure effective observance of security safeguards. (2) In this rule, the expression \"computer resource\" shall have the same meaning as is assigned to it in Information Technology Act, 2000 (21 of 2000)."}
+        {
+          "text": "6. Reasonable security safeguards. — (1) A Data Fiduciary shall protect personal data in its possession or under its control, including in respect of any processing undertaken by it or on its behalf by a Data Processor, by taking reasonable security safeguards to prevent personal data breach, which shall include, at the minimum, — (a) appropriate data security measures, such as securing of personal data through encryption, obfuscation, masking or the use of virtual tokens mapped to that personal data; (b) appropriate measures to control access to the computer resources used by such Data Fiduciary or such a Data Processor, wherever applicable; (c) visibility on the accessing of such personal data, through appropriate logs, monitoring and review, for enabling detection of unauthorised access, its investigation and remediation to prevent recurrence; (d) reasonable measures for continued processing in the event of confidentiality, integrity or availability of such personal data being compromised as a result of destruction or loss of access to personal data or otherwise, such as by way of data-backups; (e) for enabling the detection of unauthorised access, its investigation, remediation to prevent recurrence and continued processing in the event of such a compromise, retain such logs and personal data for a period of one year, unless compliance with any law for the time being in force requires otherwise; (f) appropriate provision in the contract entered into between such Data Fiduciary and such a Data Processor, wherever applicable, for taking reasonable security safeguards; and (g) appropriate technical and organisational measures to ensure effective observance of security safeguards. (2) In this rule, the expression \"computer resource\" shall have the same meaning as is assigned to it in Information Technology Act, 2000 (21 of 2000)."
+        }
       ],
       "remarks": [
+        "1. Rule 6 — Reasonable security safeguards（全項）— PDF p.3 / 官報 p.26",
         "※ (f) の太字は指定箇所の可視化のみで、原文に強調はありません。原文の引用符は \"curly quotes\"（“ ”）です。"
       ]
     },
@@ -42,7 +46,12 @@
       "page_pdf": "3",
       "page_printed": "26",
       "quotes": [
-        {"text": "7. Intimation of personal data breach. — (1) On becoming aware of any personal data breach, the Data Fiduciary shall, to the best of its knowledge, intimate to each affected Data Principal, in a concise, clear and plain manner and without delay, through her user account or any mode of communication registered by her with the Data Fiduciary, — (a) a description of the breach, including its nature, extent and the timing of its occurrence; (b) the consequences relevant to her, that are likely to arise from the breach; (c) the measures implemented and being implemented by the Data Fiduciary, if any, to mitigate risk; (d) the safety measures that she may take to protect her interests; and (e) business contact information of a person who is able to respond on behalf of the Data Fiduciary, to queries, if any, of the Data Principal. (2) On becoming aware of any personal data breach, the Data Fiduciary shall intimate to the Board, — (a) without delay, a description of the breach, including its nature, extent, timing and location of occurrence and the likely impact; (b) within seventy-two hours of becoming aware of the breach, or within such longer period as the Board may allow on a request made in writing in this behalf, — (i) updated and detailed information in respect of such description; (ii) the broad facts related to the events, circumstances and reasons leading to the breach; (iii) measures implemented or proposed, if any, to mitigate risk; (iv) any findings regarding the person who caused the breach; (v) remedial measures taken to prevent recurrence of such breach; and (vi) a report regarding the intimations given to affected Data Principals."}
+        {
+          "text": "7. Intimation of personal data breach. — (1) On becoming aware of any personal data breach, the Data Fiduciary shall, to the best of its knowledge, intimate to each affected Data Principal, in a concise, clear and plain manner and without delay, through her user account or any mode of communication registered by her with the Data Fiduciary, — (a) a description of the breach, including its nature, extent and the timing of its occurrence; (b) the consequences relevant to her, that are likely to arise from the breach; (c) the measures implemented and being implemented by the Data Fiduciary, if any, to mitigate risk; (d) the safety measures that she may take to protect her interests; and (e) business contact information of a person who is able to respond on behalf of the Data Fiduciary, to queries, if any, of the Data Principal. (2) On becoming aware of any personal data breach, the Data Fiduciary shall intimate to the Board, — (a) without delay, a description of the breach, including its nature, extent, timing and location of occurrence and the likely impact; (b) within seventy-two hours of becoming aware of the breach, or within such longer period as the Board may allow on a request made in writing in this behalf, — (i) updated and detailed information in respect of such description; (ii) the broad facts related to the events, circumstances and reasons leading to the breach; (iii) measures implemented or proposed, if any, to mitigate risk; (iv) any findings regarding the person who caused the breach; (v) remedial measures taken to prevent recurrence of such breach; and (vi) a report regarding the intimations given to affected Data Principals."
+        }
+      ],
+      "remarks": [
+        "2. Rule 7 — Intimation of personal data breach — PDF p.3 / 官報 p.26"
       ]
     },
     {
@@ -52,9 +61,12 @@
       "page_pdf": "6",
       "page_printed": "29",
       "quotes": [
-        {"text": "13. Additional obligations of Significant Data Fiduciary. — (1) A Significant Data Fiduciary shall, once in every period of twelve months from the date on which it is notified as such or is included in the class of Data Fiduciaries notified as such, undertake a Data Protection Impact Assessment and an audit to ensure effective observance of the provisions of this Act and the rules made thereunder. (2) A Significant Data Fiduciary shall cause the person carrying out the Data Protection Impact Assessment and audit to furnish to the Board a report containing significant observations in the Data Protection Impact Assessment and audit. (3) A Significant Data Fiduciary shall observe due diligence to verify that technical measures including algorithmic software adopted by it for hosting, display, uploading, modification, publishing, transmission, storage, updating or sharing of personal data processed by it are not likely to pose a risk to the rights of Data Principals. (4) A Significant Data Fiduciary shall undertake measures to ensure that personal data specified by the Central Government, on the basis of the recommendations of a committee constituted by it, is processed subject to the restriction that the personal data and the traffic data pertaining to its flow is not transferred outside the territory of India. (5) In this rule, \"committee\" means a committee constituted by the Central Government for the purpose of this rule, which shall include officials from the Ministry of Electronics and Technology and may include officials from other Ministries or Department of the Central Government."}
+        {
+          "text": "13. Additional obligations of Significant Data Fiduciary. — (1) A Significant Data Fiduciary shall, once in every period of twelve months from the date on which it is notified as such or is included in the class of Data Fiduciaries notified as such, undertake a Data Protection Impact Assessment and an audit to ensure effective observance of the provisions of this Act and the rules made thereunder. (2) A Significant Data Fiduciary shall cause the person carrying out the Data Protection Impact Assessment and audit to furnish to the Board a report containing significant observations in the Data Protection Impact Assessment and audit. (3) A Significant Data Fiduciary shall observe due diligence to verify that technical measures including algorithmic software adopted by it for hosting, display, uploading, modification, publishing, transmission, storage, updating or sharing of personal data processed by it are not likely to pose a risk to the rights of Data Principals. (4) A Significant Data Fiduciary shall undertake measures to ensure that personal data specified by the Central Government, on the basis of the recommendations of a committee constituted by it, is processed subject to the restriction that the personal data and the traffic data pertaining to its flow is not transferred outside the territory of India. (5) In this rule, \"committee\" means a committee constituted by the Central Government for the purpose of this rule, which shall include officials from the Ministry of Electronics and Technology and may include officials from other Ministries or Department of the Central Government."
+        }
       ],
       "remarks": [
+        "3. Rule 13 — Additional obligations of Significant Data Fiduciary — PDF p.6 / 官報 p.29",
         "※ (3) の太字は指定箇所の可視化のみで、原文に強調はありません。原文 (5) は “committee” と curly quotes を使用。原文の \"Ministry of Electronics and Technology\"（\"and Information Technology\" ではない）表記もそのまま写しています。"
       ]
     },
@@ -65,7 +77,12 @@
       "page_pdf": "1",
       "page_printed": "24",
       "quotes": [
-        {"text": "1. Short title and commencement. — (1) These rules may be called the Digital Personal Data Protection Rules, 2025. (2) Rules 1, 2 and 17 to 21 shall come into force on the date of their publication in the Official Gazette. (3) Rule 4 shall come into force one year after the date of publication of this Gazette. (4) Rules 3, 5 to 16, 22 and 23 shall come into force eighteen months after the date of publication of this Gazette."}
+        {
+          "text": "1. Short title and commencement. — (1) These rules may be called the Digital Personal Data Protection Rules, 2025. (2) Rules 1, 2 and 17 to 21 shall come into force on the date of their publication in the Official Gazette. (3) Rule 4 shall come into force one year after the date of publication of this Gazette. (4) Rules 3, 5 to 16, 22 and 23 shall come into force eighteen months after the date of publication of this Gazette."
+        }
+      ],
+      "remarks": [
+        "4. 施行スケジュール（commencement 条項）— PDF p.1 / 官報 p.24"
       ]
     }
   ]
