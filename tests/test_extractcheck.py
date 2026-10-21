@@ -37,7 +37,12 @@ def test_gazette_numbers_are_normalised():
 
 def test_memorandum_numbers_keep_their_form():
     ids = extractcheck.identifiers("F./1/9/2021-PPD and F.1/1/2021-PPD")
-    assert ("memorandum", "F./1/9/2021-PPD") in ids and ("memorandum", "F.1/1/2021-PPD") in ids
+    assert ("file number", "F./1/9/2021-PPD") in ids and ("file number", "F.1/1/2021-PPD") in ids
+
+
+@pytest.mark.parametrize("text", ["F.1/1/2021–PPD", "F.No.1/1/2021-PPD", "F No. 1/1/2021-PPD", "F. 1/1/2021-PPD"])
+def test_memorandum_number_variants(text):
+    assert ("file number", "F.1/1/2021-PPD") in extractcheck.identifiers(text)
 
 
 def test_titles_drop_leading_words_and_keep_the_year():
@@ -47,8 +52,18 @@ def test_titles_drop_leading_words_and_keep_the_year():
 
 
 def test_japanese_article_numbers():
-    assert ("article", "art 52(1)(q)") in extractcheck.identifiers("インド著作権法52条(1)(q)により")
-    assert ("article", "art 52(1)(q)") in extractcheck.identifiers("52条（1）（q）")
+    assert ("条", "52(1)(q)") in extractcheck.identifiers("インド著作権法52条(1)(q)により")
+    assert ("条", "52(1)(q)") in extractcheck.identifiers("52条（1）（q）")
+    assert ("条", "52(1)") in extractcheck.identifiers("第52条第1項")
+    assert ("条", "3-2") in extractcheck.identifiers("3条の2")
+    assert not extractcheck.identifiers("4条件を満たす")
+
+
+def test_a_japanese_jo_is_shown_by_a_section_of_the_same_number():
+    r = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "1",
+                       "quotes": [{"text": "persons mentioned in section 195 of the Income Tax Act"}],
+                       "remarks": ["195条の源泉徴収義務"]}])
+    assert not extractcheck.check(r)["flags"]
 
 
 def test_law_report_citations_ignore_the_court_tag():
@@ -57,8 +72,11 @@ def test_law_report_citations_ignore_the_court_tag():
 
 def test_a_paragraph_is_shown_by_a_quotation_that_begins_it():
     r = report(items=[{"n": 1, "target": "conclusion", "status": "found", "page_pdf": "115",
-                       "quotes": [{"text": "168. Given the definition"}], "remarks": ["para 168–170"]}])
+                       "quotes": [{"text": "168. Given the definition. 169. Our answer. 170. The appeals"}],
+                       "remarks": ["para 168–170"]}])
     assert not extractcheck.check(r)["flags"]
+    r["items"][0]["quotes"][0]["text"] = "168. Given the definition"
+    assert flagged(extractcheck.check(r)) == {("paragraph", "para 169"), ("paragraph", "para 170")}
 
 
 def test_identifier_shown_by_a_footnote_is_not_flagged():
@@ -96,7 +114,7 @@ def test_outside_text_itself_is_not_checked():
 
 def test_departures_and_source_fields_are_checked():
     r = report(source={"edition": "in force from 1 April 2014"}, departures=["exempt under 52条(1)(q)"], items=[])
-    assert flagged(extractcheck.check(r)) == {("date", "2014-04-01"), ("article", "art 52(1)(q)")}
+    assert flagged(extractcheck.check(r)) == {("date", "2014-04-01"), ("条", "52(1)(q)")}
 
 
 def test_not_in_source_needs_a_search_record():
@@ -117,7 +135,7 @@ def test_quote_on_its_page(tmp_path):
     assert not extractcheck.check(ok, pages)["flags"]
     wrong = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "3", "quotes": [{"text": "The Rule says this."}]}])
     msg = [f["message"] for f in extractcheck.check(wrong, pages)["flags"] if f["check"] == "X1"]
-    assert msg == ["not on page 3; found on PDF page 2"]
+    assert msg == ["not on page pdf 3; found on PDF page 2"]
     absent = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "2", "quotes": [{"text": "The Rule says that."}]}])
     assert "not found in the source" in extractcheck.check(absent, pages)["flags"][0]["message"]
 
@@ -146,8 +164,8 @@ def test_excerpt_is_checked_in_parts(tmp_path):
 def test_pdflines_source_is_read(tmp_path):
     src = tmp_path / "lines.json"
     src.write_text(json.dumps({"pages": [{"printed_page": 188, "lines": [{"y": 1, "h": 15, "text": "6.18 Since"}]}]}), encoding="utf-8")
-    pages = extractcheck.read_source(str(src))
-    assert pages == [{"pdf_page": 1, "printed_page": "188", "text": "6.18 Since"}]
+    assert extractcheck.read_source(str(src)) == [{"pdf_page": None, "printed_page": "188", "text": "6.18 Since"}]
+    assert extractcheck.read_source(str(src), 10)[0]["pdf_page"] == 10
 
 
 def test_identifier_in_source_text_is_not_flagged(tmp_path):
@@ -166,9 +184,20 @@ def test_exit_codes(tmp_path, capsys):
     dirty = tmp_path / "dirty.json"
     dirty.write_text(json.dumps(report(remarks=["G.S.R. 1(E)"], items=[])), encoding="utf-8")
     assert extractcheck.main([str(dirty)]) == 1
-    bad = tmp_path / "bad.json"
-    bad.write_text(json.dumps({"items": [{"n": 1, "target": "x", "status": "maybe"}], "id": "b"}), encoding="utf-8")
-    assert extractcheck.main([str(bad)]) == 2
+    for bad_report in ({"items": [{"n": 1, "target": "x", "status": "maybe"}], "id": "b", "source": {}},
+                       {"id": "x", "items": [1], "source": {}},
+                       {"id": "x", "source": "s", "items": []},
+                       {"id": "x", "source": {}, "items": [], "remarks": "G.S.R. 1(E)"},
+                       {"id": "x", "source": {}, "items": [], "remark": ["G.S.R. 1(E)"]},
+                       {"id": "x", "items": []}):
+        bad = tmp_path / "bad.json"
+        bad.write_text(json.dumps(bad_report), encoding="utf-8")
+        assert extractcheck.main([str(bad)]) == 2, bad_report
+    src = tmp_path / "src.json"
+    src.write_text(json.dumps({"pages": [1]}), encoding="utf-8")
+    assert extractcheck.main([str(clean), "--source", str(src)]) == 2
+    src.write_text(json.dumps([{"text": "x"}]), encoding="utf-8")
+    assert extractcheck.main([str(clean), "--source", str(src)]) == 2
     assert extractcheck.main([str(clean), str(dirty), "--source", str(clean)]) == 2
     capsys.readouterr()
 
@@ -232,11 +261,165 @@ def test_the_four_threads_as_published():
     assert ("title", "companies (accounts) amendment rules, 2021") in flagged(acc)
     assert ("gazette", "G.S.R. 205(E)") not in flagged(acc)
     ergo = results["engineering-analysis ERGO"]
-    assert ("article", "art 52(1)(q)") in flagged(ergo)
     assert ("report", "(2011) 245 CTR 481") in flagged(ergo)
     assert ("rule", "rule 192") in flagged(results["gfr-2017"])
     assert ("gazette", "G.S.R. 846(E)") in flagged(results["dpdp-rules"])
-    assert not results["engineering-analysis"]["flags"]
+    assert flagged(results["engineering-analysis"]) == {("report", "AIRONLINE 2021 SC 102")}
+    assert ("条", "52(1)(q)") in flagged(ergo)
     assert {k: v["identifiers"]["not shown"] for k, v in results.items()} == {
-        "companies-accounts-rules": 8, "dpdp-rules": 4, "engineering-analysis": 0,
-        "engineering-analysis ERGO": 9, "gfr-2017": 6}
+        "companies-accounts-rules": 7, "dpdp-rules": 3, "engineering-analysis": 1,
+        "engineering-analysis ERGO": 10, "gfr-2017": 5}
+
+
+@pytest.mark.parametrize("text", ["本PDFはRule 3(1)を含む", "但書はG.S.R. 205(E)が挿入", "改正はF.1/1/2021-PPDによる",
+                                  "施行は1st April 2014に", "本PDFはCompanies (Accounts) Rules, 2014のみ"])
+def test_identifiers_next_to_japanese_text(text):
+    assert extractcheck.identifiers(text)
+
+
+@pytest.mark.parametrize("text,iso", [("1st day of April, 2022", "2022-04-01"), ("29-10-2021", "2021-10-29"),
+                                      ("29/10/2021", "2021-10-29"), ("2nd March,2021", "2021-03-02"),
+                                      ("MARCH 2, 2021", "2021-03-02"), ("2 Sept. 2021", "2021-09-02")])
+def test_more_date_forms(text, iso):
+    assert ("date", iso) in extractcheck.identifiers(text)
+
+
+def test_a_month_and_year_is_not_a_date():
+    assert not extractcheck.identifiers("Sept 2021")
+
+
+def test_titles_do_not_swallow_what_comes_before():
+    assert extractcheck.identifiers("Schedule III of the Companies Act, 2013") == {("title", "companies act, 2013")}
+    assert extractcheck.identifiers("The Gazette of India and the Companies Act, 2013") == {("title", "companies act, 2013")}
+    assert extractcheck.identifiers("GENERAL FINANCIAL RULES 2017") == {("title", "general financial rules, 2017")}
+    assert ("rule", "rule 2017") not in extractcheck.identifiers("General Financial Rules 2017")
+
+
+def test_a_title_is_shown_by_a_longer_title_that_ends_with_it():
+    r = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "1",
+                       "quotes": [{"text": "under the Companies Act, 2013"}],
+                       "remarks": ["see Schedule III of the Companies Act, 2013"]}])
+    assert not extractcheck.check(r)["flags"]
+
+
+def test_lists_and_ranges_are_expanded():
+    ids = extractcheck.identifiers("Rules 1, 2 and 17 to 21")
+    assert {("rule", "rule " + n) for n in ("1", "2", "17", "18", "19", "20", "21")} == ids
+    assert {("section", "section 9"), ("section", "section 195")} == extractcheck.identifiers("sections 9 and 195")
+
+
+def test_a_more_specific_provision_shows_a_general_one():
+    r = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "1",
+                       "quotes": [{"text": "in the proviso to sub-rule (1) of rule 3"}],
+                       "remarks": ["Rule 3(1) has a proviso", "Rule 3 is about books of account"]}])
+    assert not extractcheck.check(r)["flags"]
+    r["items"][0]["remarks"] = ["Rule 3(2) says"]
+    assert flagged(extractcheck.check(r)) == {("rule", "rule 3(2)")}
+
+
+def test_section_headings_of_the_gazette_are_not_sections():
+    assert not extractcheck.identifiers("PART II—Section 3—Sub-section (i)")
+
+
+def test_a_rule_number_before_a_heading_is_not_a_paragraph():
+    assert ("paragraph", "para 149") not in extractcheck.identifiers("Rule 149. Government e-Market", verbatim=True)
+
+
+@pytest.mark.parametrize("text,ident", [("GSR 205(E)", ("gazette", "G.S.R. 205(E)")),
+                                        ("SO 5458(E)", ("gazette", "S.O. 5458(E)")),
+                                        ("¶ 6.21", ("paragraph", "para 6.21")),
+                                        ("Para 4", ("paragraph", "para 4")),
+                                        ("u/s 195", ("section", "section 195")),
+                                        ("(2012) 345 I.T.R. 494", ("report", "(2012) 345 ITR 494")),
+                                        ("AIR 2021 SC 102", ("report", "AIR 2021 SC 102")),
+                                        ("[2021] 125 taxmann.com 42", ("report", "[2021] 125 taxmann.com 42"))])
+def test_more_identifier_forms(text, ident):
+    assert ident in extractcheck.identifiers(text)
+
+
+def test_the_search_record_is_not_verbatim_text_except_where_it_quotes():
+    r = report(items=[{"n": 1, "target": "Rule 11(g)", "status": "not_in_source",
+                       "search_record": ["searched 'G.S.R. 206(E)': 0 hits"],
+                       "remarks": ["Rule 11(g) was inserted by G.S.R. 206(E)"]}])
+    result = extractcheck.check(r)
+    assert not result["flags"] and result["identifiers"]["searched"] == 1
+    assert result["searched_only"][0]["identifier"] == "G.S.R. 206(E)"
+    r["items"][0]["search_record"] = ["one hit: 「Inserted vide G.S.R. 206(E)」"]
+    result = extractcheck.check(r)
+    assert result["identifiers"]["shown"] == 1 and not result["searched_only"]
+
+
+def test_expected_is_not_given():
+    r = report(items=[{"n": 1, "target": "Rule 11(g)", "expected": "inserted by G.S.R. 206(E)",
+                       "status": "not_in_source", "search_record": ["0 hits"],
+                       "remarks": ["G.S.R. 206(E)"]}])
+    assert flagged(extractcheck.check(r)) == {("gazette", "G.S.R. 206(E)")}
+
+
+def test_the_cover_as_quoted_shows_what_it_says():
+    r = report(source={"title": "GENERAL FINANCIAL RULES 2017 Updated up to 31.07.2024",
+                       "cover": [{"text": "GENERAL FINANCIAL RULES 2017 / Updated up to 31.07.2024", "page_pdf": "1"}]},
+               items=[])
+    assert not extractcheck.check(r)["flags"]
+
+
+def test_counts_are_of_distinct_identifiers():
+    r = report(source={"title": "G.S.R. 9(E)", "edition": "G.S.R. 9(E)"}, remarks=["G.S.R. 9(E)"], items=[])
+    result = extractcheck.check(r)
+    assert result["identifiers"]["not shown"] == 1 and len(result["flags"]) == 3
+
+
+def test_pdf_and_printed_pages_are_not_confused(tmp_path):
+    src = tmp_path / "p.json"
+    src.write_text(json.dumps({"pages": [{"pdf_page": 1, "printed_page": "2", "text": "alpha text"},
+                                         {"pdf_page": 2, "printed_page": "3", "text": "beta text"}]}), encoding="utf-8")
+    pages = extractcheck.read_source(str(src))
+    r = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "2", "quotes": [{"text": "alpha text"}]}])
+    assert [f["check"] for f in extractcheck.check(r, pages)["flags"]] == ["X1"]
+    r["items"][0] = {"n": 1, "target": "x", "status": "found", "page_printed": "2", "quotes": [{"text": "alpha text"}]}
+    assert not extractcheck.check(r, pages)["flags"]
+
+
+def test_page_lists_with_commas_and_quotes_across_pages(tmp_path):
+    src = tmp_path / "s.txt"
+    src.write_text("a\fb\fc and the quote begins\fand ends here\fe\f" + "\f".join("x" * 110), encoding="utf-8")
+    pages = extractcheck.read_source(str(src))
+    r = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "1–5, 115",
+                       "quotes": [{"text": "the quote begins and ends here"}, {"text": "c and the"}]}])
+    assert not extractcheck.check(r, pages)["flags"]
+
+
+def test_line_end_hyphens_in_the_source(tmp_path):
+    src = tmp_path / "s.txt"
+    src.write_text("shall remain accessi-\nble in India", encoding="utf-8")
+    r = report(items=[{"n": 1, "target": "x", "status": "found", "page_pdf": "1",
+                       "quotes": [{"text": "shall remain accessible in India"}]}])
+    assert not extractcheck.check(r, extractcheck.read_source(str(src)))["flags"]
+
+
+def test_found_with_pages_on_every_quote_needs_no_item_page():
+    r = report(items=[{"n": 1, "target": "x", "status": "found", "quotes": [{"text": "a", "page_pdf": "3"}]}])
+    assert not extractcheck.check(r)["flags"]
+    r["items"][0]["status"] = "undeterminable"
+    r["items"][0]["quotes"] = []
+    assert extractcheck.check(r)["flags"][0]["message"] == "reported undeterminable with no page"
+
+
+def test_report_option_picks_one_report_for_source(tmp_path, capsys):
+    two = tmp_path / "two.json"
+    two.write_text(json.dumps([report(id="a", items=[]), report(id="b", items=[])]), encoding="utf-8")
+    src = tmp_path / "s.txt"
+    src.write_text("text", encoding="utf-8")
+    assert extractcheck.main([str(two), "--source", str(src)]) == 2
+    assert extractcheck.main([str(two), "--source", str(src), "--report", "b"]) == 0
+    assert extractcheck.main([str(two), "--report", "c"]) == 2
+    capsys.readouterr()
+
+
+def test_examples_validate_against_the_schema():
+    jsonschema = pytest.importorskip("jsonschema")
+    with open(SCHEMA, encoding="utf-8") as f:
+        schema = json.load(f)
+    for path in EXAMPLES:
+        for r in extractcheck.load(path):
+            jsonschema.validate(r, schema)

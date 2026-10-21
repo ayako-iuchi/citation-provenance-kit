@@ -4,7 +4,7 @@ This is an English translation of the instruction that opened four working threa
 
 In all four threads the "Items to extract" block was left as the unfilled template; the actual items were appended, numbered, after the report table. They are in `examples/extraction_2026-07-24/`.
 
-Note on the paper's wording. §8-2 and the paper's disclosure describe this instruction as one that "forbade summarising, characterising, or judging relevance". The instruction itself forbids summarising, paraphrasing and interpreting (要約・言い換え・解釈), and says that judgments of importance and explanations of relations to other provisions are not required (不要). "Characterising" is not in it.
+Note on the paper's wording. §8-2 and the paper's disclosure describe this instruction as one that "forbade summarising, characterising, or judging relevance"; the Japanese edition says 要約・性格づけ・重要性の判断. The instruction itself forbids summarising, paraphrasing and interpreting (要約・言い換え・解釈), and says that judgments of importance and explanations of relations to other provisions are not required (不要). "Characterising" (性格づけ) is not in it. This is entry #66 of the method paper's log.
 
 The revised instruction is `extraction_prompt_v2_en.md`.
 

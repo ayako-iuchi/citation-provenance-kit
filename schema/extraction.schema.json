@@ -2,75 +2,186 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/extraction.schema.json",
   "title": "Extraction report (kit v1.9)",
-  "description": "One verbatim-extraction report: what an extractor returned for one source. Everything the extractor wrote is kept, and kept in the field it belongs to: verbatim text (quotes, footnotes), the search record for what was not found, the extractor's own prose (remarks), what it marked as coming from outside the source, and its departures from the instruction. extractcheck.py checks that identifiers in the prose are shown by the verbatim text, given by the request, or declared as outside. CC0 1.0.",
+  "description": "One verbatim-extraction report: what an extractor returned for one source. Everything the extractor wrote is kept, and kept in the field it belongs to: verbatim text (quotations, footnotes, the cover and colophon as quoted), the search record for what was not found, the extractor's own prose (remarks), what it marked as coming from outside the source, and its departures from the instruction. extractcheck.py checks that identifiers in the prose are shown by the verbatim text, given by the request, searched for, or declared as outside. CC0 1.0.",
   "type": "object",
-  "required": ["id", "source", "items"],
+  "required": [
+    "id",
+    "source",
+    "items"
+  ],
   "additionalProperties": false,
   "properties": {
-    "id": {"type": "string", "description": "A name for this report, e.g. the thread and turn it comes from."},
-    "date": {"type": "string", "description": "When the report was written (YYYY-MM-DD)."},
-    "prompt": {"type": "string", "description": "Which instruction the extractor was given, e.g. a file in kit/."},
-    "transcribed": {"type": "string", "description": "For a report copied from somewhere else: who copied it, when, and what was left out."},
+    "id": {
+      "type": "string",
+      "description": "A name for this report, e.g. the thread and turn it comes from."
+    },
+    "date": {
+      "type": "string",
+      "description": "When the report was written (YYYY-MM-DD)."
+    },
+    "prompt": {
+      "type": "string",
+      "description": "Which instruction the extractor was given, e.g. a file in kit/."
+    },
+    "transcribed": {
+      "type": "string",
+      "description": "For a report copied from somewhere else: who copied it, when, and what was left out."
+    },
     "source": {
       "type": "object",
       "description": "The document extracted from, as the extractor described it. These fields are the extractor's words and are checked like remarks.",
       "additionalProperties": false,
       "properties": {
-        "title": {"type": "string"},
-        "issuer": {"type": "string"},
-        "edition": {"type": "string"},
-        "pages": {"type": "string", "description": "Page count as reported, e.g. \"177 (PDF) / 174 (printed)\"."},
-        "file": {"type": "string", "description": "The file name the extractor was given, if known."}
+        "title": {
+          "type": "string"
+        },
+        "issuer": {
+          "type": "string"
+        },
+        "edition": {
+          "type": "string"
+        },
+        "pages": {
+          "type": "string",
+          "description": "Page count as reported, e.g. \"177 (PDF) / 174 (printed)\"."
+        },
+        "file": {
+          "type": "string",
+          "description": "The file name the extractor was given, if known."
+        },
+        "cover": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/quote"
+          },
+          "description": "The title page, cover or colophon, quoted verbatim. Identifiers here count as shown."
+        }
       }
     },
     "items": {
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["n", "target", "status"],
+        "required": [
+          "n",
+          "target",
+          "status"
+        ],
         "additionalProperties": false,
         "properties": {
-          "n": {"type": "integer", "minimum": 1},
-          "target": {"type": "string", "description": "The item as the request named it, verbatim. Identifiers here count as given by the request."},
-          "status": {"enum": ["found", "not_in_source", "undeterminable"], "description": "not_in_source: the extractor reports the item is not in this source (never that it does not exist). undeterminable: found, but something the request asked for cannot be settled from this source."},
-          "page_pdf": {"type": "string"},
-          "page_printed": {"type": "string"},
-          "quotes": {"type": "array", "items": {"$ref": "#/$defs/quote"}},
-          "footnotes": {"type": "array", "items": {"$ref": "#/$defs/quote"}},
-          "search_record": {"type": "array", "items": {"type": "string"}, "description": "What was searched for and what came back. Required when status is not_in_source."},
-          "remarks": {"type": "array", "items": {"type": "string"}, "description": "The extractor's own prose about this item, verbatim."}
+          "n": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "target": {
+            "type": "string",
+            "description": "The item as the request named it, verbatim, without the requester's expectations of its content. Identifiers here count as given by the request."
+          },
+          "expected": {
+            "type": "string",
+            "description": "What the requester expected the item to contain, if the request said so. Something to check, not something given: identifiers here are not counted."
+          },
+          "status": {
+            "enum": [
+              "found",
+              "not_in_source",
+              "undeterminable"
+            ],
+            "description": "not_in_source: the extractor reports the item is not in this source (never that it does not exist). undeterminable: found, but something the request asked for cannot be settled from this source."
+          },
+          "page_pdf": {
+            "type": "string"
+          },
+          "page_printed": {
+            "type": "string"
+          },
+          "quotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/quote"
+            }
+          },
+          "footnotes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/$defs/quote"
+            }
+          },
+          "search_record": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What was searched for and what came back, in the extractor's words. A passage it quotes (inside 「」, “”, \"\" or ``) counts as verbatim; the rest counts as 'searched', not as shown. Expected when status is not_in_source; extractcheck.py flags its absence (X3) rather than refusing the report, so that a report which lacks one can still be recorded as it was."
+          },
+          "remarks": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The extractor's own prose about this item, verbatim."
+          }
         }
       }
     },
-    "remarks": {"type": "array", "items": {"type": "string"}, "description": "The extractor's own prose about the report as a whole, verbatim."},
+    "remarks": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "The extractor's own prose about the report as a whole, verbatim."
+    },
     "outside": {
       "type": "array",
       "description": "What the extractor itself marked as coming from outside this source.",
       "items": {
         "type": "object",
-        "required": ["text", "origin"],
+        "required": [
+          "text",
+          "origin"
+        ],
         "additionalProperties": false,
         "properties": {
-          "text": {"type": "string"},
-          "origin": {"type": "string", "description": "memory, or the name of the other document."}
+          "text": {
+            "type": "string"
+          },
+          "origin": {
+            "type": "string",
+            "description": "memory, or the name of the other document."
+          }
         }
       }
     },
     "departures": {
       "type": "array",
       "description": "Lines of the instruction the extractor said it did not follow, and why.",
-      "items": {"type": "string"}
+      "items": {
+        "type": "string"
+      }
     }
   },
   "$defs": {
     "quote": {
       "type": "object",
-      "required": ["text"],
+      "required": [
+        "text"
+      ],
       "additionalProperties": false,
       "properties": {
-        "text": {"type": "string", "description": "Verbatim, as the extractor gave it."},
-        "page_pdf": {"type": "string"},
-        "excerpt": {"type": "boolean", "description": "true if the transcription leaves part of the quote out ([…] marks where). Set only by a transcriber, never by an extractor."}
+        "text": {
+          "type": "string",
+          "description": "Verbatim, as the extractor gave it."
+        },
+        "page_pdf": {
+          "type": "string"
+        },
+        "page_printed": {
+          "type": "string"
+        },
+        "excerpt": {
+          "type": "boolean",
+          "description": "true if the text as recorded leaves part of the quotation out, marked […] or [...], whoever left it out (the extractor or a later transcriber). extractcheck.py then looks for each part separately."
+        }
       }
     }
   }
