@@ -31,7 +31,11 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6） |
 | [`tools/catchlog.py`](tools/catchlog.py) | 成分ごとに、公開前と公開後に分けて訂正と確認を別に数え、意味のないゼロを示す（キットv1.7）。`--fields` で各欄の埋まり具合を示す（キットv1.8） |
 | [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（#45〜#62）を、発見日、判断の欄、所要時間、公開前後だけにしたもの（キットv1.8） |
-| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
+| [`kit/extraction_prompt_2026-07-24_ja.md`](kit/extraction_prompt_2026-07-24_ja.md)、[`_en.md`](kit/extraction_prompt_2026-07-24_en.md) | 元のプロジェクトで2026年7月24日に使った逐語抽出の指示文。原文（日本語）と英訳（キットv1.9） |
+| [`kit/extraction_prompt_v2_ja.md`](kit/extraction_prompt_v2_ja.md)、[`_en.md`](kit/extraction_prompt_v2_en.md) | 指示文の改訂版。「このPDFにはない」と検索の記録、PDF頁と印字頁、資料の外から来たものの別の欄（キットv1.9） |
+| [`tools/extractcheck.py`](tools/extractcheck.py)、[`schema/extraction.schema.json`](schema/extraction.schema.json) | 抽出の報告を記録の形にしたものと、抽出係が書いているのに報告が示していない識別子の検査（キットv1.9） |
+| [`examples/extraction_2026-07-24/`](examples/extraction_2026-07-24/) | 2026年7月24日の抽出の報告4本を写したもの。中の逐語はインドの法令と判決で、CC0の対象**外**（キットv1.9） |
+| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計、抽出の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
 | [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
@@ -120,6 +124,17 @@ python3 tools/catchlog.py examples/series_log/after_v1.2.csv --fields
 ```
 
 `--fields` は、キャッチログの各欄がどれだけ埋まっているかを、公開前と公開後に分けて報告します。埋まっている、未判断（または記録なし）、空、の3つです。「見逃していたら何が起きたか」と「影響の大きさ」に判断のない項目を番号で挙げます。欄を埋めることはしません。ワークブックとCSVの雛形には、影響の大きさの次に「「見逃していたら」を誰が書いたか」の列を足しました（author、author chose from assistant's options、assistant、not yet decided）。論文はこの欄を委任できない項目と呼びます（§9-5）が、補助者が下書きすることはできてしまうからです。`examples/series_log/after_v1.2.csv` は、論文v1.2より後の著者のログ（#45〜#62、論文には未掲載）を、発見日、判断の欄、所要時間、公開前後だけで持ちます。18件のうち判断があるのは3件で、3件とも補助者の候補から選ばれています。
+
+## このPDFにはない（キットv1.9）
+
+```
+python3 tools/extractcheck.py REPORT.json [--source PAGES]
+python3 tools/extractcheck.py examples/extraction_2026-07-24/*.json
+```
+
+方法論文の最大の設計判断は、逐語抽出を別のスレッドで、解釈を禁じる指示の下で行ったことでした（§8-2）。`kit/extraction_prompt_2026-07-24_ja.md` は、その指示文を使ったときのまま写したもので、英訳を付けています。`kit/extraction_prompt_v2_*.md` はその改訂版です。この指示文を使った4本のスレッドでは、逐語、頁、「見つからない」は守られました。資料が尽きた箇所では、資料が示していないことも報告に入りました。PDFにない条項をどの告示が入れたか、法律上の例外、2つ目の資料との比較です。改訂版はそれを禁じません。「このPDFにはない」と検索の記録、PDF頁と印字頁を求め、資料の外から来たものは出所を付けて別の欄に書かせます。
+
+`extractcheck.py` は `schema/extraction.schema.json` の形の報告を読みます。抽出係が自分の言葉で書いた識別子のうち、報告の逐語・脚注・検索の記録が示しておらず、依頼にもなく、資料の外とも宣言されていないものを挙げます（X2）。識別子は、官報とOMの番号、規則・条・段落の番号、判例集の引用、年の付いた規則や法律の題、いくつかの書き方の日付です。ほかに、資料にないと報告して検索の記録がない項目（X3）、見つかったと報告して頁がない項目（X4）、資料のテキストを渡せば、逐語がその頁にないこと（X1）を挙げます。記憶と頁の区別はできません。挙げたものは「示されていない」の意味で、「誤り」の意味ではありません。`examples/extraction_2026-07-24/` は2026年7月の4本の報告を写したものです。写し方と、どこがClaudeの読みかは、そのREADMEにあります。
 
 ## このキットがしないこと
 

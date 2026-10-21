@@ -29,7 +29,11 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/nulleval.py`](tools/nulleval.py), [`evals/null/`](evals/null/), [`schema/null_item.schema.json`](schema/null_item.schema.json) | A test where an empty answer can be right: five questions, a scorer that counts filled and blanked slots apart and three kinds of empty, and a recorded run (kit v1.6) |
 | [`tools/catchlog.py`](tools/catchlog.py) | Counts corrections and confirmations apart for each component, before and after release, and says which zeros mean nothing (kit v1.7); with `--fields`, how full each column is (kit v1.8) |
 | [`examples/series_log/`](examples/series_log/) | The author's log after the paper's v1.2 (#45–#62): date found, judgment columns, duration and phase only (kit v1.8) |
-| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer and the catch-log tally (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`kit/extraction_prompt_2026-07-24_ja.md`](kit/extraction_prompt_2026-07-24_ja.md), [`_en.md`](kit/extraction_prompt_2026-07-24_en.md) | The verbatim-extraction instruction used in the source project on 24 July 2026, as written (Japanese) and translated (kit v1.9) |
+| [`kit/extraction_prompt_v2_ja.md`](kit/extraction_prompt_v2_ja.md), [`_en.md`](kit/extraction_prompt_v2_en.md) | The instruction revised: "not in this PDF" with a search record, PDF and printed pages, and a separate field for anything from outside the source (kit v1.9) |
+| [`tools/extractcheck.py`](tools/extractcheck.py), [`schema/extraction.schema.json`](schema/extraction.schema.json) | An extraction report as a record, and a check for identifiers the extractor states but the report does not show (kit v1.9) |
+| [`examples/extraction_2026-07-24/`](examples/extraction_2026-07-24/) | The four extraction reports of 24 July 2026, transcribed. The quotations inside them are Indian statutory and judicial text and are **not** CC0 (kit v1.9) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally and the extraction check (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
@@ -118,6 +122,17 @@ python3 tools/catchlog.py examples/series_log/after_v1.2.csv --fields
 ```
 
 `--fields` reports how full each column of a catch log is, before and after release: filled, not yet decided (or not recorded), or blank. It lists the entries with no decision in "what would have happened had it gone unnoticed" and in "stakes", and fills nothing in. The workbook and the CSV template have a new column after Stakes, "Who wrote 'what would have happened'?" (author; author chose from assistant's options; assistant; not yet decided), because the paper calls that field the one that cannot be delegated (§9-5), and an assistant can still draft it. `examples/series_log/after_v1.2.csv` holds the author's log after the paper's v1.2 (#45–#62, not yet published in a paper) with only the date found, the judgment columns, the duration and the phase: three of eighteen entries have a decision, all chosen from an assistant's options.
+
+## Not in this PDF (kit v1.9)
+
+```
+python3 tools/extractcheck.py REPORT.json [--source PAGES]
+python3 tools/extractcheck.py examples/extraction_2026-07-24/*.json
+```
+
+The method paper's largest design decision was to run verbatim extraction in separate threads, under an instruction that forbade interpretation (§8-2). `kit/extraction_prompt_2026-07-24_ja.md` is that instruction as it was used, with an English translation; `kit/extraction_prompt_v2_*.md` revises it. In the four threads that used it, the quotations, the pages and "not found" held. Where the source ran out, the reports also stated things the source did not show: which notification inserted a provision that was not in the PDF, a statutory exemption, a comparison with a second document. The revision does not forbid that. It asks for "not in this PDF" with a search record, for the PDF page and the printed page, and for anything from outside the source in a field of its own, with its origin.
+
+`extractcheck.py` reads a report in the form of `schema/extraction.schema.json`. It flags identifiers (gazette and memorandum numbers, rule, section, paragraph and article numbers, law-report citations, titles of rules and acts with their year, dates in any of several forms) that appear in the extractor's own words but are not shown by the report's quotations, footnotes or search record, not given by the request, and not declared as outside (X2). It also flags an item reported not in the source with no search record (X3), an item reported found with no page (X4), and, given the source text, a quotation that is not on its page (X1). It cannot tell memory from the page; a flag means "not shown", not "wrong". `examples/extraction_2026-07-24/` holds the four reports of July 2026, transcribed; its README says how, and which parts are Claude's reading.
 
 ## What this kit does not do
 

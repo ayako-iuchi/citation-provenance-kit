@@ -2,6 +2,13 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.9 — unreleased (branch `kit-v1.9`)
+
+- To be released before Hypothetical Technical Blog #27 (*Not in This PDF*), which cites it, is published.
+- Added `kit/extraction_prompt_2026-07-24_ja.md` (the verbatim-extraction instruction of the source project, as used on 24 July 2026) and its English translation, and `kit/extraction_prompt_v2_ja.md` / `_en.md`, a revision: "not in this PDF" with a search record, PDF and printed pages, a separate field for anything from outside the source, a separate report for each document, and a field for departures from the instruction.
+- Added `tools/extractcheck.py`, `schema/extraction.schema.json`, `examples/extraction_2026-07-24/` and `tests/test_extractcheck.py`. Standard library only, as before. The examples are the four extraction reports of 24 July 2026 (five reports: one thread had a second document), transcribed by Claude on 21 October 2026; which fields hold which text, and the item statuses, are Claude's reading and are marked as such. The quotations inside them are Indian statutory and judicial text and are not CC0.
+- **Found 2026-10-21 — the paper describes its own instruction in words the instruction does not use.** §8-2 and the paper's disclosure say the extraction ran "under an instruction that forbade summarising, characterising, or judging relevance". The instruction forbids summarising, paraphrasing and interpreting (要約・言い換え・解釈), and says judgments of importance and explanations of relations to other provisions are not required. The English translation in `kit/` notes this.
+
 ## Kit v1.8 — 2026-10-21
 
 - **Released on 21 October 2026,** before Hypothetical Technical Blog #26 (*The Field Nobody Else Can Fill*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.8`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written.
