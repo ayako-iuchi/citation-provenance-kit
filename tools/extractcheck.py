@@ -517,7 +517,7 @@ def load(path):
 def render(result):
     s = result["status"]
     c = result["identifiers"]
-    out = ["report {}  {}".format(result["id"], result["title"][:60]).rstrip(),
+    out = ["report {}".format(result["id"]),
            "  items {}: found {} / partial {} / not in source {} / undeterminable {}".format(
                result["items"], s["found"], s["partial"], s["not_in_source"], s["undeterminable"]),
            "  identifiers in the extractor's own words: shown {} / given {} / in source {} / declared {} / not shown {}".format(
