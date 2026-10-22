@@ -90,7 +90,7 @@ NOTATION_RULES = [
     ("Only where grades diverge", "If all components carry the same grade, write a plain [A]. Do not split where the divergence is not load-bearing."),
     ("Three slots maximum", "Needing a fourth means one sentence carries several claims. Split the claim, not the citation."),
     ("Close the vocabulary", "Declare every component and grade token in the document that uses it. An undefined token reached publication in the source project (§7-4)."),
-    ("Derived values (provisional, untested)", "A value computed from cited primaries is neither A nor D. The paper proposes a marker but has not tested one (§4-6, §9-3). Suggested interim: grade the operands, and state the arithmetic beside it, labelled as the author's."),
+    ("Derived values", "A value computed from cited primaries is neither A nor D (§4-6, §9-3). §4-6 says the paper proposes a provisional marker; none appears in it (entry #77 of the author's log after v1.2). Grade the operands and state who did the arithmetic: [operands: A | arithmetic: author]. Record the value, its inputs and the operation in register/computed.jsonl and check it with tools/calccheck.py (kit v1.11). Check first whether the source states the value itself: the paper's own example, about 1.6%, is stated in the judgment (#76)."),
 ]
 
 COST_ACTIONS = [

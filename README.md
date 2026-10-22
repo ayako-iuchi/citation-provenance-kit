@@ -34,8 +34,9 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/extractcheck.py`](tools/extractcheck.py), [`schema/extraction.schema.json`](schema/extraction.schema.json) | An extraction report as a record, and a check for identifiers the extractor states but the report does not show (kit v1.9) |
 | [`examples/extraction_2026-07-24/`](examples/extraction_2026-07-24/) | The four extraction reports of 24 July 2026, transcribed. The quotations inside them are Indian statutory and judicial text and are **not** CC0 (kit v1.9) |
 | [`tools/derivedcheck.py`](tools/derivedcheck.py), [`register/derived.jsonl`](register/derived.jsonl), [`schema/derived.schema.json`](schema/derived.schema.json) | A register of derived documents — summaries, READMEs, citation files, copies — with the edition of each source they were made from, and a check against the source's current edition in the status log; the kit's own version labels compared with each other; the tags the README lists compared with the tags that exist (kit v1.10) |
-| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally, the extraction check and the derived-document check (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
-| [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
+| [`tools/calccheck.py`](tools/calccheck.py), [`register/computed.jsonl`](register/computed.jsonl), [`schema/computed.schema.json`](schema/computed.schema.json) | A register of computed values — a ratio, a month counted from a period, a count — with their inputs, the operation and who did the arithmetic, and a check that recomputes each and flags what recomputing does not find, such as a value shown with its inputs' grade (kit v1.11) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally, the extraction check the derived-document check and the computed-value check (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2; the derived-document check (kit v1.10) and the computed-value check (kit v1.11) on the kit's registers |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -153,6 +154,22 @@ Each derived document gets one verdict per source: `current`, `stale` (made from
 
 It does not say what in a stale document is wrong; that is a reading. It sees only documents someone recorded. It cannot open short links such as lnkd.in, so when a document was first seen is recorded by a person.
 
+## Computed values (kit v1.11)
+
+```
+python3 tools/calccheck.py --log register/computed.jsonl --status register/status_log.jsonl --on 2026-10-23
+```
+
+A ratio, a month counted from a period, a count of items, a number of days: a computed value has no source of its own. It has inputs, an operation, and someone who did the arithmetic. The paper says such a value is "neither A nor D" (§4-6) and that it has no rule for arithmetic (§9-3). Written as a bare number beside a grade, the value takes the grade of its inputs, and nothing says who computed it. Recomputing it checks the arithmetic, not where the number came from.
+
+`register/computed.jsonl` records, for each computed value, the value as shown and where; its inputs, each with its source, its grade, any range ("a little over") or alternative (two dates for one notification), any pending change, and the status-log line it depends on; the operation, from a closed list (divide, add months, days between, minutes between, count), evaluated without `eval()`; the precision shown; who did the arithmetic (`source`, `author`, `assistant` or `unknown`); what documents say about that; and the grade printed beside the value. It is only appended to.
+
+Each value gets `recomputes` or `differs`, and flags: `grade-borrowed` (someone other than the source did the arithmetic, and the value is shown beside a grade A that does not say so; a grade that mentions the arithmetic counts as marked), `operator-unknown`, `claims-disagree` (documents disagree about who computed it), `sensitive` (an input's range or alternative changes the value as shown; otherwise it is robust to them), `if-pending` (a recorded pending change would change it), and `input-expired` / `input-unrecorded` for the status-log line an input depends on. It is a report, not a gate: the exit status is 1 whenever anything is flagged.
+
+The first records are the series' own, and every value in them recomputes. The domain paper's "about 1.6 per cent" turned out not to be computed at all: the judgment states it (「約一・六パーセント」), so the record gives the source as the one that computed it, and lists the method paper's description of it as the author's derivation as a disagreeing claim (entry #76 of the author's log after v1.2). The domain paper's "May 2027" is the author's arithmetic on a period, shown beside a grade A (`grade-borrowed`); the status log's identical month says whose it is, and is not flagged. Both would become November 2026 if the period were cut to twelve months, and both are robust to the two recorded publication dates. The README's "18 defects" (entry #62) is a right sum on a wrong rule for what to count: the check marks it `sensitive` to the exclusions. The output is in `evidence/calccheck_2026-10-23.txt`.
+
+It does not say whether an operation is the right one for the argument (whether total assets is the right denominator); that is a reading. It sees only values someone recorded.
+
 ## What this kit does not do
 
 It verifies nothing. It records what your verification acts produced. A document can be perfectly graded and still misread.
@@ -185,6 +202,7 @@ The kit is dedicated to the public domain under CC0 1.0, except for text it quot
 
 - the words of the Economic Survey 2020-21, a publication of the Government of India, in `examples/es2021_ch6/` (kit v1.4) and in the tests and `evals/null/` that use them (kit v1.4–v1.6);
 - the quotations inside the extraction reports in `examples/extraction_2026-07-24/` (kit v1.9): Indian statutory instruments, the General Financial Rules, a judgment of the Supreme Court of India, and a few lines of a law firm's newsletter (its title, copyright line and one case citation), reproduced as the extractor quoted them.
+- a few words of a judgment of the Supreme Court of Japan (20 January 1994) quoted in `register/computed.jsonl` and `evidence/calccheck_2026-10-23.txt` (kit v1.11).
 
 The transcriptions around those quotations are CC0. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
 

@@ -36,8 +36,9 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`tools/extractcheck.py`](tools/extractcheck.py)、[`schema/extraction.schema.json`](schema/extraction.schema.json) | 抽出の報告を記録の形にしたものと、抽出係が書いているのに報告が示していない識別子の検査（キットv1.9） |
 | [`examples/extraction_2026-07-24/`](examples/extraction_2026-07-24/) | 2026年7月24日の抽出の報告4本を写したもの。中の逐語はインドの法令と判決で、CC0の対象**外**（キットv1.9） |
 | [`tools/derivedcheck.py`](tools/derivedcheck.py)、[`register/derived.jsonl`](register/derived.jsonl)、[`schema/derived.schema.json`](schema/derived.schema.json) | 派生文書（要約、README、引用情報ファイル、写し）の台帳。それぞれが元にした版を記録し、状態ログにある元の文書のいまの版と比べる。キット自身の版の表記どうし、READMEが挙げるタグと実在のタグも比べる（キットv1.10） |
-| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計、抽出の検査、派生文書の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
-| [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果 |
+| [`tools/calccheck.py`](tools/calccheck.py)、[`register/computed.jsonl`](register/computed.jsonl)、[`schema/computed.schema.json`](schema/computed.schema.json) | 算出値（比率、期間から数えた月、件数）の台帳。入力、演算、誰が計算したかを記録し、計算し直したうえで、計算し直しても見つからないもの（入力の格付けをそのまま付けた値など）を挙げる（キットv1.11） |
+| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計、抽出の検査、派生文書の検査、算出値の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
+| [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果。派生文書の検査（キットv1.10）と算出値の検査（キットv1.11）をキットの台帳にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -155,6 +156,22 @@ python3 tools/derivedcheck.py --tree . --tags @tags.txt          # READMEのタ�
 
 古い文書のどこが誤りかは言いません。それは読みです。記録した文書しか見えません。lnkd.inのような短縮URLは開けないので、最初に見た日は人が記録します。
 
+## 算出値（キットv1.11）
+
+```
+python3 tools/calccheck.py --log register/computed.jsonl --status register/status_log.jsonl --on 2026-10-23
+```
+
+比率、期間から数えた月、項目の件数、日数。算出値には、それ自身の出典がありません。あるのは入力と演算と、計算した人です。論文は、こうした値を「AでもDでもない」（§4-6）とし、算術の規則はないと書いています（§9-3）。格付けの横に数字だけを書くと、値は入力の格付けを借り、誰が計算したかはどこにも残りません。計算し直して確かめられるのは算術で、数字の出どころではありません。
+
+`register/computed.jsonl` は、算出値ごとに、示した値とその場所、入力（それぞれの出典、格付け、幅（「強」）や別の値（1つの告示に2つの日付）、予定されている変更、依拠する状態ログの行）、演算（閉じた一覧：割り算、月の加算、日数、分数、件数。`eval()` は使いません）、示した桁、誰が計算したか（`source`、`author`、`assistant`、`unknown`）、それについて文書が何と言っているか、値の横に印刷された格付けを記録します。追記だけです。
+
+値ごとに `recomputes`（計算し直すと一致）か `differs`（一致しない）を返し、次の印を付けます。`grade-borrowed`（出典以外が計算した値に、そうと書かずにAが付いている。算術に触れた格付けは明示とみなす）、`operator-unknown`、`claims-disagree`（誰が計算したかについて文書の言い分が割れている）、`sensitive`（入力の幅や別の値で、示した桁の値が変わる。変わらなければ robust）、`if-pending`（予定されている変更で値が変わる）、入力が依拠する状態ログの行についての `input-expired`／`input-unrecorded`。判定ではなく報告なので、何か印が付けば終了コードは1です。
+
+最初の記録はこの連載自身のもので、どの値も計算し直すと一致します。本体論文の「about 1.6 per cent」は、そもそも算出値ではありませんでした。判決自身が「約一・六パーセント」と書いているので、記録は計算した者を出典とし、方法論文がそれを著者の計算と説明していることを、食い違う言い分として並べます（v1.2以後の著者のログ#76）。本体論文の「May 2027」は期間から出した著者の計算で、Aの横に置かれています（`grade-borrowed`）。状態ログの同じ月は誰の計算かを書いているので、印は付きません。期間が12か月に縮まれば、どちらも2026年11月になります。記録された2つの公布日では、どちらも変わりません。READMEの「18 defects」（ログ#62）は、足し算は正しく、数える規則が誤っていた例で、除外の幅に `sensitive` が付きます。出力は `evidence/calccheck_2026-10-23.txt` にあります。
+
+演算が議論に合っているか（総資産を分母にしてよいか）は言いません。それは読みの問題です。記録された値しか見えません。
+
 ## このキットがしないこと
 
 何も検証しません。あなたの検証作業が生んだものを記録するだけです。格付けが完璧でも、誤読された文書はありえます。
@@ -187,6 +204,7 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 
 - 経済白書2020-21（インド政府の刊行物）の文言。`examples/es2021_ch6/`（キットv1.4）と、それを使うテストと `evals/null/`（キットv1.4〜v1.6）
 - `examples/extraction_2026-07-24/` の抽出の報告に含まれる引用（キットv1.9）。インドの法令、一般財務規則、インド最高裁の判決、法律事務所のニュースレターの数行（題、著作権表示、判例の引用1件）で、抽出係が引いたとおりに収めています
+- `register/computed.jsonl` と `evidence/calccheck_2026-10-23.txt` が引く、日本の最高裁判所の判決（1994年1月20日）の数語（キットv1.11）
 
 それらの引用を囲む写しはCC0です。論文は別ライセンスです（『What Breaks in a Citation』本文はCC BY 4.0）。
 

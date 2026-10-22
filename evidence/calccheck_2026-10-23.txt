@@ -1,9 +1,10 @@
-2026-10-23-01  recomputes shown 1.6      computed 1.6      operator unknown
-    about 1.6 per cent  — What Your Buyer Is Defending Against v1.1, §4-2 (the 1994 Supreme Court case)
-    flags: operator-unknown, claims-disagree
+2026-10-23-01  recomputes shown 1.6      computed 1.6      operator source
+    about 1.6 per cent  — What Your Buyer Is Defending Against v1.1, §4-2, p. 11 (the 1994 Supreme Court case)
+    flags: claims-disagree
     robust to the inputs' ranges and alternatives
-    who computed it, according to What Your Buyer Is Defending Against v1.1, ch. 8 source table ("Locus used: … the 1.6 per cent proportion"): source
-    who computed it, according to What Breaks in a Citation v1.2, §9-3 and A-3 ("a ratio the author derived from two cited primary values"): author
+    who computed it, according to What Your Buyer Is Defending Against v1.1, §8-2, Grade A source table ("Locus used: … the 1.6 per cent proportion"): source
+    who computed it, according to What Breaks in a Citation v1.2, §9-3, A-3 and §10 ("a ratio the author derived from two cited primary values"): author
+    who computed it, according to the judgment, full text p. 2: 「…前記総資産四七億八六四〇万円余の約一・六パーセントに相当し」: source
 2026-10-23-02  recomputes shown 1.63     computed 1.63     operator author
     78 ÷ 4,786 = 1.63%  — What Breaks in a Citation v1.2, Appendix A-6, entry #34
     robust to the inputs' ranges and alternatives
