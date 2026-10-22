@@ -45,7 +45,7 @@
       "type": ["object", "null"],
       "required": ["on", "how"],
       "properties": {"on": {"type": "string", "format": "date"}, "how": {"type": "string"}},
-      "description": "The earliest day someone saw the issued document, and how. null with issued_on or claimed set: the check flags unobserved."
+      "description": "The earliest day on record that someone saw the issued document, and how; say in how whether earlier sightings went unrecorded. null with issued_on or claimed set: the check flags unobserved."
     },
     "recorded_on": {"type": "string", "format": "date", "description": "The day this record was made."},
     "recorded_by": {"type": "string"},

@@ -6,7 +6,7 @@ authors:
   - family-names: Iuchi
     given-names: Ayako
 version: "1.10"
-date-released: "2026-10-21"
+# date-released is written by the release commit, on the day of the release, not before.
 license: CC0-1.0
 references:
   - type: report

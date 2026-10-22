@@ -1,5 +1,5 @@
 # tools/derivedcheck.py, run on 22 October 2026 (kit v1.10)
-# Each published tag is read through git; v1.9 is the commit 9883c3f, which had no tag that day.
+# Each published tag is read through git. v1.9 is the commit 9883c3f; its tag was made at 13:22 that day.
 
 $ python3 tools/derivedcheck.py --tree . --ref v1.0 --expect v1.0
 version labels in . at v1.0
@@ -185,14 +185,14 @@ version labels in . at 9883c3f
   DISAGREES: workbook Start here A2 says 1.8, expected 1.9
 (exit 1)
 
-$ python3 tools/derivedcheck.py --tree . --ref 9883c3f --tags v1.0,v1.1,v1.1.1,v1.2,v1.3,v1.4,v1.5,v1.6,v1.7,v1.8   # the remote's tags on 22 October 2026, 13:00
+$ python3 tools/derivedcheck.py --tree . --ref 9883c3f --tags v1.0,v1.1,v1.1.1,v1.2,v1.3,v1.4,v1.5,v1.6,v1.7,v1.8   # the remote's tags on 22 October 2026 before 13:22
   README says these tags exist: v1.0, v1.1, v1.1.1, v1.2, v1.3, v1.4, v1.5, v1.6, v1.7, v1.8, v1.9
   CLAIMED, NOT FOUND: tag v1.9
 (exit 1; only the last two lines of the output are shown)
 
 $ python3 tools/derivedcheck.py --log register/derived.jsonl --status register/status_log.jsonl --on 2026-10-22
 derived documents as of 2026-10-22
-  stale           What the buyer is defending (one-page summary) v1.0  <-  What Your Buyer Is Defending Against made from v1.0, now 1.1
+  stale           What the buyer is defending (one-page summary) v1.0  <-  What Your Buyer Is Defending Against made from v1.0, now 1.1 [replaced-by-v1.1]
   current         What the buyer is defending (one-page summary) v1.1  <-  What Your Buyer Is Defending Against made from v1.1, now 1.1 [claimed-before-observed]
   stale           Citation provenance kit v1.10  <-  What Breaks in a Citation made from v1.1, now 1.2
   current         Citation provenance kit v1.10  <-  What Breaks in a Citation made from v1.2, now 1.2

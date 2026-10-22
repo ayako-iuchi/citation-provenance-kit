@@ -15,10 +15,12 @@ Three checks:
              --status register/status_log.jsonl --on 2026-10-22
 
      Each derived document gets one verdict for each source it was made from:
-         current          made from the edition the status log gives today
-         stale            made from another edition
-         source-unknown   the status log has no edition for this source
-         source-expired   the status log's edition has expired
+         current            made from the edition the status log gives today
+         stale              made from another edition
+         made-from-unknown  the register does not say which edition it was made from
+         source-unknown     the status log has no edition for this source, or
+                            none that reads as a version
+         source-expired     the status log's edition has expired
      and these flags:
          not-in-document  the derived document does not itself say which
                           edition it was made from
@@ -26,7 +28,12 @@ Three checks:
                           another document said it was issued before anyone
                           had seen it (the record ran ahead of the fact)
          unobserved       it is said to be issued and has never been seen
-     It does not say what in a stale document is wrong. That is a reading.
+         replaced-by-vN   the register holds a later version of the same
+                          derived document; this one may still be published
+     It is a report, not a gate: a copy made from an older edition stays stale
+     for as long as it is recorded, so the exit status is 1 whenever anything
+     is not current. It does not say what in a stale document is wrong. That is
+     a reading.
 
   2. The version labels a kit tree gives itself (--tree), which must agree:
      CITATION.cff, both READMEs, CHANGELOG, the workbook's Start here sheet and
@@ -36,7 +43,8 @@ Three checks:
          python3 derivedcheck.py --tree . --ref v1.2      # a tag, via git
 
   3. The tags the README says exist, against a list of tags you give
-     (--tags), for example from `git ls-remote --tags origin`.
+     (--tags). The list may be the output of `git ls-remote --tags origin`
+     as it stands: each line's last field is read, without refs/tags/ or ^{}.
 
 Exit status: 0 nothing to report; 1 something reported; 2 a file could not be
 read or a record is malformed. Standard library only. CC0 1.0. Part of the
@@ -56,7 +64,8 @@ from xml.etree import ElementTree as ET
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import statuslog  # noqa: E402
 
-VERSION_RE = re.compile(r"(?<![\w.])(?:[vV](\d+(?:\.\d+)*)|(\d+(?:\.\d+)+))(?![\w.]*\d)")
+V_VERSION = re.compile(r"(?<![A-Za-z0-9_.])[vV](\d{1,3}(?:\.\d{1,4})*)(?![A-Za-z0-9_]|\.\d)")
+DOTTED = re.compile(r"(?<![\w./])(\d{1,3}(?:\.\d{1,3}){1,2})(?![\w./]*\d)")
 RECORD_KEYS = {"id", "derived", "from", "copies", "issued_on", "claimed", "observed",
                "recorded_on", "recorded_by", "supersedes", "note"}
 REQUIRED = {"id", "derived", "from", "recorded_on", "recorded_by"}
@@ -67,14 +76,26 @@ class Malformed(Exception):
 
 
 def version_of(text):
-    """The first version number in a text, without a leading v: 'v1.1 (26 July)' -> '1.1'.
+    """The version number in a text, without a leading v: 'v1.1 (26 July)' -> '1.1'.
 
-    A number without a dot counts only after a v ('v2'), so dates are not read as versions.
+    A number after a v is preferred ('Section 2.1 says v1.1' -> '1.1'). Without a
+    v, only two or three dotted parts of at most three digits count, so dates
+    ('2026.10.12', '20.10.2026'), DOIs ('10.1234/…') and a bare number ('12')
+    are not read as versions.
     """
     if text is None:
         return None
-    m = VERSION_RE.search(str(text))
-    return (m.group(1) or m.group(2)) if m else None
+    t = str(text)
+    m = V_VERSION.search(t) or DOTTED.search(t)
+    return m.group(1) if m else None
+
+
+def same_version(a, b):
+    """'1' and '1.0' are the same version; '1.1' and '1.10' are not."""
+    ta = [int(x) for x in a.split(".")]
+    tb = [int(x) for x in b.split(".")]
+    n = max(len(ta), len(tb))
+    return ta + [0] * (n - len(ta)) == tb + [0] * (n - len(tb))
 
 
 # --- 1. the register of derived documents --------------------------------------
@@ -111,6 +132,13 @@ def _validate(r, n):
     extra = r.keys() - RECORD_KEYS
     if extra:
         raise Malformed(f"line {n}: unknown key {', '.join(sorted(extra))}")
+    if not isinstance(r["id"], str) or not r["id"]:
+        raise Malformed(f"line {n}: id must be a non-empty string")
+    if r.get("supersedes") is not None and not isinstance(r["supersedes"], str):
+        raise Malformed(f"line {n}: supersedes must be a string or null")
+    copies = r.get("copies")
+    if copies is not None and not (isinstance(copies, list) and all(isinstance(c, str) for c in copies)):
+        raise Malformed(f"line {n}: copies must be a list of strings")
     d = r["derived"]
     if not isinstance(d, dict) or not d.get("title") or not d.get("version"):
         raise Malformed(f"line {n}: derived needs a title and a version")
@@ -119,6 +147,8 @@ def _validate(r, n):
     for i, s in enumerate(r["from"]):
         if not isinstance(s, dict) or not s.get("title") or "version" not in s:
             raise Malformed(f"line {n}: from[{i}] needs a title and a version (null if unknown)")
+        if s["version"] is not None and not isinstance(s["version"], str):
+            raise Malformed(f"line {n}: from[{i}].version must be a string or null")
     _date(r["recorded_on"], f"line {n}: recorded_on")
     if r.get("issued_on") is not None:
         _date(r["issued_on"], f"line {n}: issued_on")
@@ -132,14 +162,19 @@ def _validate(r, n):
 
 
 def check_log(records):
-    """Problems with the register as a whole: reused ids, supersedes pointing forward."""
-    problems, ids = [], set()
+    """Problems with the register as a whole: reused ids, supersedes pointing
+    forward, and supersedes pointing at a record about another document."""
+    problems, seen = [], {}
     for n, r in enumerate(records, start=1):
-        if r["id"] in ids:
+        if r["id"] in seen:
             problems.append(f"line {n}: id {r['id']} is used twice")
-        if r.get("supersedes") and r["supersedes"] not in ids:
-            problems.append(f"line {n}: supersedes {r['supersedes']}, which is not recorded earlier")
-        ids.add(r["id"])
+        sup = r.get("supersedes")
+        if sup and sup not in seen:
+            problems.append(f"line {n}: supersedes {sup}, which is not recorded earlier")
+        elif sup and seen[sup]["derived"]["title"] != r["derived"]["title"]:
+            problems.append(f"line {n}: supersedes {sup}, which is about another document "
+                            f"({seen[sup]['derived']['title']!r})")
+        seen.setdefault(r["id"], r)
     return problems
 
 
@@ -155,16 +190,34 @@ def latest(records, on=None):
     return [r for r in kept if r["id"] not in replaced]
 
 
+def _newer(a, b):
+    ta = [int(x) for x in a.split(".")]
+    tb = [int(x) for x in b.split(".")]
+    n = max(len(ta), len(tb))
+    return ta + [0] * (n - len(ta)) > tb + [0] * (n - len(tb))
+
+
 def verdicts(records, status, on):
     """One result per derived document and source. See the module docstring."""
     out = []
-    for r in latest(records, on):
+    kept = latest(records, on)
+    newest = {}
+    for r in kept:
+        v = version_of(r["derived"]["version"])
+        t = r["derived"]["title"]
+        if v is not None and (t not in newest or _newer(v, newest[t])):
+            newest[t] = v
+    for r in kept:
         flags = []
         claimed, observed = r.get("claimed"), r.get("observed")
         if claimed and (observed is None or _date(observed["on"], "observed.on") > _date(claimed["on"], "claimed.on")):
             flags.append("claimed-before-observed")
         if (r.get("issued_on") or claimed) and observed is None:
             flags.append("unobserved")
+        mine = version_of(r["derived"]["version"])
+        top = newest.get(r["derived"]["title"])
+        if mine is not None and top is not None and _newer(top, mine):
+            flags.append(f"replaced-by-v{top}")
         for s in r["from"]:
             f = list(flags)
             if not s.get("as_stated"):
@@ -177,10 +230,12 @@ def verdicts(records, status, on):
                 verdict, now = "source-expired", None
             else:
                 now = version_of(cur["value"])
-                if made is None or now is None:
-                    verdict = "source-unknown" if now is None else "stale"
+                if now is None:
+                    verdict = "source-unknown"
+                elif made is None:
+                    verdict = "made-from-unknown"
                 else:
-                    verdict = "current" if made == now else "stale"
+                    verdict = "current" if same_version(made, now) else "stale"
             out.append({
                 "derived": f"{r['derived']['title']} {r['derived']['version']}",
                 "source": s["title"],
@@ -196,7 +251,17 @@ def verdicts(records, status, on):
 # --- 2. the version labels of a kit tree ----------------------------------------
 
 def _reader(root, ref):
-    """A function that returns a file's bytes (or None) from a directory or a git ref."""
+    """A function that returns a file's bytes (or None) from a directory or a git ref.
+
+    Raises Malformed if the directory does not exist or the ref is not a commit.
+    """
+    if not os.path.isdir(root):
+        raise Malformed(f"--tree: {root} is not a directory")
+    if ref is not None:
+        r = subprocess.run(["git", "-C", root, "rev-parse", "--verify", "-q", f"{ref}^{{commit}}"],
+                           capture_output=True)
+        if r.returncode != 0:
+            raise Malformed(f"--ref: {ref} is not a commit in {root}")
     if ref is None:
         def read(path):
             p = os.path.join(root, path)
@@ -222,7 +287,8 @@ def _xlsx_strings(data):
         shared = []
         if "xl/sharedStrings.xml" in z.namelist():
             for si in ET.fromstring(z.read("xl/sharedStrings.xml")).findall("m:si", ns):
-                shared.append("".join(t.text or "" for t in si.iter(f"{{{ns['m']}}}t")))
+                parts = si.findall("m:t", ns) + [t for r in si.findall("m:r", ns) for t in r.findall("m:t", ns)]
+                shared.append("".join(t.text or "" for t in parts))
         book = ET.fromstring(z.read("xl/workbook.xml"))
         rels = ET.fromstring(z.read("xl/_rels/workbook.xml.rels"))
         targets = {e.get("Id"): e.get("Target") for e in rels}
@@ -237,13 +303,25 @@ def _xlsx_strings(data):
                 if c.get("t") == "s" and v is not None:
                     out.append((c.get("r"), shared[int(v.text)]))
                 elif c.get("t") == "inlineStr":
-                    out.append((c.get("r"), "".join(t.text or "" for t in c.iter(f"{{{ns['m']}}}t"))))
+                    is_ = c.find("m:is", ns)
+                    parts = [] if is_ is None else is_.findall("m:t", ns) + [t for r in is_.findall("m:r", ns) for t in r.findall("m:t", ns)]
+                    out.append((c.get("r"), "".join(t.text or "" for t in parts)))
             return out
     return []
 
 
-KIT_LABEL = re.compile(r"(?:Kit|キット)\s*v(\d+(?:\.\d+)+)")
-PAPER_LABEL = re.compile(r"What Breaks in a Citation(?:\*\*|』)?[^\n]{0,12}?[(（]v(\d+(?:\.\d+)+)")
+KIT_LABEL = re.compile(r"^(?:Kit|キット)\s*v(\d+(?:\.\d+)+)", re.M)
+PAPER_NAME = "What Breaks in a Citation"
+
+
+def paper_versions(text):
+    """Every edition of the paper a label names: from the paper's name to the end of
+    the line, or to the next ' · ' (the workbook puts the licence there)."""
+    i = text.find(PAPER_NAME)
+    if i < 0:
+        return []
+    seg = text[i:].split("\n", 1)[0].split(" · ", 1)[0]
+    return re.findall(r"(?<![A-Za-z0-9_.])v(\d+(?:\.\d+)+)", seg)
 
 
 def tree_labels(root, ref=None):
@@ -269,9 +347,8 @@ def tree_labels(root, ref=None):
         head = "\n".join(data.decode("utf-8").splitlines()[:8])
         m = KIT_LABEL.search(head)
         kit.append((f"{name} header", m.group(1) if m else None))
-        p = PAPER_LABEL.search(head)
-        if p:
-            paper.append((f"{name} header", p.group(1)))
+        for v in paper_versions(head):
+            paper.append((f"{name} header", v))
     log = read("CHANGELOG.md")
     if log is not None:
         m = re.search(r"^## Kit v(\d+(?:\.\d+)+)", log.decode("utf-8"), re.M)
@@ -281,9 +358,10 @@ def tree_labels(root, ref=None):
         text = build.decode("utf-8")
         m = re.search(r'^KIT_VERSION\s*=\s*"([^"]+)"', text, re.M)
         kit.append(("tools/build_kit.py KIT_VERSION", m.group(1) if m else None))
-        p = re.search(r'^PAPER\s*=\s*".*?v(\d+(?:\.\d+)+)', text, re.M)
+        p = re.search(r'^PAPER\s*=\s*"([^"]*)"', text, re.M)
         if p:
-            paper.append(("tools/build_kit.py PAPER", p.group(1)))
+            for v in paper_versions(PAPER_NAME + p.group(1).split(PAPER_NAME, 1)[-1]):
+                paper.append(("tools/build_kit.py PAPER", v))
     wb = read("kit/citation-provenance-kit.xlsx")
     if wb is not None:
         found = None
@@ -291,10 +369,11 @@ def tree_labels(root, ref=None):
             m = KIT_LABEL.search(text)
             if m and found is None:
                 found = (cell, m.group(1))
-                p = PAPER_LABEL.search(text) or re.search(r"What Breaks in a Citation, v(\d+(?:\.\d+)+)", text)
-                if p:
-                    paper.append((f"workbook Start here {cell}", p.group(1)))
+                for v in paper_versions(text):
+                    paper.append((f"workbook Start here {cell}", v))
         kit.append((f"workbook Start here {found[0] if found else ''}".rstrip(), found[1] if found else None))
+    if not any(v for _, v in kit):
+        raise Malformed("no version label found in the tree: is it a kit?")
     return kit, paper
 
 
@@ -308,7 +387,7 @@ def tree_problems(kit, expected=None):
     """
     if expected is not None:
         want = version_of(expected) or expected
-        return [(place, v, want) for place, v in kit if v != want]
+        return [(place, v, want) for place, v in kit if v is None or not same_version(v, want)]
     if len({v for _, v in kit}) <= 1:
         return []
     return [(place, v, None) for place, v in kit]
@@ -320,8 +399,25 @@ def claimed_tags(root, ref=None):
     data = _reader(root, ref)("README.md")
     if data is None:
         return []
-    m = re.search(r"(?:Each release is tagged|Tags that existed[^:\n]*:)\s*\(([^)]*)\)", data.decode("utf-8"))
+    m = re.search(r"(?:Each release is tagged|Tags that existed[^\n]*?:)\s*\((`[^)]*)\)", data.decode("utf-8"))
     return re.findall(r"`([^`]+)`", m.group(1)) if m else []
+
+
+def parse_tags(spec):
+    """Tags from 'v1.0,v1.1' or from @FILE: one per line, or `git ls-remote --tags` output."""
+    if spec.startswith("@"):
+        with open(spec[1:], encoding="utf-8") as f:
+            items = [l.split()[-1] for l in f if l.strip()]
+    else:
+        items = [t.strip() for t in spec.split(",") if t.strip()]
+    out = set()
+    for t in items:
+        if t.startswith("refs/tags/"):
+            t = t[len("refs/tags/"):]
+        if t.endswith("^{}"):
+            t = t[:-3]
+        out.add(t)
+    return out
 
 
 # --- command line --------------------------------------------------------------
@@ -341,8 +437,9 @@ def main(argv=None):
         p.error("give --log (with --status) or --tree")
     if a.log and not a.status:
         p.error("--log needs --status")
-    if a.tags and not a.tree:
-        p.error("--tags needs --tree")
+    for opt in ("tags", "ref", "expect"):
+        if getattr(a, opt) and not a.tree:
+            p.error(f"--{opt} needs --tree")
     on = a.on or dt.date.today().isoformat()
     report = False
     out = {}
@@ -384,11 +481,7 @@ def main(argv=None):
                         print(f"  DISAGREES: {place} says {v or 'nothing'}, expected {want}")
             report = report or bool(bad)
             if a.tags:
-                if a.tags.startswith("@"):
-                    with open(a.tags[1:], encoding="utf-8") as f:
-                        have = {l.strip() for l in f if l.strip()}
-                else:
-                    have = {t.strip() for t in a.tags.split(",") if t.strip()}
+                have = parse_tags(a.tags)
                 claimed = claimed_tags(a.tree, a.ref)
                 missing = [t for t in claimed if t not in have]
                 out["tags_claimed"], out["tags_missing"] = claimed, missing
@@ -397,7 +490,8 @@ def main(argv=None):
                     for t in missing:
                         print(f"  CLAIMED, NOT FOUND: tag {t}")
                 report = report or bool(missing)
-    except (Malformed, OSError, json.JSONDecodeError, zipfile.BadZipFile, KeyError) as e:
+    except (Malformed, OSError, json.JSONDecodeError, zipfile.BadZipFile, KeyError,
+            UnicodeDecodeError, ValueError, TypeError, ET.ParseError) as e:
         print(f"error: {e}", file=sys.stderr)
         return 2
     if a.json:
