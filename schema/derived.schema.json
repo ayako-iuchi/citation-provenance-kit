@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/derived.schema.json",
+  "title": "Derived document record",
+  "description": "One dated record of a document made from another: a summary, a slide, a README, a citation file, a copy for pasting. It says which edition of each source it was made from, so that the copy can be compared with the source's current edition (in the status log) instead of being remembered. Records are appended, never edited. Kit v1.10. CC0 1.0.",
+  "type": "object",
+  "required": ["id", "derived", "from", "recorded_on", "recorded_by"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "description": "Stable identifier of this record. Never reused."},
+    "derived": {
+      "type": "object",
+      "required": ["title", "version"],
+      "properties": {
+        "title": {"type": "string", "description": "The derived document, as its readers name it."},
+        "version": {"type": "string", "description": "The derived document's own version."},
+        "location": {"type": ["string", "null"], "description": "Where readers get it."}
+      }
+    },
+    "from": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Each source the document was made from, with the edition. A document made from two editions of one source lists both.",
+      "items": {
+        "type": "object",
+        "required": ["title", "version"],
+        "properties": {
+          "title": {"type": "string", "description": "The source. Must match the subject of its edition line in the status log."},
+          "version": {"type": ["string", "null"], "description": "The edition it was made from. null: not known."},
+          "as_stated": {"type": ["string", "null"], "description": "The words in the derived document that say what it was made from, verbatim. null: the document does not say, and the check flags not-in-document."},
+          "parts": {"type": "string", "description": "Which parts of the derived document come from this edition."},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "copies": {"type": "array", "items": {"type": "string"}, "description": "The facts about the source that the derived document carries: a list, a count, a date, a grade. These are what go wrong when the source moves."},
+    "issued_on": {"type": ["string", "null"], "format": "date", "description": "The date the derived document gives itself."},
+    "claimed": {
+      "type": ["object", "null"],
+      "required": ["on", "by"],
+      "properties": {"on": {"type": "string", "format": "date"}, "by": {"type": "string"}},
+      "description": "Another document's statement that this one was issued or corrected, and its date. The check flags claimed-before-observed when no one had seen the document by that date."
+    },
+    "observed": {
+      "type": ["object", "null"],
+      "required": ["on", "how"],
+      "properties": {"on": {"type": "string", "format": "date"}, "how": {"type": "string"}},
+      "description": "The earliest day someone saw the issued document, and how. null with issued_on or claimed set: the check flags unobserved."
+    },
+    "recorded_on": {"type": "string", "format": "date", "description": "The day this record was made."},
+    "recorded_by": {"type": "string"},
+    "supersedes": {"type": ["string", "null"], "description": "The id of the record this one replaces. The replaced record is not edited."},
+    "note": {"type": "string"}
+  }
+}

@@ -11,8 +11,8 @@ from openpyxl.worksheet.datavalidation import DataValidation
 OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
 
-KIT_VERSION = "1.8"
-PAPER = "What Breaks in a Citation, v1.1 (26 July 2026)"
+KIT_VERSION = "1.10"
+PAPER = "What Breaks in a Citation, v1.1 (26 July 2026); files made from v1.2 (12 October 2026) name it"
 
 F = "Arial"
 HDR_FILL = PatternFill("solid", fgColor="1F2933")
@@ -180,7 +180,7 @@ lines = [
     ("Columns the original log lacked", "Besides its numbering, the original log kept three things for each entry: what was wrong, what was right, and how it came to notice (Appendix A-0). The component and rule columns were added afterwards, at grade D. The paper says the six fields of §7-1 were recorded for each correction, and §8-1 that the corrections were logged with their component, rule and consequence; the published log (Appendix A-2, and A-6 in paper v1.2) shows no 'what would have happened' column.\n'Did an existing rule fire?': two rules failed to prevent their own failure from recurring, and the log could not show it (Appendix B, §9-1).\n'Duration': no effort was recorded and it cannot be reconstructed (§8-1).\n'Stakes': the distinction between a step of the argument collapsing and one footnote dying (§7-1), as a filterable field.\n'Phase': the log closed at release, so post-publication defects went unnumbered (§9-7).\n'Who wrote what would have happened?': the field cannot be delegated (§9-5), so record when it was drafted by an assistant or chosen from an assistant's options (kit v1.8)."),
     ("What this kit does not do", "It does not verify anything. It records what your verification acts produced. A perfectly graded document can still be misread."),
     ("Licence", "CC0 1.0 Universal. Copy, modify and use it for any purpose without asking or attributing. https://creativecommons.org/publicdomain/zero/1.0/"),
-    ("Source papers", "What Breaks in a Citation (EN) https://lnkd.in/p/giTfeMUh · (JA) https://lnkd.in/p/gFUXFv2w\nWhat Your Buyer Is Defending Against (EN) https://lnkd.in/p/gHNjBuCd · (JA) https://lnkd.in/p/gF-kd9DF"),
+    ("Source papers", "What Breaks in a Citation — links listed since kit v1.0: (EN) https://lnkd.in/p/giTfeMUh · (JA) https://lnkd.in/p/gFUXFv2w; v1.2, as cited in Hypothetical Technical Blog #28: (EN) https://lnkd.in/p/gjQ2RAPW · (JA) https://lnkd.in/p/gW5xwpFK\nWhat Your Buyer Is Defending Against (EN) https://lnkd.in/p/gHNjBuCd · (JA) https://lnkd.in/p/gF-kd9DF"),
 ]
 r = 4
 for k, v in lines:

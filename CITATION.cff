@@ -5,7 +5,7 @@ type: dataset
 authors:
   - family-names: Iuchi
     given-names: Ayako
-version: "1.9"
+version: "1.10"
 date-released: "2026-10-21"
 license: CC0-1.0
 references:
@@ -17,3 +17,12 @@ references:
     version: "1.1"
     date-released: "2026-07-26"
     url: "https://lnkd.in/p/giTfeMUh"
+  - type: report
+    title: "What Breaks in a Citation: Component-graded citation as a production discipline"
+    authors:
+      - family-names: Iuchi
+        given-names: Ayako
+    version: "1.2"
+    date-released: "2026-10-12"
+    url: "https://lnkd.in/p/gjQ2RAPW"
+    notes: "The kit was made for v1.1; files made from v1.2 name it. This link is the one Hypothetical Technical Blog #28 cites for v1.2; which edition each link opens has not been checked from the kit."

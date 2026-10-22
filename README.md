@@ -1,7 +1,7 @@
 # Citation provenance kit
 
-Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi.
-Kit v1.9 (21 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
+Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi. Files made from the paper's v1.2 (12 October 2026) name it.
+Kit v1.10 (unreleased) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -33,7 +33,8 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`kit/extraction_prompt_v2_ja.md`](kit/extraction_prompt_v2_ja.md), [`_en.md`](kit/extraction_prompt_v2_en.md) | The instruction revised: "not in this PDF" with a search record, PDF and printed pages, and a separate field for anything from outside the source (kit v1.9) |
 | [`tools/extractcheck.py`](tools/extractcheck.py), [`schema/extraction.schema.json`](schema/extraction.schema.json) | An extraction report as a record, and a check for identifiers the extractor states but the report does not show (kit v1.9) |
 | [`examples/extraction_2026-07-24/`](examples/extraction_2026-07-24/) | The four extraction reports of 24 July 2026, transcribed. The quotations inside them are Indian statutory and judicial text and are **not** CC0 (kit v1.9) |
-| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally and the extraction check (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`tools/derivedcheck.py`](tools/derivedcheck.py), [`register/derived.jsonl`](register/derived.jsonl), [`schema/derived.schema.json`](schema/derived.schema.json) | A register of derived documents — summaries, READMEs, citation files, copies — with the edition of each source they were made from, and a check against the source's current edition in the status log; the kit's own version labels compared with each other; the tags the README lists compared with the tags that exist (kit v1.10) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally, the extraction check and the derived-document check (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
 | [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2 |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
@@ -134,6 +135,23 @@ The method paper's largest design decision was to run verbatim extraction in sep
 
 `extractcheck.py` reads a report in the form of `schema/extraction.schema.json`. It flags identifiers that appear in the extractor's own words (its remarks, its search record, its description of the source, its departures) but are not shown by the report's verbatim text (quotations, footnotes, the cover as quoted, and any passage the extractor sets in quotation marks, on its word that the passage is the source's; code marks never count, and in the search record only 「」 and “” do, since search terms are written in "" or code marks), not given by the request, and not declared as outside (X2). The search record counts as the extractor's own words: it is its account of the source. Each report is checked on its own. It checks identifiers, not what is said about them: "inserted by G.S.R. 205(E)" passes if a quotation shows 205(E) at all. The identifiers are gazette numbers, file numbers of office memoranda, case numbers, rule, section, paragraph and article numbers and Japanese 条 numbers, law-report citations, titles of rules, acts and regulations with their year, and dates in several forms; lists and ranges are expanded, and they are found inside Japanese text as well. It also flags an item reported not in the source with no search record (X3), an item reported found with no page (X4), and, given the source text, a quotation that is not on its page, matching PDF pages and printed pages separately (X1). Counts are of distinct identifiers. It cannot tell memory from the page; a flag means "not shown", not "wrong". `examples/extraction_2026-07-24/` holds the four reports of July 2026, transcribed; its README says how, and which parts are Claude's reading.
 
+## Derived documents (kit v1.10)
+
+```
+python3 tools/derivedcheck.py --log register/derived.jsonl --status register/status_log.jsonl --on 2026-10-22
+python3 tools/derivedcheck.py --tree .                          # this tree's own version labels
+python3 tools/derivedcheck.py --tree . --ref v1.2 --expect v1.2 # a published tag, read through git
+python3 tools/derivedcheck.py --tree . --tags v1.0,v1.1,v1.1.1  # the README's tag list against tags that exist
+```
+
+A summary, a README or a citation file copies facts about another document: its list of items, a count, its version, the date it was issued. When the source moves, the copy becomes wrong without a word of it changing. `register/derived.jsonl` records, for each derived document, which edition of each source it was made from, the words in the document that say so (verbatim, or null if it does not say), what it copies, the date it gives itself, any other document's statement that it was issued, and the day it was first seen. Like the status log, it is only appended to. The source's current edition comes from the status log (component `edition`), so the copy is compared with the same record as everything else that can become false without the document changing.
+
+Each derived document gets one verdict per source: `current`, `stale` (made from another edition), `source-unknown` (the status log has no edition for it) or `source-expired`; and flags: `not-in-document` (the document itself does not say what it was made from), `claimed-before-observed` (another document said it was issued before anyone had seen it) and `unobserved` (said to be issued, never seen). The first rows are the series' own. The one-page summary of the domain paper, v1.0, named on its last line the edition it was made from; the domain paper moved to v1.1 two days later, and nothing compared that line with it for 79 days (entry #32 of the method paper's log). The method paper's v1.2 recorded the summary's v1.1 as issued on 12 October; it was issued on 13 October (#49). The kit itself is recorded as made from two editions of the paper, and gets two verdicts.
+
+`--tree` collects the version labels the kit gives itself (CITATION.cff, both READMEs, CHANGELOG, the workbook's Start here sheet, read with the standard library, and `build_kit.py`) and reports them when they disagree; without `--expect` it does not assume which one is right. Run on the published tags, it finds the two failures already logged where they were: at v1.2 the citation file said 1.1.1 (#47) and the workbook 1.1 (#65); from v1.3 to v1.7 the workbook said 1.1 (#65); and at v1.9 the workbook said 1.8 (`evidence/derivedcheck_2026-10-22.txt`). A test runs it on this tree, so a release whose labels disagree fails its own tests. The edition of the paper each place names is listed and not judged; the register says which files come from which edition. `--tags` compares the tags the README lists with tags you give it, for example from `git ls-remote --tags origin`.
+
+It does not say what in a stale document is wrong; that is a reading. It sees only documents someone recorded. It cannot open short links such as lnkd.in, so when a document was first seen is recorded by a person.
+
 ## What this kit does not do
 
 It verifies nothing. It records what your verification acts produced. A document can be perfectly graded and still misread.
@@ -151,11 +169,11 @@ Hypothetical Technical Blog, *Citation provenance* (English, on note):
 - #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263) (the notation as typed records, kit v1.5)
 - #24 — [Not Established Is an Answer](https://note.com/ayako_iuchi/n/n7d7ca5a8837b) (a test where an empty answer can be right, kit v1.6)
 
-Each release is tagged (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`, `v1.6`, `v1.7`, `v1.8`, `v1.9`). #19, #20 and #22–#24 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22, #23 and #24 were published on 20 October 2026, after v1.4, v1.5 and v1.6 respectively were released.
+Each release is tagged by the author on GitHub after its release commit is on `main`; until then it has no tag. Tags that existed when this README was last changed (22 October 2026): (`v1.0`, `v1.1`, `v1.1.1`, `v1.2`, `v1.3`, `v1.4`, `v1.5`, `v1.6`, `v1.7`, `v1.8`). #19, #20 and #22–#24 name the version they describe; check out that tag to see the kit as they saw it. #17, #18 and #21 name no version; when they were published (13–14 October 2026) the default branch held v1.2. #22, #23 and #24 were published on 20 October 2026, after v1.4, v1.5 and v1.6 respectively were released.
 
 ## Sources
 
-- What Breaks in a Citation — [English](https://lnkd.in/p/giTfeMUh) · [日本語](https://lnkd.in/p/gFUXFv2w)
+- What Breaks in a Citation — links listed since kit v1.0: [English](https://lnkd.in/p/giTfeMUh) · [日本語](https://lnkd.in/p/gFUXFv2w); v1.2, as cited in Hypothetical Technical Blog #28: [English](https://lnkd.in/p/gjQ2RAPW) · [日本語](https://lnkd.in/p/gW5xwpFK). Which edition each link opens has not been checked from here.
 - What Your Buyer Is Defending Against (the source project) — [English](https://lnkd.in/p/gHNjBuCd) · [日本語](https://lnkd.in/p/gF-kd9DF)
 
 The example log is the author's English translation. The original log was kept in Japanese and governs; from v1.2 of the paper (12 October 2026) it is published as Appendix A-2 of the Japanese edition. In v1.1 it was referenced but not published. Its component and rule columns are the author's classification, applied afterwards (grade D). Four entries are contested; see the paper, Appendix A-4.
