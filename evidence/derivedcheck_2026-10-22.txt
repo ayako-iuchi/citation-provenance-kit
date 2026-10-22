@@ -1,5 +1,5 @@
 # tools/derivedcheck.py, run on 22 October 2026 (kit v1.10)
-# Each published tag is read through git. v1.9 is the commit 9883c3f; its tag was made at 13:22 that day.
+# Each published tag is read through git. v1.9 is the commit 9883c3f; its release, with the tag, was published that day at 13:22:40 JST.
 
 $ python3 tools/derivedcheck.py --tree . --ref v1.0 --expect v1.0
 version labels in . at v1.0

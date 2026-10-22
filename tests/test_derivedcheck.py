@@ -390,3 +390,36 @@ def test_workbook_shared_strings_skip_phonetic_runs(tmp_path):
     _xlsx(p, "worksheets/sheet2.xml", '<c r="A2" t="s"><v>0</v></c>',
           shared='<si><r><t>Kit v1.3</t></r><rPh sb="0" eb="1"><t>キット</t></rPh></si>')
     assert dc._xlsx_strings(p.read_bytes()) == [("A2", "Kit v1.3")]
+
+
+def test_an_unknown_ref_says_so():
+    r = run("--tree", ROOT, "--ref", "no-such-ref-xyz")
+    assert r.returncode == 2 and "not a commit" in r.stderr
+
+
+def test_only_the_readme_header_is_read_for_the_kit_label(tmp_path):
+    root = make_tree(tmp_path, build="1.3")
+    readme = tmp_path / "README.md"
+    readme.write_text("# Kit\n\nReproduction kit.\n\n\n\n\n\n\nKit v9.9 is mentioned here, below the header.\n", encoding="utf-8")
+    kit, _ = dc.tree_labels(root)
+    assert dict(kit)["README.md header"] is None
+
+
+def test_a_bad_status_date_names_the_line(tmp_path):
+    status = tmp_path / "s.jsonl"
+    status.write_text(json.dumps(status_line("v2", recorded="yesterday")) + "\n", encoding="utf-8")
+    good = tmp_path / "g.jsonl"
+    good.write_text(json.dumps(rec()) + "\n", encoding="utf-8")
+    r = run("--log", str(good), "--status", str(status), "--on", "2026-02-01")
+    assert r.returncode == 2 and "line 1: recorded_on" in r.stderr
+
+
+def test_the_register_was_only_appended_to():
+    """The first four records stand as first written (kit v1.10's draft, 1256ee8)."""
+    r = subprocess.run(["git", "-C", ROOT, "show", "1256ee8:register/derived.jsonl"], capture_output=True, text=True)
+    if r.returncode != 0:
+        pytest.skip("commit 1256ee8 not in this clone")
+    with open(DERIVED, encoding="utf-8") as f:
+        now = [l.rstrip("\n") for l in f if l.strip()]
+    first = [l for l in r.stdout.splitlines() if l.strip()]
+    assert now[: len(first)] == first

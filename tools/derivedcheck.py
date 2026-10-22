@@ -207,6 +207,11 @@ def verdicts(records, status, on):
         t = r["derived"]["title"]
         if v is not None and (t not in newest or _newer(v, newest[t])):
             newest[t] = v
+    first = {}
+    for i, r in enumerate(records):
+        first.setdefault((r["derived"]["title"], r["derived"]["version"]), i)
+    # A copy is listed where it was first recorded, even if a later record replaced it.
+    kept = sorted(kept, key=lambda r: first[(r["derived"]["title"], r["derived"]["version"])])
     for r in kept:
         flags = []
         claimed, observed = r.get("claimed"), r.get("observed")
@@ -447,6 +452,13 @@ def main(argv=None):
         if a.log:
             records = load(a.log)
             status = statuslog.load(a.status)
+            for n, line in enumerate(status, start=1):
+                try:
+                    _date(line.get("recorded_on"), f"{a.status} line {n}: recorded_on")
+                    if line.get("expires_on") is not None:
+                        _date(line["expires_on"], f"{a.status} line {n}: expires_on")
+                except AttributeError:
+                    raise Malformed(f"{a.status} line {n}: not a JSON object")
             problems = check_log(records)
             res = verdicts(records, status, on)
             out["derived"] = res
