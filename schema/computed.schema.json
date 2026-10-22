@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/computed.schema.json",
+  "title": "Computed value record",
+  "description": "One dated record of a value computed from other values: a ratio, a month counted from a period, a count, a number of days. It keeps the inputs, the operation, how the value is shown, who did the arithmetic and the grade printed beside it, so that the value can be recomputed and its grade compared with its inputs'. Records are appended, never edited. Kit v1.11. CC0 1.0.",
+  "type": "object",
+  "required": ["id", "shown", "where", "inputs", "op", "display", "operator", "recorded_on", "recorded_by"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "description": "Stable identifier of this record. Never reused."},
+    "shown": {"type": "string", "description": "The value as the document shows it, verbatim, with any grade beside it."},
+    "where": {"type": "string", "description": "The document, its edition and the place."},
+    "inputs": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "required": ["name", "value"], "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "value": {"description": "A number, a date (YYYY-MM-DD), a time (YYYY-MM-DDTHH:MM), or a list (for count)."},
+          "unit": {"type": "string"},
+          "range": {"type": "array", "minItems": 2, "maxItems": 2, "description": "[low, high] where the source gives the value approximately (\"a little over\")."},
+          "alternatives": {"type": "array", "description": "Other values the record holds for this input (two dates given for one notification)."},
+          "pending": {"description": "A value a recorded pending change would give the input, or {value, note}."},
+          "source": {"type": "string"},
+          "grade": {"type": "string", "description": "The input's grade, as for any cited value."},
+          "status": {"type": "object", "required": ["subject", "component"], "properties": {"subject": {"type": "string"}, "component": {"type": "string"}}, "description": "The status-log line the input depends on."},
+          "note": {"type": "string"}
+        }
+      }
+    },
+    "op": {
+      "type": "object", "required": ["kind", "args"],
+      "properties": {
+        "kind": {"enum": ["divide", "add_months", "days_between", "minutes_between", "count"]},
+        "args": {"type": "array", "items": {"type": "string"}, "minItems": 2, "maxItems": 2, "description": "Input names, in order. count takes items, then exclusions."}
+      }
+    },
+    "display": {
+      "type": "object", "required": ["as", "value"],
+      "properties": {
+        "as": {"enum": ["percent", "decimal", "integer", "month", "day", "hours_minutes"]},
+        "decimals": {"type": "integer", "minimum": 0},
+        "value": {"type": "string", "description": "The value shown, normalised: 1.6, 2027-05, 17, 23:36."}
+      }
+    },
+    "operator": {"enum": ["source", "author", "assistant", "unknown"], "description": "Who did the arithmetic. source: the source states the value itself."},
+    "operator_claims": {"type": "array", "items": {"type": "object", "required": ["by", "says"], "properties": {"by": {"type": "string"}, "says": {"enum": ["source", "author", "assistant", "unknown"]}}}, "description": "What documents say about who did the arithmetic. The check flags claims-disagree."},
+    "grade_shown": {"type": ["string", "null"], "description": "The grade printed beside the value, verbatim; null if none."},
+    "recorded_on": {"type": "string", "format": "date"},
+    "recorded_by": {"type": "string"},
+    "supersedes": {"type": ["string", "null"]},
+    "note": {"type": "string"}
+  }
+}

@@ -2,6 +2,13 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.11 — 2026-10-23
+
+- Added `tools/calccheck.py`, `register/computed.jsonl`, `schema/computed.schema.json`, `tests/test_calccheck.py` and `evidence/calccheck_2026-10-23.txt`. Standard library only, as before; the operations are a closed list (divide, add months, days between, minutes between, count) evaluated without `eval()`. The register records computed values — a ratio, a month counted from a period, a count, a number of days — with the value as shown, its inputs (each with its source, grade, any range or alternative, any pending change and the status-log line it depends on), the operation, the precision shown, who did the arithmetic (source, author, assistant, unknown) and what documents say about that, and the grade printed beside it. The check recomputes each value at the precision shown and flags what recomputing does not find: `grade-borrowed` (someone other than the source computed it, and it is shown beside the inputs' grade without saying so), `operator-unknown`, `claims-disagree`, `sensitive` (an input's range or alternative changes the value as shown), `if-pending` and `input-expired` / `input-unrecorded`. Hypothetical Technical Blog #31 describes it.
+- The method paper says computed values are "neither A nor D" (§4-6) and that it has no rule for arithmetic (§9-3). The first records are the series' own: the domain paper's ratio of about 1.6 per cent and the method paper's recomputation of it (#34); "May 2027" in the domain paper, beside a grade A, and the same month in the status log, marked as the author's arithmetic (#35); "November 2026"; the README's count of post-release defects, 18 and then 17 (#62); the 79 days in the v1.10 README; and the 23 hours 36 minutes of #73. Every value recomputes. {{CHANGELOG_16}}
+- The READMEs' list of tags now includes `v1.10`, made by the author on 23 October 2026 and pointing at 1b57c34.
+- `CITATION.cff` names version 1.11 on this branch and has no `date-released`; the release commit writes the date on the day of the release.
+
 ## Kit v1.10 — 2026-10-22
 
 - **Released on 22 October 2026,** before Hypothetical Technical Blog #30 (*A Copy Has a Version Too*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.10`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written. The tag `v1.10` is made by the author on GitHub after this commit; until it exists, the README's list of tags does not include it.
