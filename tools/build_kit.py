@@ -11,7 +11,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
 
-KIT_VERSION = "1.11"
+KIT_VERSION = "1.12"
 PAPER = "What Breaks in a Citation, v1.1 (26 July 2026); files made from v1.2 (12 October 2026) name it"
 
 F = "Arial"
@@ -63,7 +63,7 @@ COMPONENTS = [
     ("edition", "版", "The edition, vintage or version cited is identified, current where currency matters, and not mixed.", "Yes",
      "Two vintages of an official translation in circulation (#5); the change-marked edition cited as authoritative (#23)."),
     ("identifier", "識別子", "The identifier resolves to the one instrument intended, not a namesake.", "No",
-     "G.S.R. 206(E) of 2015 and of 2021 (#22)."),
+     "G.S.R. 206(E) of 2015 and of 2021 (log #22). Write the namespace with the number: Blog #22 is a post. Check with tools/idcheck.py (kit v1.12)."),
     ("existence", "存在", "The cited provision or document exists in the version relied on.", "Yes",
      "A supplementary principle deleted in a code revision (#14); a memorandum absent from the consolidated rules (#9)."),
     ("commencement", "施行", "The provision is in force on the date the text speaks from.", "Yes",

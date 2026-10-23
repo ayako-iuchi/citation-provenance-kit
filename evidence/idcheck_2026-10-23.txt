@@ -1,0 +1,56 @@
+$ python3 tools/idcheck.py --check
+key-incomplete  om F./1/9/2021-PPD (2026-10-23-05): subject
+key-incomplete  file echap06_vol1.pdf (2026-10-23-16): sha256
+name-shared     file echap06_vol1.pdf: 2026-10-23-15, 2026-10-23-16; differ in url, sha256, edition
+number-shared   gsr 206(E): 2026-10-23-02, 2026-10-23-03; differ in date, amends
+date-shared     gsr 2021-03-24: 205(E), 206(E) (2026-10-23-01, 2026-10-23-02)
+date-shared     om 2021-10-29: F.1/1/2021-PPD, F./1/9/2021-PPD (2026-10-23-04, 2026-10-23-05)
+bare-overlap    blog and log: #1–#36
+(exit 1)
+
+$ python3 tools/idcheck.py --resolve gsr 206(E)
+ambiguous  gsr 206(E) — by number alone: 2; candidates: 2026-10-23-02, 2026-10-23-03; separate by date, amends
+(exit 1)
+
+$ python3 tools/idcheck.py --resolve gsr 206(E) --key date=2021-03-24
+unique     gsr 206(E) — by number alone: 2; with the key: 2026-10-23-02
+(exit 0)
+
+$ python3 tools/idcheck.py --resolve gsr 206(E) --key date=2015-03-18
+unique     gsr 206(E) — by number alone: 2; with the key: 2026-10-23-03
+(exit 0)
+
+$ python3 tools/idcheck.py --resolve blog 18 --key "title=A Rule Is Not a Mechanism"
+mismatch   blog 18 — by number alone: 1; with the key: none; the key given fits: 19 (2026-10-23-07)
+(exit 1)
+
+$ python3 tools/idcheck.py --resolve om F./1/9/2021-PPD
+unique     om F./1/9/2021-PPD — by number alone: 1; candidates: 2026-10-23-05
+(exit 0)
+
+$ python3 tools/idcheck.py --scan README.md README_ja.md
+README.md: named 53, unqualified 0, ambiguous 0, unknown 0
+README_ja.md: named 53, unqualified 0, ambiguous 0, unknown 0
+(exit 0)
+
+# Not reproducible from the kit: the posts themselves
+
+Run on 2026-10-23 on the text of Blog #17–#31 (Blog #29 is the special edition), English and Japanese, as held in the author's paste kit (edition 15), the copy made for pasting into note and LinkedIn; the published pages were not scanned, and the posts are not in the kit. The tool was the version in this commit, with register/namespaces.json as committed. Counts are tokens: named / unqualified / ambiguous (unknown was 0 everywhere).
+
+post      | EN named unq amb | JA named unq amb
+Blog #17  |   5   2   1 |   3   4   3
+Blog #18  |   6   0   2 |   5   0   3
+Blog #19  |  12   9  14 |   9  10  16
+Blog #20  |   7   0   8 |   6   1   8
+Blog #21  |   9   0   4 |   9   0   4
+Blog #22  |   5   0  16 |   5   0  17
+Blog #23  |   6  15  12 |   6  15  12
+Blog #24  |   7   0  16 |   7   0  16
+Blog #25  |   7   4  12 |   7   4  12
+Blog #26  |   8  23   3 |   6  25   3
+Blog #27  |   9   0   6 |   8   1   7
+Blog #28  |  13   0   4 |  11   2   5
+Blog #29  |   3   2   0 |   3   2   0
+Blog #30  |  14  19  18 |  13  20  20
+Blog #31  |  12   7  17 |  12   7  20
+total     | 123  81 133 | 110  91 146

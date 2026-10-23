@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。論文のv1.2（2026年10月12日）から作ったファイルは、そう名乗っています。
-キット v1.11（2026年10月23日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（例外：引用した政府文書・法令・判決の文言と、法律事務所のニュースレターの数行。「ライセンス」を参照）。
+キット v1.12（準備中、2026年10月23日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（例外：引用した政府文書・法令・判決の文言と、法律事務所のニュースレターの数行。「ライセンス」を参照）。
 
 ※英語版READMEを正本とします。
 
@@ -25,20 +25,21 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`tools/retrieve.py`](tools/retrieve.py) | 箇所の文言だけを対象にしたBM25。出すのは候補で、引用ではない（キットv1.4） |
 | [`tools/depaudit.py`](tools/depaudit.py) | 検索の後の検査。文言をハッシュと照らし、記録した依存の辺を1段たどり、引かれた文献の状態を状態ログから指定日時点で付ける（キットv1.4） |
 | [`schema/locus.schema.json`](schema/locus.schema.json)、[`schema/dependency.schema.json`](schema/dependency.schema.json) | 箇所（スナップショットをそのまま入れ子にする）と、依存の辺（キットv1.4） |
-| [`examples/es2021_ch6/`](examples/es2021_ch6/) | #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4） |
+| [`examples/es2021_ch6/`](examples/es2021_ch6/) | Blog #21が手作業で監査した章を、パイプラインに通した例。章の文言はインド政府のもので、CC0の対象**外**（キットv1.4） |
 | [`tools/notation.py`](tools/notation.py)、[`schema/annotation.schema.json`](schema/annotation.schema.json) | 記法を、英語形と日本語形を1つの文法で読み、型付きの記録（成分、格付け、その成分が動くかどうか）にする。形を検査し（N0〜N7）、2つの形の間で書き換える（キットv1.5） |
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5）と、公開されたキャッチログを番号・成分・結果・公開前後だけにしたもの（キットv1.7） |
 | [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6） |
 | [`tools/catchlog.py`](tools/catchlog.py) | 成分ごとに、公開前と公開後に分けて訂正と確認を別に数え、意味のないゼロを示す（キットv1.7）。`--fields` で各欄の埋まり具合を示す（キットv1.8） |
-| [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（#45〜#62）を、発見日、判断の欄、所要時間、公開前後だけにしたもの（キットv1.8） |
+| [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（ログ#45〜#62）を、発見日、判断の欄、所要時間、公開前後だけにしたもの（キットv1.8） |
 | [`kit/extraction_prompt_2026-07-24_ja.md`](kit/extraction_prompt_2026-07-24_ja.md)、[`_en.md`](kit/extraction_prompt_2026-07-24_en.md) | 元のプロジェクトで2026年7月24日に使った逐語抽出の指示文。原文（日本語）と英訳（キットv1.9） |
 | [`kit/extraction_prompt_v2_ja.md`](kit/extraction_prompt_v2_ja.md)、[`_en.md`](kit/extraction_prompt_v2_en.md) | 指示文の改訂版。「このPDFにはない」と検索の記録、PDF頁と印字頁、資料の外から来たものの別の欄（キットv1.9） |
 | [`tools/extractcheck.py`](tools/extractcheck.py)、[`schema/extraction.schema.json`](schema/extraction.schema.json) | 抽出の報告を記録の形にしたものと、抽出係が書いているのに報告が示していない識別子の検査（キットv1.9） |
 | [`examples/extraction_2026-07-24/`](examples/extraction_2026-07-24/) | 2026年7月24日の抽出の報告4本を写したもの。中の逐語はインドの法令と判決で、CC0の対象**外**（キットv1.9） |
 | [`tools/derivedcheck.py`](tools/derivedcheck.py)、[`register/derived.jsonl`](register/derived.jsonl)、[`schema/derived.schema.json`](schema/derived.schema.json) | 派生文書（要約、README、引用情報ファイル、写し）の台帳。それぞれが元にした版を記録し、状態ログにある元の文書のいまの版と比べる。キット自身の版の表記どうし、READMEが挙げるタグと実在のタグも比べる（キットv1.10） |
 | [`tools/calccheck.py`](tools/calccheck.py)、[`register/computed.jsonl`](register/computed.jsonl)、[`schema/computed.schema.json`](schema/computed.schema.json) | 算出値（比率、期間から数えた月、件数）の台帳。入力、演算、誰が計算したかを記録し、計算し直したうえで、計算し直しても見つからないもの（入力の格付けをそのまま付けた値など）を挙げる（キットv1.11） |
-| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計、抽出の検査、派生文書の検査、算出値の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
-| [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果。派生文書の検査（キットv1.10）と算出値の検査（キットv1.11）をキットの台帳にかけた結果 |
+| [`tools/idcheck.py`](tools/idcheck.py)、[`register/identifiers.jsonl`](register/identifiers.jsonl)、[`register/namespaces.json`](register/namespaces.json)、[`schema/identifier.schema.json`](schema/identifier.schema.json)、[`schema/namespaces.schema.json`](schema/namespaces.schema.json) | 識別子の台帳。それぞれが属する名前空間と、キーの残り（日付と改正対象、題、ファイルのハッシュと版）を記録する。参照を解決し、2つのものが共有する番号とファイル名を挙げ、文中の名乗りのない `#N` のうち2つの名前空間を指しうるものを見つける（キットv1.12） |
+| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計、抽出の検査、派生文書の検査、算出値の検査、識別子の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
+| [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果。派生文書の検査（キットv1.10）、算出値の検査（キットv1.11）、識別子の検査（キットv1.12）をキットの台帳にかけた結果 |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -69,7 +70,7 @@ python3 tools/citelint.py paper.md                                        # 著�
 python3 tools/citelint.py paper_from_pdf.txt --format rendered --lang ja  # 公開ファイルから取り出したテキスト
 ```
 
-何か見つけると終了コード1を返すので、CIで使えます。読むのはテキストだけです。読みが正しいか、出典がまだ有効か、言葉の違う2つの文が矛盾しているかは判断できません。論文v1.1にかけると、のちに#26〜#44として記録された欠陥17件（確認の#34と、規則の改善の#35を除く）のうち8件と、もう1件の一部を見つけました。誰も見つけていなかったものも1件ありました。日本語版で、目次の第3章の題が本文の見出しと一致していません。結果はHypothetical Technical Blog #19『規則はメカニズムではない』で報告しています。
+何か見つけると終了コード1を返すので、CIで使えます。読むのはテキストだけです。読みが正しいか、出典がまだ有効か、言葉の違う2つの文が矛盾しているかは判断できません。論文v1.1にかけると、のちにログ#26〜#44として記録された欠陥17件（確認のログ#34と、規則の改善のログ#35を除く）のうち8件と、もう1件の一部を見つけました。誰も見つけていなかったものも1件ありました。日本語版で、目次の第3章の題が本文の見出しと一致していません。結果はHypothetical Technical Blog #19『規則はメカニズムではない』で報告しています。
 
 ## 状態ログ（キットv1.3）
 
@@ -116,7 +117,7 @@ python3 tools/catchlog.py LOG.csv            # ワークブックのキャッチ
 python3 tools/catchlog.py examples/method_paper_v1.2/catch_log.csv
 ```
 
-訂正だけを数えるログでは、確かめて問題がなかった成分も、一度も確かめていない成分も、同じゼロになります。`catchlog.py` は成分ごとに、公開前と公開後に分けて、訂正と確認を別に数え、各欄を `found`（訂正あり）、`clean`（訂正なし、確認あり）、`other-only`（不記載や規則の改善だけ）、`unexamined`（行がひとつもない）と名付けます。2つを足し合わせることはしません。ワークブックの「キャッチログ」シートをCSVで保存したもの（UTF-8、または日本語版Excelのcp932）と、英語・日本語の成分名を読みます。知らない成分名は報告します（`--strict` なら誤りとして止めます）。綴りを誤った成分があると、本来の成分が「unexamined」に見えてしまうからです。ワークブックの「結果」の選択肢には v1.0 から「confirmed (no error found)」があります。確認も訂正と同じログに記録してください。`examples/method_paper_v1.2/catch_log.csv` は、方法論文の公開されたログ（英語版#1〜#42、日本語版のみ#43〜#44）を、本文を除いて番号・成分・結果・公開前後だけで持ちます。公開前は頁（page）が `clean`、数値（figure）が `unexamined`（§7-3）。公開後、数値には訂正2件と確認1件があります。論文の3件の不記載（§7-5）は入れていません。論文が番号も成分も示していないためです。
+訂正だけを数えるログでは、確かめて問題がなかった成分も、一度も確かめていない成分も、同じゼロになります。`catchlog.py` は成分ごとに、公開前と公開後に分けて、訂正と確認を別に数え、各欄を `found`（訂正あり）、`clean`（訂正なし、確認あり）、`other-only`（不記載や規則の改善だけ）、`unexamined`（行がひとつもない）と名付けます。2つを足し合わせることはしません。ワークブックの「キャッチログ」シートをCSVで保存したもの（UTF-8、または日本語版Excelのcp932）と、英語・日本語の成分名を読みます。知らない成分名は報告します（`--strict` なら誤りとして止めます）。綴りを誤った成分があると、本来の成分が「unexamined」に見えてしまうからです。ワークブックの「結果」の選択肢には v1.0 から「confirmed (no error found)」があります。確認も訂正と同じログに記録してください。`examples/method_paper_v1.2/catch_log.csv` は、方法論文の公開されたログ（英語版ログ#1〜#42、日本語版のみログ#43〜#44）を、本文を除いて番号・成分・結果・公開前後だけで持ちます。公開前は頁（page）が `clean`、数値（figure）が `unexamined`（§7-3）。公開後、数値には訂正2件と確認1件があります。論文の3件の不記載（§7-5）は入れていません。論文が番号も成分も示していないためです。
 
 ## ほかの誰にも書けない欄（キットv1.8）
 
@@ -125,7 +126,7 @@ python3 tools/catchlog.py LOG.csv --fields
 python3 tools/catchlog.py examples/series_log/after_v1.2.csv --fields
 ```
 
-`--fields` は、キャッチログの各欄がどれだけ埋まっているかを、公開前と公開後に分けて報告します。埋まっている、未判断（または記録なし）、空、の3つです。「見逃していたら何が起きたか」と「影響の大きさ」に判断のない項目を番号で挙げます。欄を埋めることはしません。ワークブックとCSVの雛形には、影響の大きさの次に「「見逃していたら」を誰が書いたか」の列を足しました（author、author chose from assistant's options、assistant、not yet decided）。論文はこの欄を委任できない項目と呼びます（§9-5）が、補助者が下書きすることはできてしまうからです。`examples/series_log/after_v1.2.csv` は、論文v1.2より後の著者のログ（#45〜#62、論文には未掲載）を、発見日、判断の欄、所要時間、公開前後だけで持ちます。18件のうち判断があるのは3件で、3件とも補助者の候補から選ばれています。
+`--fields` は、キャッチログの各欄がどれだけ埋まっているかを、公開前と公開後に分けて報告します。埋まっている、未判断（または記録なし）、空、の3つです。「見逃していたら何が起きたか」と「影響の大きさ」に判断のない項目を番号で挙げます。欄を埋めることはしません。ワークブックとCSVの雛形には、影響の大きさの次に「「見逃していたら」を誰が書いたか」の列を足しました（author、author chose from assistant's options、assistant、not yet decided）。論文はこの欄を委任できない項目と呼びます（§9-5）が、補助者が下書きすることはできてしまうからです。`examples/series_log/after_v1.2.csv` は、論文v1.2より後の著者のログ（ログ#45〜#62、論文には未掲載）を、発見日、判断の欄、所要時間、公開前後だけで持ちます。18件のうち判断があるのは3件で、3件とも補助者の候補から選ばれています。
 
 ## このPDFにはない（キットv1.9）
 
@@ -150,9 +151,9 @@ python3 tools/derivedcheck.py --tree . --tags @tags.txt          # READMEのタ�
 
 要約、README、引用情報ファイルは、別の文書についての事実を写しています。項目の一覧、件数、版、発行の日付です。元の文書が動くと、写しは一語も変わらずに誤りになります。`register/derived.jsonl` は、派生文書ごとに、元にした文書とその版、それを述べる文書中の言葉（逐語。述べていなければ null）、写している事実、文書が自分に付けた日付、ほかの文書が「発行した」と述べた日、最初に見た日を記録します。状態ログと同じく、追記だけです。元の文書のいまの版は状態ログ（成分 `edition`）から取るので、写しは、文書が変わらなくても偽になりうるほかのすべてと同じ記録と比べられます。
 
-派生文書は、元の文書ごとに1つの判定を受けます。`current`、`stale`（別の版から作った）、`made-from-unknown`（どの版から作ったかを台帳が述べていない）、`source-unknown`（状態ログに元の文書の版がない、または版として読めない）、`source-expired`。印は4つです。`not-in-document`（文書自身が何から作ったかを述べていない）、`claimed-before-observed`（誰も見ていないうちに、ほかの文書が発行済みと書いた）、`unobserved`（発行したとされ、誰も見ていない）、`replaced-by-vN`（台帳に同じ文書の後の版がある。この版もまだ公開されていることがある）。これは報告で、関門ではありません。古い版から作った写しは、記録されている限り stale のままなので、current でないものが1つでもあれば終了コードは1です。最初の行はこの連載自身のものです。本体論文の1枚要約v1.0は、元にした版を最後の行に書いていました。本体論文は2日後（7月26日）にv1.1になり、その行は、要約v1.1を発行した10月13日まで79日間直されませんでした。それを見つけた照合は方法論文のログ#32で、10月12日の論文v1.2に載っています。方法論文v1.2は10月12日に要約v1.1を発行済みと記録しましたが、発行は10月13日でした（#49）。キット自身は論文の2つの版から作ったものとして記録し、判定を2つ受けます。
+派生文書は、元の文書ごとに1つの判定を受けます。`current`、`stale`（別の版から作った）、`made-from-unknown`（どの版から作ったかを台帳が述べていない）、`source-unknown`（状態ログに元の文書の版がない、または版として読めない）、`source-expired`。印は4つです。`not-in-document`（文書自身が何から作ったかを述べていない）、`claimed-before-observed`（誰も見ていないうちに、ほかの文書が発行済みと書いた）、`unobserved`（発行したとされ、誰も見ていない）、`replaced-by-vN`（台帳に同じ文書の後の版がある。この版もまだ公開されていることがある）。これは報告で、関門ではありません。古い版から作った写しは、記録されている限り stale のままなので、current でないものが1つでもあれば終了コードは1です。最初の行はこの連載自身のものです。本体論文の1枚要約v1.0は、元にした版を最後の行に書いていました。本体論文は2日後（7月26日）にv1.1になり、その行は、要約v1.1を発行した10月13日まで79日間直されませんでした。それを見つけた照合は方法論文のログ#32で、10月12日の論文v1.2に載っています。方法論文v1.2は10月12日に要約v1.1を発行済みと記録しましたが、発行は10月13日でした（ログ#49）。キット自身は論文の2つの版から作ったものとして記録し、判定を2つ受けます。
 
-`--tree` は、キットが自分に付けている版の表記（CITATION.cff、README英日、CHANGELOG、ワークブックのStart hereシート（標準ライブラリで読む）、`build_kit.py`）を集め、食い違えば報告します。`--expect` がなければ、どれが正しいかを決めません。公開したタグにかけると、記録済みの2つの故障がその場所で出ます。v1.2では引用情報ファイルが1.1.1（#47）、ワークブックが1.1（#65）。v1.3〜v1.7ではワークブックが1.1（#65）。v1.9ではワークブックが1.8（`evidence/derivedcheck_2026-10-22.txt`）。テストがこのツリーにかけるので、表記が食い違うリリースは自分のテストで落ちます。各所が挙げる論文の版は一覧にするだけで、判定しません。どのファイルがどの版から来たかは台帳が述べます。`--tags` は、READMEが挙げるタグを、与えたタグと比べます。カンマ区切りの一覧か、1行に1つのタグを書いたファイル、または `git ls-remote --tags origin` の出力をそのまま渡せます。
+`--tree` は、キットが自分に付けている版の表記（CITATION.cff、README英日、CHANGELOG、ワークブックのStart hereシート（標準ライブラリで読む）、`build_kit.py`）を集め、食い違えば報告します。`--expect` がなければ、どれが正しいかを決めません。公開したタグにかけると、記録済みの2つの故障がその場所で出ます。v1.2では引用情報ファイルが1.1.1（ログ#47）、ワークブックが1.1（ログ#65）。v1.3〜v1.7ではワークブックが1.1（ログ#65）。v1.9ではワークブックが1.8（`evidence/derivedcheck_2026-10-22.txt`）。テストがこのツリーにかけるので、表記が食い違うリリースは自分のテストで落ちます。各所が挙げる論文の版は一覧にするだけで、判定しません。どのファイルがどの版から来たかは台帳が述べます。`--tags` は、READMEが挙げるタグを、与えたタグと比べます。カンマ区切りの一覧か、1行に1つのタグを書いたファイル、または `git ls-remote --tags origin` の出力をそのまま渡せます。
 
 古い文書のどこが誤りかは言いません。それは読みです。記録した文書しか見えません。lnkd.inのような短縮URLは開けないので、最初に見た日は人が記録します。
 
@@ -170,9 +171,28 @@ python3 tools/calccheck.py --log register/computed.jsonl --status register/statu
 
 値ごとに `recomputes`（計算し直すと一致）か `differs`（一致しない）を返し、次の印を付けます。`grade-borrowed`（出典以外が計算した値にAが付き、格付けにも値にも誰の計算かが書かれていない。閉じた語彙の中では `［数値: A｜帰属: D］`／`[figure: A | attribution: D]` と書き、「著者の計算」「author's arithmetic」などの決まった語も明示とみなす。決まった形だけを読むので、「計算していない」のような否定は読めない）、`operator-unknown`、`claims-disagree`（誰が計算したかについて、文書どうし、または文書と記録の言い分が割れている）、`sensitive`（入力の幅や別の値で、示した桁の値が変わる。変わらなければ robust）、`if-pending`（予定されている変更で値が変わる）、入力が依拠する状態ログの行についての `input-expired`／`input-unrecorded`。判定ではなく報告なので、何か印が付けば終了コードは1です。
 
-最初の記録はこの連載自身のもので、どの値も計算し直すと一致します。本体論文の「about 1.6 per cent」は、そもそも算出値ではありませんでした。判決自身が「約一・六パーセント」と書いているので、記録は計算した者を出典とし、方法論文がそれを著者の計算と説明していることを、食い違う言い分として並べます（v1.2以後の著者のログ#76）。本体論文の「May 2027」は期間から出した著者の計算で、Aの横に置かれています（`grade-borrowed`）。状態ログの同じ月は、値の中で誰の計算かを書いているので、印は付きません。同じ日に記録した状態ログのもう1つの月（規則4の「November 2026」）はそう書いておらず、印が付きます。期間が12か月に縮まれば、2つの5月はどちらも2026年11月になります。記録された2つの公布日では、どちらも変わりません。READMEの「18 defects」（ログ#62）は、足し算は正しく、数える規則が誤っていた例で、除外の幅に `sensitive` が付きます。v1.10のREADMEの79日は、記録が持つもう1つの終点で `sensitive` になります（方法論文は要約v1.1の発行を1日早く書いていた。#49）。出力は `evidence/calccheck_2026-10-23.txt` にあります。
+最初の記録はこの連載自身のもので、どの値も計算し直すと一致します。本体論文の「about 1.6 per cent」は、そもそも算出値ではありませんでした。判決自身が「約一・六パーセント」と書いているので、記録は計算した者を出典とし、方法論文がそれを著者の計算と説明していることを、食い違う言い分として並べます（v1.2以後の著者のログ#76）。本体論文の「May 2027」は期間から出した著者の計算で、Aの横に置かれています（`grade-borrowed`）。状態ログの同じ月は、値の中で誰の計算かを書いているので、印は付きません。同じ日に記録した状態ログのもう1つの月（規則4の「November 2026」）はそう書いておらず、印が付きます。期間が12か月に縮まれば、2つの5月はどちらも2026年11月になります。記録された2つの公布日では、どちらも変わりません。READMEの「18 defects」（ログ#62）は、足し算は正しく、数える規則が誤っていた例で、除外の幅に `sensitive` が付きます。v1.10のREADMEの79日は、記録が持つもう1つの終点で `sensitive` になります（方法論文は要約v1.1の発行を1日早く書いていた。ログ#49）。出力は `evidence/calccheck_2026-10-23.txt` にあります。
 
 出典が値を自分で書いているかは分かりません。1.6%は3か月のあいだ、計算した値として記録されていました。演算が議論に合っているか（総資産を分母にしてよいか）は言いません。それは読みの問題です。記録された値しか見えません。
+
+## 識別子（キットv1.12）
+
+```
+python3 tools/idcheck.py --check
+python3 tools/idcheck.py --resolve gsr "206(E)" --key date=2021-03-24
+python3 tools/idcheck.py --file path/to/echap06_vol1.pdf
+python3 tools/idcheck.py --scan post.txt
+```
+
+番号は、名前空間の中でしか一意ではありません。論文が法令について置いた対策は三点キーです。「An identifier is written as number, date, and instrument amended. Never number alone.」（§2-4）。同じ故障は別の形でも起きます。キットv1.2のREADMEは、連載の番号の繰り上げの後も記事を「Hypothetical Technical Blog #18」と引き、指していた記事はBlog #19になっていました（ログ#48）。経済白書の第6章は、2つのパスの下で同じ `echap06_vol1.pdf` という名前を持ち、一方は2018-19年版、もう一方は2020-21年版です。そしてこの連載は、記事にも方法論文のログの項目にも名乗りのない `#` を使い、両者の番号の範囲はいま重なっています。
+
+`register/namespaces.json` は名前空間ごとに、番号以外のキーの項目、文中でその名前空間を名乗る語（`Blog #`、`log #`、`ログ#`）、名乗りのない `#N` がそれを指しうるか、どの番号が存在し、どの番号が予定されているかを宣言します。`register/identifiers.jsonl` は識別子をキーとともに記録します。ダッシュはその項目が確定していないことを示します。追記だけです。
+
+`--check` は `number-shared`（1つの名前空間で2つの記録が番号を共有する。区別できる項目を挙げる）、`date-shared`（日付を共有し番号が違う。論文の言う相補的な形）、`name-shared`（2つのファイルが名前を共有し、中身が違う）、`key-incomplete`（キーの項目がないか、ダッシュ）、`bare-overlap`（名乗りのない `#N` が指しうる2つの名前空間と、共有する番号）を報告します。`--resolve` は `unique`、`ambiguous`（候補を区別できる項目を挙げる）、`mismatch`（番号はあるが、与えたキーとは合わない。そのキーを持つ番号も挙げる）、`absent` を返します。`--file` は各ファイルのハッシュを取り、名前と中身の両方で台帳から探します。`--scan` は文中の `#N` を探し、`named`（名前空間を名乗っている。または名乗った範囲や列挙の続き）、`unqualified`（名乗りがなく、その番号を持つ名前空間が1つ）、`ambiguous`（名乗りがなく、2つ以上が持つか予定している）、`unknown` に分けます。書き手がどちらを指したかは決めません。文脈で読み手には明らかなこともあります。報告するのは、その記号だけでは分からないことです。検査は報告であって関門ではなく、何かを報告したときは終了ステータスが1になります。
+
+最初の記録はこの連載自身のものです。G.S.R. 205(E)・206(E)（2021年）と206(E)（2015年）（§2-2）、2021年10月29日の2つの通達（一方の件名は確定していない）、ログ#48のためのBlog #18と#19、そして `echap06_vol1.pdf` という名前の2つの章です。2020-21年版のハッシュは `examples/es2021_ch6/lines.json` が記録したものです。2018-19年版はこの環境からハッシュを取れておらず、取れるまでは `key-incomplete` です。v1.12から、このREADMEは書く番号すべてに名前空間を名乗らせ、テストがそれを確かめます。出力は `evidence/idcheck_2026-10-23.txt` にあり、キットに入っていない記事Blog #17〜#31の集計も載せています。
+
+読むのは、記録されたものと書かれたものだけです。どの項目を3つ目のキーにするかは書き手が選びます。ハッシュは、中身が同じでもファイルを保存し直すと変わります（メタデータが変わったPDFなど）。公開済みの記事は直しません。
 
 ## このキットがしないこと
 
@@ -182,17 +202,17 @@ python3 tools/calccheck.py --log register/computed.jsonl --status register/statu
 
 Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 
-- #17 — [What Broke Was the Provenance, Not the Claim](https://note.com/ayako_iuchi/n/nb5dbd0aa502b)
-- #18 — [Commencement Is a Cache-Invalidation Problem](https://note.com/ayako_iuchi/n/n6cbb36bb35c1)（動いている規定の登録簿。キットv1.1で追加）
-- #19 — [A Rule Is Not a Mechanism](https://note.com/ayako_iuchi/n/n5adfbe0c66f8)（linter、キットv1.2）
-- #20 — [Fixed Words, Moving Status](https://note.com/ayako_iuchi/n/ne5747d7bcd77)（状態ログ、キットv1.3）
-- #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
-- #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282)（箇所への分割、検索、検索後の依存の検査。キットv1.4）
-- #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263)（型付きの記録としての記法。キットv1.5）
-- #24 — [Not Established Is an Answer](https://note.com/ayako_iuchi/n/n7d7ca5a8837b)（空の答えが正解になりうるテスト。キットv1.6）
-- #31 — [Recomputing Is Not Citing](https://note.com/ayako_iuchi/n/nf8adb5ccde85)（算出値と、誰が計算したか。キットv1.11。2026年10月23日、v1.11のリリースとタグの後に公開。日本語版は[こちら](https://note.com/ayako_iuchi/n/n37b6cbf7a377)）。#25〜#30は公開済みで、リンクは追って足します。
+- Blog #17 — [What Broke Was the Provenance, Not the Claim](https://note.com/ayako_iuchi/n/nb5dbd0aa502b)
+- Blog #18 — [Commencement Is a Cache-Invalidation Problem](https://note.com/ayako_iuchi/n/n6cbb36bb35c1)（動いている規定の登録簿。キットv1.1で追加）
+- Blog #19 — [A Rule Is Not a Mechanism](https://note.com/ayako_iuchi/n/n5adfbe0c66f8)（linter、キットv1.2）
+- Blog #20 — [Fixed Words, Moving Status](https://note.com/ayako_iuchi/n/ne5747d7bcd77)（状態ログ、キットv1.3）
+- Blog #21 — [A Source Has Sources](https://note.com/ayako_iuchi/n/n7a82eee7a8af)
+- Blog #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282)（箇所への分割、検索、検索後の依存の検査。キットv1.4）
+- Blog #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263)（型付きの記録としての記法。キットv1.5）
+- Blog #24 — [Not Established Is an Answer](https://note.com/ayako_iuchi/n/n7d7ca5a8837b)（空の答えが正解になりうるテスト。キットv1.6）
+- Blog #31 — [Recomputing Is Not Citing](https://note.com/ayako_iuchi/n/nf8adb5ccde85)（算出値と、誰が計算したか。キットv1.11。2026年10月23日、v1.11のリリースとタグの後に公開。日本語版は[こちら](https://note.com/ayako_iuchi/n/n37b6cbf7a377)）。Blog #25〜#30は公開済みで、リンクは追って足します。
 
-リリースのタグは、リリースのコミットが `main` に入った後に、著者がGitHubで付けます。それまでタグはありません。このREADMEを最後に変えた日（2026年10月23日）に存在したタグ：（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`、`v1.5`、`v1.6`、`v1.7`、`v1.8`、`v1.9`、`v1.10`）。v1.10のタグはv1.10のリリースのコミット 1b57c34 を指し、著者が2026年10月23日に作りました。v1.9のタグは時刻を持たない軽量タグで、v1.9のリリースと一緒に作られました。GitHubはそのリリースの公開を10月22日13時22分40秒（日本時間）と記録しています。リリースのコミットの約23時間半後です。v1.9を引くHypothetical Technical Blog #27は、その間に公開されています。#19、#20、#22〜#24は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。#17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。#22、#23、#24は2026年10月20日に、それぞれv1.4、v1.5、v1.6のリリースの後に公開されました。
+リリースのタグは、リリースのコミットが `main` に入った後に、著者がGitHubで付けます。それまでタグはありません。このREADMEを最後に変えた日（2026年10月23日）に存在したタグ：（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`、`v1.5`、`v1.6`、`v1.7`、`v1.8`、`v1.9`、`v1.10`、`v1.11`）。v1.11のタグはv1.11のリリースのコミット 19ec6f7 を指し、著者が2026年10月23日9時36分（日本時間）に作りました。v1.10のタグはv1.10のリリースのコミット 1b57c34 を指し、著者が2026年10月23日に作りました。v1.9のタグは時刻を持たない軽量タグで、v1.9のリリースと一緒に作られました。GitHubはそのリリースの公開を10月22日13時22分40秒（日本時間）と記録しています。リリースのコミットの約23時間半後です。v1.9を引くHypothetical Technical Blog #27は、その間に公開されています。Blog #19、#20、#22〜#24は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。Blog #17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。Blog #22、#23、#24は2026年10月20日に、それぞれv1.4、v1.5、v1.6のリリースの後に公開されました。
 
 ## 出典
 

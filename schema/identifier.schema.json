@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/identifier.schema.json",
+  "title": "Identifier record",
+  "description": "One dated record of an identifier: the namespace it belongs to, its number, and the rest of its key, so that a reference written with the number alone can be resolved, and a collision seen. The fields of the key are declared per namespace in register/namespaces.json. Records are appended, never edited. Kit v1.12. CC0 1.0.",
+  "type": "object",
+  "required": ["id", "namespace", "number", "key", "what", "source", "recorded_on", "recorded_by"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {"type": "string", "description": "Stable identifier of this record. Never reused."},
+    "namespace": {"type": "string", "description": "A namespace declared in register/namespaces.json: blog, log, gsr, om, file."},
+    "number": {"type": "string", "description": "The number as written: 206(E), F.1/1/2021-PPD, 30, or a file's name."},
+    "key": {
+      "type": "object",
+      "description": "The rest of the key, as the namespace declares it (for gsr: date and amends; for blog: title; for file: name, url, sha256 and edition). A dash means not established.",
+      "additionalProperties": {"type": ["string", "null"]},
+      "properties": {
+        "date": {"type": ["string", "null"], "description": "YYYY-MM-DD, or a dash"},
+        "sha256": {"type": ["string", "null"], "description": "64 lower-case hex digits, or a dash"}
+      }
+    },
+    "what": {"type": "string", "description": "What the identifier names, in a few words."},
+    "source": {"type": "string", "description": "Where the key's values were taken from."},
+    "recorded_on": {"type": "string", "format": "date"},
+    "recorded_by": {"type": "string"},
+    "supersedes": {"type": ["string", "null"]},
+    "note": {"type": "string"}
+  }
+}

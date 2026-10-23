@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/namespaces.schema.json",
+  "title": "Namespaces",
+  "description": "The namespaces identifiers belong to: the fields of each one's key besides the number, the words that name it in text, whether a bare '#N' can mean it, and which numbers exist or are planned. Kit v1.12. CC0 1.0.",
+  "type": "object",
+  "required": ["namespaces"],
+  "additionalProperties": false,
+  "properties": {
+    "namespaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "what", "key", "bare"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string"},
+          "what": {"type": "string"},
+          "key": {"type": "array", "minItems": 1, "items": {"type": "string", "not": {"const": "number"}}},
+          "names": {"type": "array", "items": {"type": "string"}, "description": "Words that, written right before '#N', name this namespace: 'Blog #', 'log #', 'ログ#'. A word names one namespace only."},
+          "bare": {"type": "boolean", "description": "Whether a bare '#N' can mean this namespace."},
+          "exists": {"type": "array", "items": {"oneOf": [{"type": "integer"}, {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}]}},
+          "planned": {"type": "array", "items": {"oneOf": [{"type": "integer"}, {"type": "array", "items": {"type": "integer"}, "minItems": 2, "maxItems": 2}]}},
+          "as_of": {"type": "string", "format": "date"},
+          "source": {"type": "string"},
+          "note": {"type": "string"}
+        }
+      }
+    }
+  }
+}
