@@ -42,16 +42,26 @@ edited.
 --scan finds each "#N" in the text and says which namespace it names:
     named            the text names the namespace ("Blog #30", "log #30"), or
                      the token continues a range or list that did
-                     ("entries #26–#42")
-    unqualified      bare, and N exists in only one namespace that a bare "#N"
-                     can mean
-    ambiguous        bare, and N exists (or is planned) in more than one
-    unknown          bare, and N exists in none
-It does not decide which namespace the writer meant; the context may make it
-plain to a reader. It reports what the token alone does not say.
+                     ("entries #26–#42", "Blog #19, #20 and #22–#24")
+    absent           named, but the namespace has no such number, existing or
+                     planned
+    unqualified      bare, and only one namespace that a bare "#N" can mean
+                     has N (existing or planned)
+    ambiguous        bare, and more than one has it (existing or planned)
+    unknown          bare, and none has it
+A token continues the name of the token before it on the same line when only
+a dash, a wave dash, a comma, 、, ・, a slash, "to", "and", "or", と or から
+stands between them. Words after a token are not read: in "Blog #18 and #19 of
+the log" the second token is read as a post. Only the "#N" form is read
+("entry 30" is not), code spans are read like other text, and a fragment
+inside a URL is skipped. It does not decide which namespace the writer meant;
+the context may make it plain to a reader. It reports what the token alone
+does not say.
 
 It is a report, not a gate: exit 1 whenever anything is reported (in --scan,
-anything but named; in --resolve, anything but unique). Exit 2: a file could
+anything but named; in --resolve, anything but unique; in --file, anything but
+one record by content that is also the only record by name, so a right file
+whose name another file shares is reported). Exit 2: a file could
 not be read, or a record is malformed. Standard library only. CC0 1.0. Part of
 the citation provenance kit (kit v1.12).
 """
@@ -79,8 +89,8 @@ SHA256 = re.compile(r"[0-9a-f]{64}")
 NOT_ESTABLISHED = {"—", "–", "-", ""}
 # "#N": a hash, digits, and no Latin letter or digit after them. A hashtag
 # (#TechBlog) has no digits after the hash; #1st is not a number. Japanese
-# text may follow directly (#21の).
-TOKEN = re.compile(r"[#＃]([0-9]+)(?![0-9A-Za-z_])")
+# text may follow directly (#21の). Full-width ＃ and digits are read.
+TOKEN = re.compile(r"[#＃]([0-9０-９]+)(?![0-9０-９A-Za-zＡ-Ｚａ-ｚ_])")
 # Between two tokens of one range or list: a dash, a wave dash, "to", "and",
 # "or", a comma, 、, ・ or a slash, with spaces.
 JOIN = re.compile(r"^\s*(?:[–—\-〜~～,、・/]|to|and|or|から|と|及び|および)\s*$", re.I)
@@ -136,6 +146,11 @@ def load_namespaces(path=NAMESPACES):
             raise Malformed(f"{where}: key is a list of field names")
         if "number" in ns["key"]:
             raise Malformed(f"{where}: key lists the fields besides the number")
+        for k in ("what", "source", "note"):
+            if k in ns and not isinstance(ns[k], str):
+                raise Malformed(f"{where}: {k} must be a string")
+        if "as_of" in ns and not (isinstance(ns["as_of"], str) and DATE.fullmatch(ns["as_of"])):
+            raise Malformed(f"{where}: as_of is not YYYY-MM-DD")
         if not isinstance(ns["bare"], bool):
             raise Malformed(f"{where}: bare is true or false")
         names = ns.get("names", [])
@@ -217,10 +232,23 @@ def load(path, namespaces):
             raise Malformed(f"{where}: id {rec['id']!r} used twice")
         ids.add(rec["id"])
         out.append(rec)
+    by_id = {r["id"]: r for r in out}
     for r in out:
         s = r.get("supersedes")
-        if s is not None and s not in ids:
+        if s is None:
+            continue
+        if s not in ids:
             raise Malformed(f"record {r['id']}: supersedes {s!r}, which is not in the register")
+        if s == r["id"]:
+            raise Malformed(f"record {r['id']}: supersedes itself")
+        if by_id[s]["namespace"] != r["namespace"]:
+            raise Malformed(f"record {r['id']}: supersedes {s!r}, a record in another namespace")
+        seen, cur = {r["id"]}, s
+        while cur is not None:
+            if cur in seen:
+                raise Malformed(f"record {r['id']}: the chain of supersedes returns to {cur!r}")
+            seen.add(cur)
+            cur = by_id[cur].get("supersedes")
     targets = [r["supersedes"] for r in out if r.get("supersedes")]
     dup = {t for t in targets if targets.count(t) > 1}
     if dup:
@@ -296,29 +324,24 @@ def check(records, namespaces):
     bare = [ns for ns in namespaces.values() if ns["bare"]]
     for i, a in enumerate(bare):
         for b in bare[i + 1:]:
-            both = []
+            spans = []
             for lo, hi in a["exists"] + a["planned"]:
-                for n in range(lo, hi + 1):
-                    if _in(n, b["exists"] + b["planned"]):
-                        both.append(n)
-            if both:
+                for lo2, hi2 in b["exists"] + b["planned"]:
+                    if max(lo, lo2) <= min(hi, hi2):
+                        spans.append([max(lo, lo2), min(hi, hi2)])
+            if spans:
                 out.append({"flag": "bare-overlap", "namespaces": [a["name"], b["name"]],
-                            "numbers": _spans(sorted(set(both)))})
+                            "numbers": _merge(spans)})
     return out
 
 
-def _spans(nums):
-    out, start, prev = [], None, None
-    for n in nums:
-        if start is None:
-            start = prev = n
-        elif n == prev + 1:
-            prev = n
+def _merge(spans):
+    out = []
+    for lo, hi in sorted(spans):
+        if out and lo <= out[-1][1] + 1:
+            out[-1][1] = max(out[-1][1], hi)
         else:
-            out.append([start, prev])
-            start = prev = n
-    if start is not None:
-        out.append([start, prev])
+            out.append([lo, hi])
     return out
 
 
@@ -334,8 +357,14 @@ def resolve(records, namespaces, namespace, number, key=None):
     recs = [r for r in current(records) if r["namespace"] == namespace]
     by_number = [r for r in recs if _same_number(r["number"], number)]
 
+    for k, v in key.items():
+        if not _established(v):
+            raise Malformed(f"--key {k}: a dash or an empty value is not a value to match")
+
     def fits(r):
-        return all(_norm(r["key"].get(k) or "").strip().lower() == _norm(v).strip().lower()
+        # A field not established matches nothing.
+        return all(_established(r["key"].get(k))
+                   and _norm(r["key"][k]).strip().lower() == _norm(v).strip().lower()
                    for k, v in key.items())
 
     hits = [r for r in by_number if fits(r)]
@@ -363,7 +392,10 @@ def sha256_of(path):
 
 
 def find_file(records, path):
-    digest = sha256_of(path)
+    try:
+        digest = sha256_of(path)
+    except OSError as e:
+        raise Malformed(f"{path}: {e.strerror or e}")
     name = os.path.basename(path)
     recs = [r for r in current(records) if "sha256" in r["key"] or "name" in r["key"]]
     by_name = [r["id"] for r in recs if r["key"].get("name") == name]
@@ -393,13 +425,26 @@ def _named_by(before, namers):
         w = word.rstrip("#＃").rstrip()
         if not w:
             continue
-        if re.search(re.escape(w) + r"\s*$", b):
-            # The word must start at a boundary, so "catalog " is not "log ".
-            start = len(re.sub(re.escape(w) + r"\s*$", "", b))
-            # Only Latin words need it; Japanese has no spaces between words.
-            if start == 0 or not (b[start - 1].isascii() and b[start - 1].isalnum()) \
-                    or not (w[0].isascii() and w[0].isalnum()):
+        m = re.search(re.escape(w) + r"\s*$", b)
+        if m:
+            # The word must start at a boundary, so "catalog " is not "log "
+            # and カタログ is not ログ: the character before it must not be of
+            # the same script as the word's first character.
+            if m.start() == 0 or _script(b[m.start() - 1]) is None \
+                    or _script(b[m.start() - 1]) != _script(w[0]):
                 return ns
+    return None
+
+
+def _script(c):
+    if c.isascii() and c.isalnum():
+        return "latin"
+    if "\u30a0" <= c <= "\u30ff" or "\u31f0" <= c <= "\u31ff":
+        return "katakana"
+    if "\u3040" <= c <= "\u309f":
+        return "hiragana"
+    if "\u4e00" <= c <= "\u9fff":
+        return "kanji"
     return None
 
 
@@ -410,17 +455,22 @@ def scan_text(text, namespaces):
     for line_no, line in enumerate(text.splitlines(), start=1):
         prev_line = None
         for m in TOKEN.finditer(line):
+            # A fragment in a URL (https://x/#30) is not a reference.
+            word_start = max(line.rfind(" ", 0, m.start()), line.rfind("\t", 0, m.start())) + 1
+            if "://" in line[word_start:m.start()]:
+                continue
             n = int(m.group(1))
             before = line[max(0, m.start() - 40): m.start()]
             ns = _named_by(before, namers)
-            how = "named" if ns else None
             if not ns and prev_line and JOIN.match(line[prev_line[0]: m.start()]):
-                ns, how = prev_line[1], "named"
+                ns = prev_line[1]
             if ns:
+                exists = _in(n, namespaces[ns]["exists"])
+                planned = _in(n, namespaces[ns]["planned"])
+                known = bool(namespaces[ns]["exists"] or namespaces[ns]["planned"])
                 tok = {"line": line_no, "col": m.start() + 1, "token": m.group(0), "number": n,
-                       "verdict": "named", "namespace": ns,
-                       "exists": _in(n, namespaces[ns]["exists"]),
-                       "planned": _in(n, namespaces[ns]["planned"])}
+                       "verdict": "absent" if known and not (exists or planned) else "named",
+                       "namespace": ns, "exists": exists, "planned": planned}
                 prev_line = (m.end(), ns)
             else:
                 cands = [b["name"] for b in bare if _in(n, b["exists"])]
@@ -435,7 +485,7 @@ def scan_text(text, namespaces):
 
 
 def summarise(tokens):
-    s = {"named": 0, "unqualified": 0, "ambiguous": 0, "unknown": 0}
+    s = {"named": 0, "absent": 0, "unqualified": 0, "ambiguous": 0, "unknown": 0}
     for t in tokens:
         s[t["verdict"]] += 1
     return s
@@ -447,8 +497,8 @@ def _fmt_check(findings):
     lines = []
     for f in findings:
         if f["flag"] == "bare-overlap":
-            spans = ", ".join(f"#{a}" if a == b else f"#{a}–#{b}" for a, b in f["numbers"])
-            lines.append(f"bare-overlap    {' and '.join(f['namespaces'])}: {spans}")
+            spans = ", ".join(f"{a}" if a == b else f"{a}–{b}" for a, b in f["numbers"])
+            lines.append(f"bare-overlap    {' and '.join(f['namespaces'])}: numbers {spans}")
         elif f["flag"] == "date-shared":
             lines.append(f"date-shared     {f['namespace']} {f['date']}: {', '.join(f['numbers'])} ({', '.join(f['ids'])})")
         elif f["flag"] == "name-shared":
@@ -527,12 +577,12 @@ def main(argv=None):
         else:
             for r in results:
                 s = r["summary"]
-                print(f"{r['file']}: named {s['named']}, unqualified {s['unqualified']}, "
+                print(f"{r['file']}: named {s['named']}, absent {s['absent']}, unqualified {s['unqualified']}, "
                       f"ambiguous {s['ambiguous']}, unknown {s['unknown']}")
                 for t in r["tokens"]:
                     if t["verdict"] == "named" and not args.all:
                         continue
-                    if t["verdict"] == "named":
+                    if t["verdict"] in ("named", "absent"):
                         what = t["namespace"]
                     else:
                         what = ", ".join(t["candidates"] + [c + " (planned)" for c in t["planned"]]) or "—"
@@ -540,6 +590,9 @@ def main(argv=None):
         return 1 if any(r["summary"]["named"] != len(r["tokens"]) for r in results) else 0
     except Malformed as e:
         print("error:", e, file=sys.stderr)
+        return 2
+    except RecursionError:
+        print("error: input nested too deeply to read", file=sys.stderr)
         return 2
     except (OSError, ValueError, TypeError, KeyError) as e:
         print("error:", repr(e), file=sys.stderr)

@@ -8,6 +8,9 @@ import os
 import subprocess
 import sys
 
+import shlex
+import time
+
 import pytest
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -52,7 +55,7 @@ def write(tmp_path, records, name="ids.jsonl"):
 # --- the register ---------------------------------------------------------------
 
 def test_register_loads(reg):
-    assert len(reg) >= 16
+    assert len(reg) >= 19
     assert {r["namespace"] for r in reg} == {"gsr", "om", "blog", "log", "file"}
 
 
@@ -391,6 +394,7 @@ EVIDENCE_COMMANDS = [
     ["--resolve", "blog", "18", "--key", "title=A Rule Is Not a Mechanism"],
     ["--resolve", "om", "F./1/9/2021-PPD"],
     ["--scan", "README.md", "README_ja.md"],
+    ["--scan", "register/namespaces.json", "register/identifiers.jsonl"],
 ]
 
 
@@ -399,6 +403,7 @@ def evidence_text():
     for args in EVIDENCE_COMMANDS:
         shown = " ".join(a if " " not in a else f'"{a}"' for a in args)
         r = subprocess.run([sys.executable, TOOL, *args], capture_output=True, text=True, cwd=ROOT)
+        shown = " ".join(shlex.quote(a) for a in args)
         out.append(f"$ python3 tools/idcheck.py {shown}\n{r.stdout.rstrip()}\n(exit {r.returncode})")
     return "\n\n".join(out) + "\n"
 
@@ -413,3 +418,122 @@ def test_readmes_name_every_number():
     # From kit v1.12 the READMEs write "Blog #N" and "log #N" (ログ#N).
     r = run("--scan", os.path.join(ROOT, "README.md"), os.path.join(ROOT, "README_ja.md"))
     assert r.returncode == 0, r.stdout
+
+
+# --- after the review of the first draft (2026-10-23) -------------------------------
+
+def test_full_width_digits(ns):
+    v = verdicts("ログ＃２０６、＃３０", ns)
+    assert v == [("＃２０６", "absent", "log"), ("＃３０", "named", "log")]
+    assert [t["number"] for t in ic.scan_text("＃３０", ns)] == [30]
+
+
+def test_japanese_blog_word(ns):
+    v = verdicts("ブログ#30、#31", ns)
+    assert v == [("#30", "named", "blog"), ("#31", "named", "blog")]
+
+
+def test_katakana_boundary(ns):
+    # カタログ is not ログ.
+    assert verdicts("カタログ#5", ns)[0][1] == "ambiguous"
+    assert verdicts("このログ#5", ns)[0][2] == "log"
+
+
+def test_more_names(ns):
+    assert [t[2] for t in verdicts("Blogの#1〜#16, posts #17–#20, blog post #30", ns)] == ["blog"] * 5
+
+
+def test_named_but_absent(ns):
+    v = verdicts("Blog #99 and log #500", ns)
+    assert [t[1] for t in v] == ["absent", "absent"]
+
+
+def test_planned_only_is_unqualified(tmp_path):
+    p = tmp_path / "ns.json"
+    p.write_text(json.dumps({"namespaces": [
+        {"name": "a", "what": "x", "key": ["t"], "bare": True, "planned": [[40, 40]]},
+        {"name": "b", "what": "x", "key": ["t"], "bare": True, "exists": [[1, 5]]}]}), encoding="utf-8")
+    t = ic.scan_text("#40", ic.load_namespaces(str(p)))[0]
+    assert t["verdict"] == "unqualified" and t["planned"] == ["a"]
+
+
+def test_url_fragment_is_skipped(ns):
+    assert ic.scan_text("see https://example.com/page#30 and http://x/a/#31", ns) == []
+    assert len(ic.scan_text("`#30`", ns)) == 1  # code spans are read
+
+
+def test_inheritance_does_not_read_ahead(ns):
+    assert verdicts("Blog #18 and #19 of the log", ns)[1][2] == "blog"
+
+
+@pytest.mark.parametrize("records", [
+    [{"id": "a", "supersedes": "a"}],
+    [{"id": "a", "supersedes": "b"}, {"id": "b", "supersedes": "a"}],
+    [{"id": "a"}, {"id": "b", "supersedes": "a", "namespace": "blog", "number": "5", "key": {"title": "x"}}],
+])
+def test_bad_supersedes(tmp_path, ns, records):
+    with pytest.raises(ic.Malformed):
+        ic.load(write(tmp_path, [rec(**r) for r in records]), ns)
+
+
+def test_deep_nesting_exits_2(tmp_path):
+    p = tmp_path / "deep.jsonl"
+    p.write_text('{"a":' * 100000 + "1" + "}" * 100000 + "\n", encoding="utf-8")
+    r = run("--check", "--log", str(p))
+    assert r.returncode == 2 and "Traceback" not in r.stderr
+    r = run("--check", "--namespaces", str(p))
+    assert r.returncode == 2 and "Traceback" not in r.stderr
+
+
+def test_huge_ranges_are_fast(tmp_path):
+    p = tmp_path / "ns.json"
+    p.write_text(json.dumps({"namespaces": [
+        {"name": "a", "what": "x", "key": ["t"], "bare": True, "exists": [[1, 1000000000]]},
+        {"name": "b", "what": "x", "key": ["t"], "bare": True, "exists": [[5, 2000000000]]}]}), encoding="utf-8")
+    n = ic.load_namespaces(str(p))
+    t0 = time.time()
+    f = ic.check([], n)
+    assert time.time() - t0 < 1
+    assert f == [{"flag": "bare-overlap", "namespaces": ["a", "b"], "numbers": [[5, 1000000000]]}]
+
+
+def test_file_error_names_the_path(tmp_path):
+    r = run("--file", str(tmp_path))
+    assert r.returncode == 2 and str(tmp_path) in r.stderr
+
+
+def test_dash_is_not_a_key_value(reg, ns):
+    with pytest.raises(ic.Malformed):
+        ic.resolve(reg, ns, "om", "F./1/9/2021-PPD", {"subject": "—"})
+    # A field not established matches nothing.
+    assert ic.resolve(reg, ns, "om", "F./1/9/2021-PPD", {"subject": "x"})["verdict"] == "mismatch"
+
+
+def test_namespace_field_types(tmp_path):
+    for bad in ({"what": 5}, {"as_of": "23 Oct"}, {"source": []}):
+        d = {"name": "a", "what": "x", "key": ["t"], "bare": True}
+        d.update(bad)
+        p = tmp_path / "ns.json"
+        p.write_text(json.dumps({"namespaces": [d]}), encoding="utf-8")
+        with pytest.raises(ic.Malformed):
+            ic.load_namespaces(str(p))
+
+
+def test_superseding_records_name_their_numbers():
+    # The records that replace 2026-10-23-04, -06 and -07 scan clean; the
+    # replaced ones stand as written.
+    with open(IDENTIFIERS, encoding="utf-8") as f:
+        lines = [l for l in f if l.strip()]
+    new = [l for l in lines if json.loads(l).get("supersedes")]
+    assert len(new) == 3
+    nsp = ic.load_namespaces(NAMESPACES)
+    for l in new:
+        assert all(t["verdict"] == "named" for t in ic.scan_text(l, nsp))
+
+
+def test_changelog_entry_for_this_version_names_every_number():
+    # Older entries are history and stand as written; the v1.12 entry follows the rule.
+    with open(os.path.join(ROOT, "CHANGELOG.md"), encoding="utf-8") as f:
+        log = f.read()
+    entry = log.split("## Kit v1.12", 1)[1].split("\n## ", 1)[0]
+    assert all(t["verdict"] == "named" for t in ic.scan_text(entry, ic.load_namespaces(NAMESPACES)))

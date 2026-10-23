@@ -2,30 +2,76 @@
   "namespaces": [
     {
       "name": "blog",
-      "what": "Hypothetical Technical Blog, numbered from #1 across both themes (Misconduct Records as a Data Model, #1–#16; Citation provenance, from #17)",
-      "key": ["title"],
-      "names": ["Hypothetical Technical Blog #", "Technical Blog #", "Blog #", "Hypothetical Technical Blogの#", "架空の技術ブログ #", "架空の技術ブログ#"],
+      "what": "Hypothetical Technical Blog, numbered from Blog #1 across both themes (Misconduct Records as a Data Model, Blog #1–#16; Citation provenance, from Blog #17)",
+      "key": [
+        "title"
+      ],
+      "names": [
+        "Hypothetical Technical Blog #",
+        "Technical Blog #",
+        "Hypothetical Technical Blogの#",
+        "Blog #",
+        "Blogの#",
+        "blog post #",
+        "post #",
+        "posts #",
+        "架空の技術ブログ #",
+        "架空の技術ブログ#",
+        "ブログ #",
+        "ブログ#",
+        "ブログの#"
+      ],
       "bare": true,
-      "exists": [[1, 31]],
-      "planned": [[32, 36]],
+      "exists": [
+        [
+          1,
+          31
+        ]
+      ],
+      "planned": [
+        [
+          32,
+          36
+        ]
+      ],
       "as_of": "2026-10-23",
-      "source": "the author's theme list and handoff memo, 23 October 2026: #31 published on 23 October; #32–#36 planned (#36 the theme's closing post)",
-      "note": "#2–#4 are not public; the numbers exist. Renumbered on 13 October 2026 (old #16–#19 became #17–#20; entry #48)."
+      "source": "the author's theme list and handoff memo, 23 October 2026: Blog #31 published on 23 October; Blog #32–#36 planned (Blog #36 the theme's closing post)",
+      "note": "Blog #2–#4 are not public; the numbers exist. Renumbered on 13 October 2026 (the old Blog #16–#19 became Blog #17–#20; log #48)."
     },
     {
       "name": "log",
-      "what": "the catch log of What Breaks in a Citation: entries #1–#25 (Appendix A-2) and #26–#44 (A-6) in v1.2, #43–#44 in the Japanese edition only; #45 onwards kept by the author after v1.2, not yet published in an edition of the paper",
-      "key": ["document", "edition"],
-      "names": ["log #", "log entry #", "log entries #", "entry #", "entries #", "ログ#", "ログ #", "ログの#"],
+      "what": "the catch log of What Breaks in a Citation: log #1–#25 (Appendix A-2) and log #26–#44 (A-6) in v1.2, log #43–#44 in the Japanese edition only; from log #45, kept by the author after v1.2, not yet published in an edition of the paper",
+      "key": [
+        "document",
+        "edition"
+      ],
+      "names": [
+        "log #",
+        "log entry #",
+        "log entries #",
+        "entry #",
+        "entries #",
+        "ログ#",
+        "ログ #",
+        "ログの#"
+      ],
       "bare": true,
-      "exists": [[1, 78]],
+      "exists": [
+        [
+          1,
+          78
+        ]
+      ],
       "as_of": "2026-10-23",
-      "source": "What Breaks in a Citation v1.2, Appendix A-2 and A-6; the author's correction log in the theme list, entries #45–#78 (23 October 2026)"
+      "source": "What Breaks in a Citation v1.2, Appendix A-2 and A-6; the author's correction log in the theme list, log #45–#78 (23 October 2026)"
     },
     {
       "name": "gsr",
       "what": "Indian Gazette of India notifications, General Statutory Rules (G.S.R. … (E)); the numbers restart each year",
-      "key": ["date", "amends"],
+      "key": [
+        "date",
+        "amends"
+      ],
       "names": [],
       "bare": false,
       "source": "What Breaks in a Citation v1.2, §2-2"
@@ -33,7 +79,10 @@
     {
       "name": "om",
       "what": "office memoranda of the Ministry of Finance, Government of India (Department of Expenditure, Procurement Policy Division)",
-      "key": ["date", "subject"],
+      "key": [
+        "date",
+        "subject"
+      ],
       "names": [],
       "bare": false,
       "source": "What Breaks in a Citation v1.2, §2-2"
@@ -41,7 +90,12 @@
     {
       "name": "file",
       "what": "a file as fetched from a URL; the name is what a download saves it as",
-      "key": ["name", "url", "sha256", "edition"],
+      "key": [
+        "name",
+        "url",
+        "sha256",
+        "edition"
+      ],
       "names": [],
       "bare": false
     }

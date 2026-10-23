@@ -4,24 +4,24 @@ key-incomplete  file echap06_vol1.pdf (2026-10-23-16): sha256
 name-shared     file echap06_vol1.pdf: 2026-10-23-15, 2026-10-23-16; differ in url, sha256, edition
 number-shared   gsr 206(E): 2026-10-23-02, 2026-10-23-03; differ in date, amends
 date-shared     gsr 2021-03-24: 205(E), 206(E) (2026-10-23-01, 2026-10-23-02)
-date-shared     om 2021-10-29: F.1/1/2021-PPD, F./1/9/2021-PPD (2026-10-23-04, 2026-10-23-05)
-bare-overlap    blog and log: #1–#36
+date-shared     om 2021-10-29: F./1/9/2021-PPD, F.1/1/2021-PPD (2026-10-23-05, 2026-10-23-19)
+bare-overlap    blog and log: numbers 1–36
 (exit 1)
 
-$ python3 tools/idcheck.py --resolve gsr 206(E)
+$ python3 tools/idcheck.py --resolve gsr '206(E)'
 ambiguous  gsr 206(E) — by number alone: 2; candidates: 2026-10-23-02, 2026-10-23-03; separate by date, amends
 (exit 1)
 
-$ python3 tools/idcheck.py --resolve gsr 206(E) --key date=2021-03-24
+$ python3 tools/idcheck.py --resolve gsr '206(E)' --key date=2021-03-24
 unique     gsr 206(E) — by number alone: 2; with the key: 2026-10-23-02
 (exit 0)
 
-$ python3 tools/idcheck.py --resolve gsr 206(E) --key date=2015-03-18
+$ python3 tools/idcheck.py --resolve gsr '206(E)' --key date=2015-03-18
 unique     gsr 206(E) — by number alone: 2; with the key: 2026-10-23-03
 (exit 0)
 
-$ python3 tools/idcheck.py --resolve blog 18 --key "title=A Rule Is Not a Mechanism"
-mismatch   blog 18 — by number alone: 1; with the key: none; the key given fits: 19 (2026-10-23-07)
+$ python3 tools/idcheck.py --resolve blog 18 --key 'title=A Rule Is Not a Mechanism'
+mismatch   blog 18 — by number alone: 1; with the key: none; the key given fits: 19 (2026-10-23-18)
 (exit 1)
 
 $ python3 tools/idcheck.py --resolve om F./1/9/2021-PPD
@@ -29,9 +29,18 @@ unique     om F./1/9/2021-PPD — by number alone: 1; candidates: 2026-10-23-05
 (exit 0)
 
 $ python3 tools/idcheck.py --scan README.md README_ja.md
-README.md: named 53, unqualified 0, ambiguous 0, unknown 0
-README_ja.md: named 53, unqualified 0, ambiguous 0, unknown 0
+README.md: named 55, absent 0, unqualified 0, ambiguous 0, unknown 0
+README_ja.md: named 55, absent 0, unqualified 0, ambiguous 0, unknown 0
 (exit 0)
+
+$ python3 tools/idcheck.py --scan register/namespaces.json register/identifiers.jsonl
+register/namespaces.json: named 24, absent 0, unqualified 0, ambiguous 0, unknown 0
+register/identifiers.jsonl: named 11, absent 0, unqualified 0, ambiguous 4, unknown 0
+  6:356  #17   ambiguous   blog, log
+  6:367  #18   ambiguous   blog, log
+  7:339  #18   ambiguous   blog, log
+  7:397  #18   ambiguous   blog, log
+(exit 1)
 
 # Not reproducible from the kit: the posts themselves
 
@@ -54,3 +63,5 @@ Blog #29  |   3   2   0 |   3   2   0
 Blog #30  |  14  19  18 |  13  20  20
 Blog #31  |  12   7  17 |  12   7  20
 total     | 123  81 133 | 110  91 146
+
+Of the ambiguous tokens, 109 (English) and 117 (Japanese) have a number from 1 to 31, which both namespaces already have; the rest are 32–36, log entries and planned posts.

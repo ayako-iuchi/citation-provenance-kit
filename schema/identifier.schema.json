@@ -23,7 +23,7 @@
     "source": {"type": "string", "description": "Where the key's values were taken from."},
     "recorded_on": {"type": "string", "format": "date"},
     "recorded_by": {"type": "string"},
-    "supersedes": {"type": ["string", "null"]},
-    "note": {"type": "string"}
+    "supersedes": {"type": ["string", "null"], "description": "The id of a record in the same namespace that this one replaces. A record is replaced at most once; the chain may not return to itself."},
+    "note": {"type": ["string", "null"]}
   }
 }

@@ -1,11 +1,11 @@
 ﻿component,ja,definition,can_become_false_without_document_changing,example
-wording,語,The words the claim attributes to the source are the words in it.,No,A rule cited as listing 'life cycle cost' among its criteria; the phrase was not in it (#8).
-figure,数値,A quantity stated or derived from the source is correct.,No (derived values: see Grades sheet),"'May 2027', the author's arithmetic on a period (#35). The 1.6% ratio, once listed here as derived from two cited primary values, is stated in the judgment (#76)."
+wording,語,The words the claim attributes to the source are the words in it.,No,A rule cited as listing 'life cycle cost' among its criteria; the phrase was not in it (log #8).
+figure,数値,A quantity stated or derived from the source is correct.,No (derived values: see Grades sheet),"'May 2027', the author's arithmetic on a period (log #35). The 1.6% ratio, once listed here as derived from two cited primary values, is stated in the judgment (log #76)."
 page,頁,"The locator (printed page, paragraph, article) points to where the text is.",No,Printed numbering ran three behind the file numbering in a 177-page instrument.
-date,日付,A date attributed to the source or computed from it is correct.,No,'Eighteen months from publication' rendered as a specific day (#11).
-edition,版,"The edition, vintage or version cited is identified, current where currency matters, and not mixed.",Yes,Two vintages of an official translation in circulation (#5); the change-marked edition cited as authoritative (#23).
+date,日付,A date attributed to the source or computed from it is correct.,No,'Eighteen months from publication' rendered as a specific day (log #11).
+edition,版,"The edition, vintage or version cited is identified, current where currency matters, and not mixed.",Yes,Two vintages of an official translation in circulation (log #5); the change-marked edition cited as authoritative (log #23).
 identifier,識別子,"The identifier resolves to the one instrument intended, not a namesake.",No,G.S.R. 206(E) of 2015 and of 2021 (log #22). Write the namespace with the number: Blog #22 is a post. Check with tools/idcheck.py (kit v1.12).
-existence,存在,The cited provision or document exists in the version relied on.,Yes,A supplementary principle deleted in a code revision (#14); a memorandum absent from the consolidated rules (#9).
-commencement,施行,The provision is in force on the date the text speaks from.,Yes,"An obligation described in the present tense, eighteen months before commencement (#18, recurred #24)."
-attribution,帰属,The statement is attributed to the body that actually made it.,No,Guidance from a professional institute treated as if it settled a statutory question (#17).
+existence,存在,The cited provision or document exists in the version relied on.,Yes,A supplementary principle deleted in a code revision (log #14); a memorandum absent from the consolidated rules (log #9).
+commencement,施行,The provision is in force on the date the text speaks from.,Yes,"An obligation described in the present tense, eighteen months before commencement (log #18; recurred as log #24)."
+attribution,帰属,The statement is attributed to the body that actually made it.,No,Guidance from a professional institute treated as if it settled a statutory question (log #17).
 dependency,依存,"What the source itself rests on still holds (not withdrawn, retracted or discredited).",Yes,"A government chapter drawing, at two paragraphs, on a discontinued index (§6-2)."
