@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## README update — 2026-10-23 (no new version)
+
+- Both READMEs list Hypothetical Technical Blog #31, *Recomputing Is Not Citing* (published on note and LinkedIn on 23 October 2026, after kit v1.11 was released and tagged), among the posts that use the kit. No other file changed.
+
 ## Kit v1.11 — 2026-10-23
 
 - **Released on 23 October 2026,** before Hypothetical Technical Blog #31 (*Recomputing Is Not Citing*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.11`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written. The tag `v1.11` is made by the author on GitHub after this commit; until it exists, the README's list of tags does not include it.
