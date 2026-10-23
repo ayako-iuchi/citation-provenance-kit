@@ -18,9 +18,9 @@
       "key": ["document", "edition"],
       "names": ["log #", "log entry #", "log entries #", "entry #", "entries #", "ログ#", "ログ #", "ログの#"],
       "bare": true,
-      "exists": [[1, 77]],
+      "exists": [[1, 78]],
       "as_of": "2026-10-23",
-      "source": "What Breaks in a Citation v1.2, Appendix A-2 and A-6; the author's correction log in the theme list, entries #45–#77 (23 October 2026)"
+      "source": "What Breaks in a Citation v1.2, Appendix A-2 and A-6; the author's correction log in the theme list, entries #45–#78 (23 October 2026)"
     },
     {
       "name": "gsr",
