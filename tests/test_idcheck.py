@@ -525,7 +525,7 @@ def test_superseding_records_name_their_numbers():
     with open(IDENTIFIERS, encoding="utf-8") as f:
         lines = [l for l in f if l.strip()]
     new = [l for l in lines if json.loads(l).get("supersedes")]
-    assert len(new) == 3
+    assert len(new) == 4
     nsp = ic.load_namespaces(NAMESPACES)
     for l in new:
         assert all(t["verdict"] == "named" for t in ic.scan_text(l, nsp))
