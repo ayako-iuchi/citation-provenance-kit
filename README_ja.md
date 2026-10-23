@@ -231,6 +231,10 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 
 それらの引用を囲む写しはCC0です。論文は別ライセンスです（『What Breaks in a Citation』本文はCC BY 4.0）。
 
+## コミットメッセージ
+
+Claudeと作ったコミットは、末尾に2行を持ちます。`Co-Authored-By: Claude …` と `Claude-Session: https://claude.ai/code/session_…` です。セッションのリンクは、その変更を行った会話への著者自身の記録で、後から振り返るために残しています。開けるのは著者だけで、共有はしていません。ほかの人が開くと、サインインの画面が出るか、何も表示されません。キットの内容の出典ではありません。決めたことは `CHANGELOG.md` と各ファイルにあります。
+
 ## 訂正
 
 訂正を歓迎します（Issueでお知らせください）。黙って直さず、`CHANGELOG.md`に日付付きの改訂として公開します。

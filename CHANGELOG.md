@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## README update — 2026-10-23 (no new version)
+
+- Both READMEs gain a section, "Commit messages", saying what the `Claude-Session` link at the end of commits is: the author's own record of the conversation, opening only for the author and not shared, and not a source for the kit. The author asked for it after noticing that the link is public in the commit history while the page behind it is not. No other file changed.
+
 ## Kit v1.12 — 2026-10-23
 
 - **Released on 23 October 2026,** before Hypothetical Technical Blog #32 (*A Number Is Not a Key*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.12`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written. The tag `v1.12` is made by the author on GitHub after this commit; until it exists, the README's list of tags does not include it.

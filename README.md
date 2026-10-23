@@ -229,6 +229,10 @@ The kit is dedicated to the public domain under CC0 1.0, except for text it quot
 
 The transcriptions around those quotations are CC0. The papers it accompanies are licensed separately (the body of *What Breaks in a Citation* under CC BY 4.0).
 
+## Commit messages
+
+Commits made with Claude end with two lines: `Co-Authored-By: Claude …` and `Claude-Session: https://claude.ai/code/session_…`. The session link is the author's own record of the conversation in which the change was made, kept for looking back. It opens only for the author and has not been shared; to anyone else it shows a sign-in page or nothing. It is not a source for anything in the kit. What was decided is in `CHANGELOG.md` and in the files themselves.
+
 ## Corrections
 
 Corrections are welcome — open an issue. They are published as dated revisions in `CHANGELOG.md`, not silent edits.
