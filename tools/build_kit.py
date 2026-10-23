@@ -55,7 +55,7 @@ COMPONENTS = [
     ("wording", "語", "The words the claim attributes to the source are the words in it.", "No",
      "A rule cited as listing 'life cycle cost' among its criteria; the phrase was not in it (#8)."),
     ("figure", "数値", "A quantity stated or derived from the source is correct.", "No (derived values: see Grades sheet)",
-     "A 1.6% ratio derived from two cited primary values; never examined in v1.1."),
+     "'May 2027', the author's arithmetic on a period (#35). The 1.6% ratio, once listed here as derived from two cited primary values, is stated in the judgment (#76)."),
     ("page", "頁", "The locator (printed page, paragraph, article) points to where the text is.", "No",
      "Printed numbering ran three behind the file numbering in a 177-page instrument."),
     ("date", "日付", "A date attributed to the source or computed from it is correct.", "No",
@@ -90,7 +90,7 @@ NOTATION_RULES = [
     ("Only where grades diverge", "If all components carry the same grade, write a plain [A]. Do not split where the divergence is not load-bearing."),
     ("Three slots maximum", "Needing a fourth means one sentence carries several claims. Split the claim, not the citation."),
     ("Close the vocabulary", "Declare every component and grade token in the document that uses it. An undefined token reached publication in the source project (§7-4)."),
-    ("Derived values", "A value computed from cited primaries is neither A nor D (§4-6, §9-3). §4-6 says the paper proposes a provisional marker; none appears in it (entry #77 of the author's log after v1.2). Grade the operands and state who did the arithmetic: [operands: A | arithmetic: author]. Record the value, its inputs and the operation in register/computed.jsonl and check it with tools/calccheck.py (kit v1.11). Check first whether the source states the value itself: the paper's own example, about 1.6%, is stated in the judgment (#76)."),
+    ("Derived values", "A value computed from cited primaries is neither A nor D (§4-6, §9-3). §4-6 says the paper proposes a provisional marker; none appears in it (entry #77 of the author's log after v1.2). Grade the operands and say whose the arithmetic is, within the closed vocabulary: [figure: A | attribution: D]. Record the value, its inputs and the operation in register/computed.jsonl and check it with tools/calccheck.py (kit v1.11). Check first whether the source states the value itself: the paper's own example, about 1.6%, is stated in the judgment (#76)."),
 ]
 
 COST_ACTIONS = [

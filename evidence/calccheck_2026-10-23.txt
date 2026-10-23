@@ -3,10 +3,11 @@
     flags: claims-disagree
     robust to the inputs' ranges and alternatives
     who computed it, according to What Your Buyer Is Defending Against v1.1, §8-2, Grade A source table ("Locus used: … the 1.6 per cent proportion"): source
-    who computed it, according to What Breaks in a Citation v1.2, §9-3, A-3 and §10 ("a ratio the author derived from two cited primary values"): author
+    who computed it, according to What Breaks in a Citation v1.2, §9-3 and A-3 ("a ratio the author derived from two cited primary values"): author
     who computed it, according to the judgment, full text p. 2: 「…前記総資産四七億八六四〇万円余の約一・六パーセントに相当し」: source
-2026-10-23-02  recomputes shown 1.63     computed 1.63     operator author
+2026-10-23-02  recomputes shown 1.63     computed 1.63     operator unknown
     78 ÷ 4,786 = 1.63%  — What Breaks in a Citation v1.2, Appendix A-6, entry #34
+    flags: operator-unknown
     robust to the inputs' ranges and alternatives
 2026-10-23-03  recomputes shown 2027-05  computed 2027-05  operator author
     May 2027 [A]  — What Your Buyer Is Defending Against v1.1, Exhibit 8-1, DPDP Rules 2025, Rules 3, 5 to 16, 22 and 23
@@ -29,11 +30,17 @@
     flags: sensitive, operator-unknown
     over the inputs' ranges and alternatives: 17, 18
 2026-10-23-07  recomputes shown 17       computed 17       operator assistant
-    17 (excluding the confirmation #34 and the rule sharpened, #35)  — Kit README (English), linter section, from kit v1.7
+    8 of the 17 defects later logged as #26–#44 (excluding #34, a confirmation, and #35, a rule sharpened)  — Kit README (English), linter section, from kit v1.7
     robust to the inputs' ranges and alternatives
 2026-10-23-08  recomputes shown 79       computed 79       operator assistant
     79 days later  — Kit README (English), Derived documents section, kit v1.10
-    robust to the inputs' ranges and alternatives
+    flags: sensitive
+    over the inputs' ranges and alternatives: 78, 79
 2026-10-23-09  recomputes shown 23:36    computed 23:36    operator assistant
-    about 23½ hours  — Kit README (English), Posts that use the kit; entry #73 gives 約23時間36分
+    約23時間36分  — Entry #73 of the author's log after v1.2; the kit v1.10 README rounds it to "about 23½ hours"
     robust to the inputs' ranges and alternatives
+2026-10-23-10  recomputes shown 2026-11  computed 2026-11  operator author
+    Twelve months from publication (month: November 2026)  — register/status_log.jsonl, 2026-10-10-02 (DPDP Rules 2025, Rule 4)
+    flags: grade-borrowed
+    robust to the inputs' ranges and alternatives
+    status: period: 2026-10-10-02 (ok, expires 2026-11-01)

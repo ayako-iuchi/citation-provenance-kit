@@ -81,16 +81,25 @@ def test_register_the_series_findings():
     readme18 = by_id(res, "2026-10-23-06")     # entry #62
     assert "sensitive" in readme18["flags"]
     assert readme18["detail"]["over_inputs"] == ["17", "18"]
-    assert by_id(res, "2026-10-23-08")["computed"] == "79"
+    days = by_id(res, "2026-10-23-08")
+    assert days["computed"] == "79" and days["detail"]["over_inputs"] == ["78", "79"]
     assert by_id(res, "2026-10-23-09")["computed"] == "23:36"
+    assert "grade-borrowed" in by_id(res, "2026-10-23-10")["flags"]   # the status log's own month
+    assert "operator-unknown" in by_id(res, "2026-10-23-02")["flags"]
+    assert by_id(res, "2026-10-23-01")["operator"] == "source"
 
 
-def test_register_is_append_only_against_first_lines():
-    """The register's first lines stand as first written (kit v1.11)."""
-    with open(COMPUTED, encoding="utf-8") as f:
-        first = json.loads(f.readline())
-    assert first["id"] == "2026-10-23-01"
-    assert first["display"]["value"] == "1.6"
+# The register as released in kit v1.11: these lines stand as written. Later
+# records are appended after them; a correction is a new record that supersedes.
+V1_11_LINES = 10
+V1_11_SHA256 = "4a8a4b90b067cd4e7216e630a048559748f3e5d2b7f178030abeb305af4990b3"
+
+
+def test_register_is_append_only_against_v1_11():
+    import hashlib
+    with open(COMPUTED, "rb") as f:
+        lines = f.read().split(b"\n")[:V1_11_LINES]
+    assert hashlib.sha256(b"\n".join(lines)).hexdigest() == V1_11_SHA256
 
 
 # --- operations --------------------------------------------------------------------
@@ -148,12 +157,20 @@ def test_grade_borrowed_only_when_someone_else_computed_and_A_is_shown_unmarked(
     assert "grade-borrowed" in cc.check(rec(grade_shown="[A]"))["flags"]
     assert "grade-borrowed" in cc.check(rec(operator="assistant", grade_shown="A — G.S.R. 843(E)"))["flags"]
     assert "grade-borrowed" not in cc.check(rec(operator="source", grade_shown="[A]"))["flags"]
-    assert "grade-borrowed" not in cc.check(rec(grade_shown="[operands: A | arithmetic: author]"))["flags"]
+    assert "grade-borrowed" not in cc.check(rec(grade_shown="[figure: A | attribution: D]"))["flags"]
+    assert "grade-borrowed" not in cc.check(rec(grade_shown="［数値: A｜帰属: D］"))["flags"]
+    assert "grade-borrowed" not in cc.check(rec(grade_shown="[A, derived by the author]"))["flags"]
+    assert "grade-borrowed" in cc.check(rec(grade_shown="[Ａ]"))["flags"]          # full width
+    assert "grade-borrowed" in cc.check(rec(grade_shown="All rows Grade A."))["flags"]
+    assert "grade-borrowed" in cc.check(rec(grade_shown="A text / B source"))["flags"]
+    # a mark in the value itself counts
+    assert "grade-borrowed" not in cc.check(rec(shown="May 2027 (author's arithmetic)", grade_shown="A"))["flags"]
     assert "grade-borrowed" not in cc.check(rec(grade_shown="［A。月は著者の計算］"))["flags"]
     assert "grade-borrowed" not in cc.check(rec(grade_shown="[C]"))["flags"]
     assert "grade-borrowed" not in cc.check(rec(grade_shown=None))["flags"]
-    # "Annex" contains an A but is not a grade
-    assert "grade-borrowed" not in cc.check(rec(grade_shown="Annex"))["flags"]
+    # an A that is not a grade
+    for g in ("Annex", "Annex A", "[D; Exhibit A-6]", "[C (see Appendix A)]", "[A1]"):
+        assert "grade-borrowed" not in cc.check(rec(grade_shown=g))["flags"], g
 
 
 def test_operator_unknown_and_claims_disagree():
@@ -162,6 +179,9 @@ def test_operator_unknown_and_claims_disagree():
     assert {"operator-unknown", "claims-disagree"} <= set(r["flags"])
     r = cc.check(rec(operator_claims=[{"by": "x", "says": "author"}, {"by": "y", "says": "author"}]))
     assert "claims-disagree" not in r["flags"]
+    # one claim against the record's own operator
+    r = cc.check(rec(operator_claims=[{"by": "x", "says": "source"}]))
+    assert "claims-disagree" in r["flags"]
 
 
 def test_range_and_alternatives_robust_or_sensitive():
@@ -224,7 +244,24 @@ def test_status_expired_and_unrecorded():
     {"inputs": [{"name": "a", "value": 1, "range": [1]}, {"name": "b", "value": 2}]},
     {"operator_claims": [{"by": "x", "says": "maybe"}]},
     {"recorded_on": "23 Oct 2026"},
+    {"recorded_on": "20261023"},
     {"colour": "red"},
+    {"shown": ["1.6"]},
+    {"grade_shown": 1},
+    {"operator_claims": 3},
+    {"display": {"as": "percent", "decimals": 40, "value": "1.6"}},
+    {"display": {"as": "percent", "decimals": -1, "value": "1.6"}},
+    {"display": {"as": "percent", "decimals": 1, "value": 1.6}},
+    {"inputs": [{"name": "a", "value": "NaN"}, {"name": "b", "value": 4786}]},
+    {"inputs": [{"name": "a", "value": "Infinity"}, {"name": "b", "value": 4786}]},
+    {"inputs": [{"name": "a", "value": 1e30}, {"name": "b", "value": 1}]},
+    {"inputs": [{"name": "a", "value": 78, "alternatives": "47"}, {"name": "b", "value": 4786}]},
+    {"inputs": [{"name": "a", "value": 78, "pending": {"note": "x"}}, {"name": "b", "value": 4786}]},
+    {"inputs": [{"name": "a", "value": [1, 2]}, {"name": "b", "value": 4786}]},
+    {"inputs": [{"name": "a", "value": "2025-11-13T10:00+09:00"}, {"name": "b", "value": "2025-11-14T10:00"}],
+     "op": {"kind": "minutes_between", "args": ["a", "b"]}, "display": {"as": "integer", "value": "1"}},
+    {"inputs": [{"name": "a", "value": "2025-W46-4"}, {"name": "b", "value": 18}],
+     "op": {"kind": "add_months", "args": ["a", "b"]}, "display": {"as": "month", "value": "2027-05"}},
 ])
 def test_malformed_records(tmp_path, bad):
     p = write(tmp_path, [rec(**bad)])
@@ -255,6 +292,20 @@ def test_cli_supersedes(tmp_path):
     assert run("--log", bad).returncode == 2
 
 
+def test_cli_status_needs_on_and_good_lines(tmp_path):
+    ok = write(tmp_path, [rec()], "ok.jsonl")
+    assert run("--log", ok, "--status", STATUS).returncode == 2
+    bad = tmp_path / "status.jsonl"
+    bad.write_text(json.dumps({"id": "x", "component": "commencement", "recorded_on": "2026-10-10"}) + "\n", encoding="utf-8")
+    assert run("--log", ok, "--status", str(bad), "--on", "2026-10-23").returncode == 2
+
+
+def test_cli_superseded_twice(tmp_path):
+    a = rec(id="x-1")
+    p = write(tmp_path, [a, rec(id="x-2", supersedes="x-1"), rec(id="x-3", supersedes="x-1")])
+    assert run("--log", p).returncode == 2
+
+
 def test_cli_on_the_register():
     out = run("--log", COMPUTED, "--status", STATUS, "--on", "2026-10-23")
     assert out.returncode == 1
@@ -262,7 +313,9 @@ def test_cli_on_the_register():
 
 
 def test_evidence_matches_the_tool():
-    """evidence/calccheck_2026-10-23.txt is what the tool prints on the register."""
+    """evidence/calccheck_2026-10-23.txt is what the README's command prints."""
+    readme = open(os.path.join(ROOT, "README.md"), encoding="utf-8").read()
+    assert "--status register/status_log.jsonl --on 2026-10-23 --all" in readme
     path = os.path.join(ROOT, "evidence", "calccheck_2026-10-23.txt")
     out = run("--log", COMPUTED, "--status", STATUS, "--on", "2026-10-23", "--all")
     with open(path, encoding="utf-8") as f:

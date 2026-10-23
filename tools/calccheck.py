@@ -23,9 +23,13 @@ Each record gets one verdict:
     differs          it gives another value
 and these flags:
     grade-borrowed   someone other than the source did the arithmetic, and the
-                     value is shown beside the inputs' grade without saying so
+                     value is shown beside a grade A, with neither the grade nor
+                     the value saying whose arithmetic it is (in the notation:
+                     [figure: A | attribution: D], or words such as "author's
+                     arithmetic"; only fixed forms are read)
     operator-unknown the record does not know who did the arithmetic
-    claims-disagree  documents disagree about who did the arithmetic
+    claims-disagree  documents disagree about who did the arithmetic, or with
+                     the record
     sensitive        an input's range or alternative changes the value as shown
                      (otherwise the value is robust to it)
     if-pending       a change recorded as pending would change the value as shown
@@ -51,7 +55,8 @@ import json
 import os
 import re
 import sys
-from decimal import ROUND_HALF_UP, Decimal
+import unicodedata
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import statuslog  # noqa: E402
@@ -66,9 +71,36 @@ REQUIRED = {"id", "shown", "where", "inputs", "op", "display", "operator",
             "recorded_on", "recorded_by"}
 INPUT_KEYS = {"name", "value", "unit", "range", "alternatives", "pending", "source",
               "grade", "status", "note"}
-# A grade printed beside the value that says the arithmetic is not the source's.
-MARKED = re.compile(r"arithmetic|calculation|computed|計算", re.I)
-GRADE_A = re.compile(r"(?<![A-Za-z])A(?![A-Za-z])")
+# Words that say the arithmetic is not the source's. A grade or a shown value
+# that carries one of these counts as marked. Only fixed forms are read: a
+# negation ("not computed") cannot be told from a mark by matching words.
+MARKED = re.compile(
+    r"attribution\s*:\s*D\b|帰属\s*:\s*D\b|author'?s\s+(?:own\s+)?(?:arithmetic|calculation)"
+    r"|arithmetic\s*:\s*(?:author|assistant)|(?:derived|computed|calculated)\s+by\s+the\s+(?:author|assistant)"
+    r"|著者の(?:計算|算出)|著者が(?:計算|算出)", re.I)
+# A grade A as a token: after a bracket, a slot colon, a bar, a comma, or a
+# space, and before a space, a bracket, a bar, punctuation, a dash or the end.
+# grade_shown holds a grade, not prose, so "A text / B source" reads as A.
+GRADE_A = re.compile(r"(?:(?<=^)|(?<=[\[(:|;,\s]))A(?=\s|$|[\])|;,.—–/-])")
+NOT_GRADE = re.compile(r"(?:annex|appendix|exhibit|part|schedule|table|form|chapter)\s*$", re.I)
+DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+TIME = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}")
+
+
+def _norm(text):
+    return unicodedata.normalize("NFKC", text or "")
+
+
+def shows_a(grade):
+    g = _norm(grade)
+    for m in GRADE_A.finditer(g):
+        if not NOT_GRADE.search(g[: m.start()]):
+            return True
+    return False
+
+
+def marked(*texts):
+    return any(MARKED.search(_norm(t)) for t in texts if t)
 
 
 class Malformed(Exception):
@@ -126,26 +158,68 @@ def validate(rec, where):
         if "status" in i and not (isinstance(i["status"], dict)
                                   and {"subject", "component"} <= set(i["status"])):
             raise Malformed(f"{where}: input {i['name']}: status needs subject and component")
+    for k in ("id", "shown", "where", "recorded_by"):
+        if not isinstance(rec[k], str):
+            raise Malformed(f"{where}: {k} must be a string")
+    for k in ("grade_shown", "supersedes", "note"):
+        if rec.get(k) is not None and not isinstance(rec[k], str):
+            raise Malformed(f"{where}: {k} must be a string or null")
+    claims = rec.get("operator_claims")
+    if claims is not None and not isinstance(claims, list):
+        raise Malformed(f"{where}: operator_claims must be a list")
+    for i in rec["inputs"]:
+        if not isinstance(i["name"], str):
+            raise Malformed(f"{where}: input names must be strings")
+        if "alternatives" in i and not isinstance(i["alternatives"], list):
+            raise Malformed(f"{where}: input {i['name']}: alternatives must be a list")
+        if isinstance(i.get("pending"), dict) and "value" not in i["pending"]:
+            raise Malformed(f"{where}: input {i['name']}: pending needs a value")
     for a in op["args"]:
         if a not in names:
             raise Malformed(f"{where}: op uses {a!r}, which is not an input")
     disp = rec["display"]
     if not isinstance(disp, dict) or disp.get("as") not in SHOWN_AS or "value" not in disp:
         raise Malformed(f"{where}: display needs as (one of {sorted(SHOWN_AS)}) and value")
+    if not isinstance(disp["value"], str):
+        raise Malformed(f"{where}: display.value must be a string")
+    dec = disp.get("decimals", 0)
+    if isinstance(dec, bool) or not isinstance(dec, int) or not 0 <= dec <= 12:
+        raise Malformed(f"{where}: display.decimals must be a whole number from 0 to 12")
     for c in rec.get("operator_claims") or []:
         if not isinstance(c, dict) or c.get("says") not in OPERATORS or "by" not in c:
             raise Malformed(f"{where}: each operator claim needs by and says")
-    for k in ("recorded_on",):
-        try:
-            dt.date.fromisoformat(rec[k])
-        except (TypeError, ValueError):
-            raise Malformed(f"{where}: {k} is not YYYY-MM-DD")
+    if not (isinstance(rec["recorded_on"], str) and DATE.fullmatch(rec["recorded_on"])):
+        raise Malformed(f"{where}: recorded_on is not YYYY-MM-DD")
+    try:
+        dt.date.fromisoformat(rec["recorded_on"])
+    except ValueError:
+        raise Malformed(f"{where}: recorded_on is not a date")
+    # Every input combination must be computable: a bad value is malformed,
+    # not a finding.
+    try:
+        for i in rec["inputs"]:
+            for v in candidates(i) + ([i["pending"]["value"] if isinstance(i["pending"], dict) else i["pending"]] if "pending" in i else []):
+                _typed(v)
+        compute(rec)
+    except Malformed as e:
+        raise Malformed(f"{where}: {e}")
 
 
 # --- the operations ----------------------------------------------------------------
 
+def _typed(v):
+    """Check that a value is one the operations take."""
+    if isinstance(v, list):
+        if not all(isinstance(x, str) for x in v):
+            raise Malformed(f"list items must be strings: {v!r}")
+        return
+    if isinstance(v, str) and (DATE.fullmatch(v) or TIME.fullmatch(v)):
+        return _time(v) if "T" in v else _date(v)
+    _num(v)
+
+
 def _date(v):
-    if isinstance(v, str):
+    if isinstance(v, str) and DATE.fullmatch(v):
         try:
             return dt.date.fromisoformat(v)
         except ValueError:
@@ -154,7 +228,7 @@ def _date(v):
 
 
 def _time(v):
-    if isinstance(v, str):
+    if isinstance(v, str) and TIME.fullmatch(v):
         try:
             return dt.datetime.fromisoformat(v)
         except ValueError:
@@ -166,9 +240,14 @@ def _num(v):
     if isinstance(v, bool) or not isinstance(v, (int, float, str)):
         raise Malformed(f"not a number: {v!r}")
     try:
-        return Decimal(str(v))
-    except Exception:
+        d = Decimal(str(v))
+    except (InvalidOperation, ValueError):
         raise Malformed(f"not a number: {v!r}")
+    if not d.is_finite():
+        raise Malformed(f"not a finite number: {v!r}")
+    if abs(d) >= Decimal(10) ** 15:
+        raise Malformed(f"number too large: {v!r}")
+    return d
 
 
 def add_months(day, months):
@@ -276,9 +355,11 @@ def check(rec, status=None, on=None):
     grade = rec.get("grade_shown")
     if op == "unknown":
         flags.append("operator-unknown")
-    elif op != "source" and grade and GRADE_A.search(grade) and not MARKED.search(grade):
+    elif op != "source" and grade and shows_a(grade) and not marked(grade, rec["shown"]):
         flags.append("grade-borrowed")
     claims = {c["says"] for c in rec.get("operator_claims") or []}
+    if op != "unknown" and claims:
+        claims.add(op)
     if len(claims) > 1:
         flags.append("claims-disagree")
         detail["claims"] = [f"{c['by']}: {c['says']}" for c in rec["operator_claims"]]
@@ -309,11 +390,16 @@ def check(rec, status=None, on=None):
 def check_log(records):
     problems = []
     ids = set()
+    replaced = set()
     for n, r in enumerate(records, start=1):
         if r["id"] in ids:
             problems.append(f"record {n}: id {r['id']} is used twice")
         if r.get("supersedes") and r["supersedes"] not in ids:
             problems.append(f"record {n}: supersedes {r['supersedes']}, not recorded earlier")
+        if r.get("supersedes") and r["supersedes"] in replaced:
+            problems.append(f"record {n}: {r['supersedes']} is already superseded by another record")
+        if r.get("supersedes"):
+            replaced.add(r["supersedes"])
         ids.add(r["id"])
     return problems
 
@@ -360,9 +446,16 @@ def main(argv=None):
     args = p.parse_args(argv)
     try:
         records = load(args.log)
+        if bool(args.status) != bool(args.on):
+            raise Malformed("--status and --on go together")
         status = statuslog.load(args.status) if args.status else None
+        if args.on and not DATE.fullmatch(args.on):
+            raise Malformed("--on is not YYYY-MM-DD")
         if args.on:
             dt.date.fromisoformat(args.on)
+        for n, a in enumerate(status or [], start=1):
+            if not isinstance(a, dict) or not {"id", "subject", "component", "recorded_on"} <= set(a):
+                raise Malformed(f"status log line {n}: needs id, subject, component and recorded_on")
         problems = check_log(records)
         for msg in problems:
             print("problem:", msg, file=sys.stderr)
@@ -373,8 +466,8 @@ def main(argv=None):
     except Malformed as e:
         print("error:", e, file=sys.stderr)
         return 2
-    except (OSError, ValueError, json.JSONDecodeError) as e:
-        print("error:", e, file=sys.stderr)
+    except (OSError, ValueError, TypeError, KeyError, ArithmeticError) as e:
+        print("error:", repr(e), file=sys.stderr)
         return 2
     print(json.dumps(results, ensure_ascii=False, indent=2) if args.json else report(results))
     return 1 if any(r["verdict"] != "recomputes" or r["flags"] for r in results) else 0
