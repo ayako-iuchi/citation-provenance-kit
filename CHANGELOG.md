@@ -2,6 +2,10 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## README update — 2026-10-24 (no new version)
+
+- Both READMEs list Hypothetical Technical Blog #32, *A Number Is Not a Key* (published on note and LinkedIn on 23 October 2026, after kit v1.12 was released and tagged), among the posts that use the kit. No other file changed.
+
 ## README update — 2026-10-23 (no new version)
 
 - Both READMEs gain a section, "Commit messages", saying what the `Claude-Session` link at the end of commits is: the author's own record of the conversation, opening only for the author and not shared, and not a source for the kit. The author asked for it after noticing that the link is public in the commit history while the page behind it is not. No other file changed.

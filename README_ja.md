@@ -210,7 +210,8 @@ Hypothetical Technical Blog「引用の来歴」（英語版、note）：
 - Blog #22 — [The Chunk Is the Citation](https://note.com/ayako_iuchi/n/n380de7d3e282)（箇所への分割、検索、検索後の依存の検査。キットv1.4）
 - Blog #23 — [The Component Is the Type](https://note.com/ayako_iuchi/n/ndacfe00e9263)（型付きの記録としての記法。キットv1.5）
 - Blog #24 — [Not Established Is an Answer](https://note.com/ayako_iuchi/n/n7d7ca5a8837b)（空の答えが正解になりうるテスト。キットv1.6）
-- Blog #31 — [Recomputing Is Not Citing](https://note.com/ayako_iuchi/n/nf8adb5ccde85)（算出値と、誰が計算したか。キットv1.11。2026年10月23日、v1.11のリリースとタグの後に公開。日本語版は[こちら](https://note.com/ayako_iuchi/n/n37b6cbf7a377)）。Blog #25〜#30は公開済みで、リンクは追って足します。
+- Blog #31 — [Recomputing Is Not Citing](https://note.com/ayako_iuchi/n/nf8adb5ccde85)（算出値と、誰が計算したか。キットv1.11。2026年10月23日、v1.11のリリースとタグの後に公開。日本語版は[こちら](https://note.com/ayako_iuchi/n/n37b6cbf7a377)）。
+- Blog #32 — [A Number Is Not a Key](https://note.com/ayako_iuchi/n/ncf262340dc74)（識別子、名前空間、識別子の検査。キットv1.12。2026年10月23日、v1.12のリリースとタグの後に公開。日本語版は[こちら](https://note.com/ayako_iuchi/n/n54ebd37a457c)）。Blog #25〜#30は公開済みで、リンクは追って足します。
 
 リリースのタグは、リリースのコミットが `main` に入った後に、著者がGitHubで付けます。それまでタグはありません。このREADMEを最後に変えた日（2026年10月23日）に存在したタグ：（`v1.0`、`v1.1`、`v1.1.1`、`v1.2`、`v1.3`、`v1.4`、`v1.5`、`v1.6`、`v1.7`、`v1.8`、`v1.9`、`v1.10`、`v1.11`）。v1.11のタグはv1.11のリリースのコミット 19ec6f7 を指し、著者が2026年10月23日9時36分（日本時間）に作りました。v1.10のタグはv1.10のリリースのコミット 1b57c34 を指し、著者が2026年10月23日に作りました。v1.9のタグは時刻を持たない軽量タグで、v1.9のリリースと一緒に作られました。GitHubはそのリリースの公開を10月22日13時22分40秒（日本時間）と記録しています。リリースのコミットの約23時間半後です。v1.9を引くHypothetical Technical Blog #27は、その間に公開されています。Blog #19、#20、#22〜#24は説明している版を挙げているので、そのタグを開くと記事が見ていたときのキットを見られます。Blog #17、#18、#21は版を挙げていません。公開された2026年10月13〜14日には、既定のブランチはv1.2でした。Blog #22、#23、#24は2026年10月20日に、それぞれv1.4、v1.5、v1.6のリリースの後に公開されました。
 
