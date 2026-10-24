@@ -24,7 +24,9 @@ It reports names, not content. A file named in one line about something else
 counts as named, and a changelog that names a file and describes the change
 wrongly passes. What it finds is a change the changelog never mentions at all.
 
-The changelog itself is not checked against itself.
+Headings in the changelog ("## README update — 2026-10-24") do not name
+anything; only the lines under them do. The changelog itself is not checked
+against itself.
 
 Usage:
     python3 silentcheck.py --git REPO [--changelog CHANGELOG.md] [--aliases FILE]
@@ -100,7 +102,8 @@ def check_range(repo, a, b, changelog="CHANGELOG.md", aliases=None):
     aliases = aliases or {}
     files = [f for f in _git(repo, "diff", "--name-only", "--no-renames", a, b).splitlines() if f]
     diff = _git(repo, "diff", "-U0", a, b, "--", changelog)
-    added = "\n".join(l[1:] for l in diff.splitlines() if l.startswith("+") and not l.startswith("+++"))
+    added = "\n".join(l[1:] for l in diff.splitlines()
+                      if l.startswith("+") and not l.startswith("+++") and not l[1:].lstrip().startswith("#"))
     rows = []
     for f in files:
         if f == changelog:

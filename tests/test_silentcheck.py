@@ -108,3 +108,18 @@ def test_evidence_reproduces():
             pytest.skip("tags not fetched")
         got = r.stdout.rstrip("\n") + (f"\n[exit {r.returncode}]" if r.returncode else "")
         assert got == want.rstrip("\n"), cmd
+
+
+def test_this_release_names_every_changed_file():
+    """The kit's own release, against the latest tag before it: nothing changed silently."""
+    try:
+        tags = sorted(silentcheck._git(ROOT, "tag", "--list", "v*").split(), key=silentcheck._version_key)
+        head_tags = silentcheck._git(ROOT, "tag", "--points-at", "HEAD").split()
+    except ValueError:
+        pytest.skip("not a git checkout")
+    base = [t for t in tags if t not in head_tags]
+    if not base:
+        pytest.skip("no earlier tag")
+    aliases = silentcheck.load_aliases(os.path.join(ROOT, "register", "silent_aliases.json"))
+    r = silentcheck.check_range(ROOT, base[-1], "HEAD", aliases=aliases)
+    assert r["unnamed"] == [], r["unnamed"]

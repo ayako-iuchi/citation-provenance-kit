@@ -2,6 +2,15 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.15 — 2026-10-24
+
+- Added `tools/silentcheck.py`, `register/silent_aliases.json`, `tests/test_silentcheck.py` and `evidence/silentcheck_2026-10-24.txt`. Standard library only, as before (git is needed). For each pair of neighbouring tags, or the two given, the tool reports the files that changed and that the changelog lines added in the same range never name (by path, file name, directory, or a declared alias). It reads names, not content. A test runs it on this release against the latest tag, so a release that changes a file without naming it fails its own tests. Both READMEs describe it. Hypothetical Technical Blog #35, planned for after this release, describes it.
+- **Found 2026-10-24 — this changelog did not name every change.** Run on v1.0 to v1.13, the check reports 21 files in 9 of the 14 ranges; read by hand, about 7 are mentioned in other words, and the new README sections of v1.5, v1.6 and v1.8 are missed by the check because other lines in the same ranges say "README". Not written in the entries of their versions: the version string in `CITATION.cff` (v1.1, v1.1.1 and v1.5 to v1.9); the READMEs in v1.1 (the version and a table row) and v1.2 (the version, table rows and the linter section, which held two claims later corrected as log #62 and log #48); the README sections added in v1.5 (notation), v1.6 (the null test) and v1.8 (`--fields`); `.gitignore` in v1.2; `examples/series_log/README.md` in v1.8. In v1.13, `register/namespaces.json` was edited in place to extend the log namespace from log #78 to log #79 (with its date and source), and the v1.13 entry does not say so; the earlier values survive only in git. Recorded as entries #82 (v1.13) and #83 (v1.1 to v1.9) of the method paper's log, which the author keeps after v1.2. The entries of those versions are not changed; this entry is the record.
+- `register/namespaces.json` gives the log to log #83, with its date and source; edited in place, as a definition, and named here.
+- Both READMEs' Corrections section now says where and how to send a correction, and that no issue had been opened by 24 October 2026.
+- The workbook was regenerated and saved again through LibreOffice, as before; compared with v1.14 cell by cell, the only change is Start here A2 (the kit version). The CSVs `build_kit.py` writes are unchanged.
+- `CITATION.cff` names version 1.15 on this branch and has no `date-released`; the release commit writes the date on the day of the release.
+
 ## Kit v1.14 — 2026-10-24
 
 - **Released on 24 October 2026,** before Hypothetical Technical Blog #34 (*The Log Stays Open*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.14`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written. The tag `v1.14` is made by the author on GitHub after this commit; until it exists, the README's list of tags does not include it.

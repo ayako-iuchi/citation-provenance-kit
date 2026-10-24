@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi. Files made from the paper's v1.2 (12 October 2026) name it.
-Kit v1.14 (24 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
+Kit v1.15 (24 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -38,9 +38,10 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/idcheck.py`](tools/idcheck.py), [`register/identifiers.jsonl`](register/identifiers.jsonl), [`register/namespaces.json`](register/namespaces.json), [`schema/identifier.schema.json`](schema/identifier.schema.json), [`schema/namespaces.schema.json`](schema/namespaces.schema.json) | A register of identifiers with the namespace each belongs to and the rest of its key (a date and what it amends, a title, a file's hash and edition), and a check that resolves a reference, reports numbers and file names that two things share, and finds each bare `#N` in a text that two namespaces could mean, and each named one the namespace does not have (kit v1.12) |
 | [`tools/debtcheck.py`](tools/debtcheck.py), [`register/deferred.jsonl`](register/deferred.jsonl), [`schema/deferred.schema.json`](schema/deferred.schema.json) | A register of fixes found and put off to a later edition, the fixes made, and the editions published, and a report of how many are open for each document, how long the oldest has waited, and which an edition came out without (kit v1.13) |
 | [`tools/elapsed.py`](tools/elapsed.py) | The clock time each tagged release spanned, from the commit times: elapsed time, not effort (kit v1.13) |
+| [`tools/silentcheck.py`](tools/silentcheck.py), [`register/silent_aliases.json`](register/silent_aliases.json) | Files that changed between two releases and that the changelog lines added in the same range never name (kit v1.15) |
 | [`tools/sessions.py`](tools/sessions.py) | Who was editing at the same time: the sessions named in the commits, their spans, two sessions that changed the same file on diverged lines of history, handoffs, and commits that name no session (kit v1.14) |
-| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally, the extraction check, the derived-document check, the computed-value check, the identifier check, the deferred-fix report, the elapsed-time report and the session report (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
-| [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2; the derived-document check (kit v1.10), the computed-value check (kit v1.11) and the identifier check (kit v1.12) on the kit's registers; the deferred-fix report, the durations of the series log and the elapsed time of each release, with the commit times they rest on (kit v1.13); the session report on the kit's own history, with the commits it rests on (kit v1.14) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally, the extraction check, the derived-document check, the computed-value check, the identifier check, the deferred-fix report, the elapsed-time report, the session report and the silent-change check (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2; the derived-document check (kit v1.10), the computed-value check (kit v1.11) and the identifier check (kit v1.12) on the kit's registers; the deferred-fix report, the durations of the series log and the elapsed time of each release, with the commit times they rest on (kit v1.13); the session report on the kit's own history, with the commits it rests on (kit v1.14); the silent-change check on every pair of neighbouring releases from v1.0 to v1.13 (kit v1.15) |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -230,6 +231,19 @@ On this repository it finds eight sessions and one overlap, from the evening of 
 
 It sees commits only. A session can be open before its first commit and after its last; documents edited outside git (the series' theme list, memo and posts) leave nothing here; several agents inside one session share its name. A rebase, cherry-pick or amend gives a commit a new time and new parents, so a concurrent edit that was rebased afterwards looks like a handoff. Two spans that overlap say that two sessions committed in the same period, not that they conflicted. Every pair of commits in two overlapping sessions is compared, which suits a history of a few thousand commits.
 
+## Changes the changelog never names (kit v1.15)
+
+```
+python3 tools/silentcheck.py --git .
+python3 tools/silentcheck.py --git . --from v1.12 --to v1.13
+```
+
+This changelog opens with "Nothing is changed silently", and so it has since v1.0. Nothing checked it. `silentcheck.py` lists, for each pair of neighbouring tags (or the two given), the files that differ, and the changelog lines added in the same range, and reports each changed file those lines never name: by its path, its file name, a directory above it written as a directory, or an alias declared in `register/silent_aliases.json` (the READMEs as "README" or "READMEs", the workbook as "workbook"). Headings in the changelog do not count. The exit status is 1 if any file is not named, 2 on unreadable input.
+
+On v1.0 to v1.13 it reports 21 files in 9 of the 14 ranges (`evidence/silentcheck_2026-10-24.txt`). Read by hand, about 7 of those are mentioned in other words ("the Register in motion sheet", "its tests", "Each is tested", "the example README"); most of the rest are the version string in `CITATION.cff`, which no entry mentioned from v1.0 to v1.9, and the READMEs. It also misses the new README sections of v1.5, v1.6 and v1.8, because a line in the same range about something else says "README". The one change with substance in a register is v1.13's: `register/namespaces.json` was edited in place to extend the log to log #79, and the v1.13 entry does not say so. These are recorded as entries #82 and #83 of the method paper's log; the published entries are not changed, and the v1.15 entry lists what they left out.
+
+It reads names, not content: a file named in a line about something else counts as named, and an entry that names a file and describes the change wrongly passes. It does not see a change made and reverted between two tags, or an edit to the changelog itself. A test runs it on this release against the last tag, so a release that changes a file without naming it fails its own tests.
+
 ## What this kit does not do
 
 It verifies nothing. It records what your verification acts produced. A document can be perfectly graded and still misread.
@@ -274,6 +288,6 @@ Commits made with Claude end with two lines: `Co-Authored-By: Claude …` and `C
 
 ## Corrections
 
-Corrections are welcome — open an issue. They are published as dated revisions in `CHANGELOG.md`, not silent edits.
+Corrections are welcome — open an issue at https://github.com/ayako-iuchi/citation-provenance-kit/issues. Say which file and which version or tag, what is wrong, and the source that shows it. They are published as dated revisions in `CHANGELOG.md`, not silent edits, and recorded in the method paper's log. Up to 24 October 2026 no issue had been opened; every correction so far was found by the author and the assistants working with her.
 
 *A discipline that is licensed is a discipline that is not adopted.*
