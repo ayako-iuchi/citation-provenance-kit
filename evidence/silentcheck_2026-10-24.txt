@@ -1,0 +1,82 @@
+# silentcheck, kit v1.15 (24 October 2026)
+
+Each section is a command run from the kit's root, with the tags fetched, and its output. tests/test_silentcheck.py reruns them and compares. Fixed ranges are given so that later tags do not change the output.
+
+$ python3 tools/silentcheck.py --git . --from v1.0 --to v1.1
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.0..v1.1: 6 file(s) changed, 5 not named: CITATION.cff, README.md, README_ja.md, kit/citation-provenance-kit.xlsx, tools/build_kit.py
+not named in all: 5
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.1 --to v1.1.1
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.1..v1.1.1: 5 file(s) changed, 3 not named: CITATION.cff, kit/citation-provenance-kit.xlsx, tools/build_kit.py
+not named in all: 3
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.1.1 --to v1.2
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.1.1..v1.2: 9 file(s) changed, 4 not named: .gitignore, README.md, README_ja.md, tests/test_citelint.py
+not named in all: 4
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.2 --to v1.3
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.2..v1.3: 10 file(s) changed, 0 not named
+not named in all: 0
+
+$ python3 tools/silentcheck.py --git . --from v1.3 --to v1.4
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.3..v1.4: 16 file(s) changed, 0 not named
+not named in all: 0
+
+$ python3 tools/silentcheck.py --git . --from v1.4 --to v1.5
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.4..v1.5: 11 file(s) changed, 1 not named: CITATION.cff
+not named in all: 1
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.5 --to v1.6
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.5..v1.6: 29 file(s) changed, 1 not named: CITATION.cff
+not named in all: 1
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.6 --to v1.7
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.6..v1.7: 7 file(s) changed, 2 not named: CITATION.cff, examples/method_paper_v1.2/README.md
+not named in all: 2
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.7 --to v1.8
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.7..v1.8: 10 file(s) changed, 3 not named: CITATION.cff, examples/series_log/README.md, tests/test_catchlog.py
+not named in all: 3
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.8 --to v1.9
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.8..v1.9: 15 file(s) changed, 1 not named: CITATION.cff
+not named in all: 1
+[exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.9 --to v1.10
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.9..v1.10: 11 file(s) changed, 0 not named
+not named in all: 0
+
+$ python3 tools/silentcheck.py --git . --from v1.10 --to v1.11
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.10..v1.11: 11 file(s) changed, 0 not named
+not named in all: 0
+
+$ python3 tools/silentcheck.py --git . --from v1.11 --to v1.12
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.11..v1.12: 13 file(s) changed, 0 not named
+not named in all: 0
+
+$ python3 tools/silentcheck.py --git . --from v1.12 --to v1.13
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.12..v1.13: 16 file(s) changed, 1 not named: register/namespaces.json
+not named in all: 1
+[exit 1]

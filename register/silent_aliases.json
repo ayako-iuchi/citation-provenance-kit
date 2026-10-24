@@ -1,0 +1,5 @@
+{
+  "README.md": ["README", "READMEs"],
+  "README_ja.md": ["README", "READMEs"],
+  "kit/citation-provenance-kit.xlsx": ["workbook"]
+}

@@ -1,0 +1,110 @@
+"""Tests for tools/silentcheck.py (kit v1.15)."""
+import json
+import os
+import subprocess
+import sys
+
+import pytest
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "tools"))
+import silentcheck  # noqa: E402
+
+ENV = {**os.environ, "GIT_AUTHOR_NAME": "a", "GIT_AUTHOR_EMAIL": "a@x", "GIT_COMMITTER_NAME": "a", "GIT_COMMITTER_EMAIL": "a@x"}
+ALIASES = {"README.md": ["README", "READMEs"], "README_ja.md": ["README", "READMEs"], "kit/book.xlsx": ["workbook"]}
+
+
+@pytest.mark.parametrize("path,text,want", [
+    ("tools/idcheck.py", "Added `tools/idcheck.py`.", "path"),
+    ("tools/idcheck.py", "idcheck.py now reads ...", "file name"),
+    ("tools/idcheck.py", "idcheck.pyc", None),
+    ("tools/idcheck.py", "tools/idcheck.py2", None),
+    ("examples/es/lines.json", "Added `examples/es/` with the chapter.", "directory examples/es/"),
+    ("examples/es/lines.json", "examples/es/other.json changed", None),
+    ("register/namespaces.json", "Added `register/deferred.jsonl`.", None),
+    ("README.md", "Both READMEs now say so.", "alias READMEs"),
+    ("README_ja.md", "The readme gains a section.", "alias README"),
+    ("kit/book.xlsx", "The workbook was regenerated.", "alias workbook"),
+    ("kit/book.xlsx", "workbooks", None),
+    ("CITATION.cff", "The release commit writes the date.", None),
+])
+def test_named(path, text, want):
+    assert silentcheck.named(path, text, ALIASES) == want
+
+
+def _repo(tmp_path):
+    repo = tmp_path / "r"
+    repo.mkdir()
+
+    def git(*a):
+        subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True, env=ENV)
+
+    def commit(files, msg, tag=None):
+        for name, body in files.items():
+            p = repo / name
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(body)
+            git("add", name)
+        git("commit", "-q", "-m", msg)
+        if tag:
+            git("tag", tag)
+    git("init", "-q")
+    commit({"CHANGELOG.md": "# Changelog\n", "a.py": "1", "CITATION.cff": "version: 1.0\n"}, "v1.0", "v1.0")
+    commit({"CHANGELOG.md": "# Changelog\n\n## v1.1\n- `a.py` reads more.\n", "a.py": "2", "CITATION.cff": "version: 1.1\n"}, "v1.1", "v1.1")
+    commit({"CHANGELOG.md": "# Changelog\n\n## v1.2\n- Nothing new.\n\n## v1.1\n- `a.py` reads more.\n", "b.py": "x"}, "v1.2", "v1.2")
+    return repo
+
+
+def test_ranges_on_a_repository(tmp_path, capsys):
+    repo = _repo(tmp_path)
+    r = silentcheck.check_range(str(repo), "v1.0", "v1.1")
+    assert r["unnamed"] == ["CITATION.cff"]
+    r = silentcheck.check_range(str(repo), "v1.1", "v1.2")
+    assert r["unnamed"] == ["b.py"]
+    assert silentcheck.main(["--git", str(repo)]) == 1
+    out = capsys.readouterr().out
+    assert "v1.0..v1.1: 2 file(s) changed, 1 not named: CITATION.cff" in out
+    assert silentcheck.main(["--git", str(repo), "--from", "v1.0", "--to", "v1.1", "--json"]) == 1
+
+
+def test_a_changelog_line_added_later_counts(tmp_path):
+    # Lines added anywhere in the changelog within the range count, including old sections.
+    repo = _repo(tmp_path)
+    r = silentcheck.check_range(str(repo), "v1.0", "v1.2")
+    assert "b.py" in r["unnamed"] and "a.py" not in r["unnamed"]
+
+
+@pytest.mark.parametrize("args", [["--from", "v1.0"], ["--from", "v9", "--to", "v1.1"]])
+def test_bad_arguments_exit_2(tmp_path, args, capsys):
+    repo = _repo(tmp_path)
+    assert silentcheck.main(["--git", str(repo), *args]) == 2
+
+
+@pytest.mark.parametrize("content", ["[1]", '{"a": "b"}', '{"a": [""]}', "not json"])
+def test_bad_aliases_exit_2(tmp_path, content):
+    repo = _repo(tmp_path)
+    p = tmp_path / "al.json"
+    p.write_text(content)
+    assert silentcheck.main(["--git", str(repo), "--aliases", str(p)]) == 2
+
+
+def test_kit_aliases_file_is_valid():
+    d = silentcheck.load_aliases(os.path.join(ROOT, "register", "silent_aliases.json"))
+    assert set(d) >= {"README.md", "README_ja.md", "kit/citation-provenance-kit.xlsx"}
+
+
+def test_evidence_reproduces():
+    stored = open(os.path.join(ROOT, "evidence", "silentcheck_2026-10-24.txt"), encoding="utf-8").read()
+    for block in stored.split("\n\n$ ")[1:]:
+        cmd, _, want = block.partition("\n")
+        args = cmd.split()
+        if args[0] == "python3":
+            args[0] = sys.executable
+        try:
+            r = subprocess.run(args, cwd=ROOT, capture_output=True, text=True)
+        except OSError:
+            pytest.skip("git not available")
+        if r.returncode == 2 and "unknown revision" in r.stderr:
+            pytest.skip("tags not fetched")
+        got = r.stdout.rstrip("\n") + (f"\n[exit {r.returncode}]" if r.returncode else "")
+        assert got == want.rstrip("\n"), cmd
