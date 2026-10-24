@@ -1,0 +1,67 @@
+# tag	commit	committer time	subject. Elapsed clock time between commits. Not effort: waiting, parallel work and work outside git are not separated.
+v1.0	02de134	2026-10-10T15:47:39+09:00	Kit v1.0: reproduction kit for What Breaks in a Citation v1.1
+v1.1	3c93219	2026-10-10T21:09:46+09:00	Kit v1.1: add register of provisions in motion
+v1.1.1	fc5a27b	2026-10-12T17:44:50+09:00	Kit v1.1.1: say where the governing Japanese log is published
+v1.2	b55e308	2026-10-12T19:31:42+09:00	Kit v1.2: add citelint, its tests, and its output on the paper
+v1.3	9713ff5	2026-10-12T20:20:41+09:00	Changelog: record that the register disagrees with Blog #17 (log #46)
+v1.3	4a0ed4d	2026-10-12T20:33:12+09:00	Kit v1.3 (unreleased): status log, snapshot and assertion schemas, queries, tests
+v1.3	c9a9823	2026-10-13T10:37:06+09:00	README: the linter post is Hypothetical Technical Blog #19
+v1.3	fdd8f9c	2026-10-13T10:45:19+09:00	Renumber blog posts #16–#19 as #17–#20; record log #48
+v1.3	00312ae	2026-10-13T10:49:07+09:00	Changelog: log range includes #48
+v1.3	c538dae	2026-10-13T10:55:32+09:00	Changelog: record the README correction of 13 October (log #48)
+v1.3	84a6849	2026-10-13T10:55:50+09:00	Merge main (README correction, log #48) into kit-v1.3
+v1.3	e679b5f	2026-10-20T08:54:58+09:00	Kit v1.3: release the status log
+v1.4	adb20fd	2026-10-20T09:36:04+09:00	Kit v1.4 (unreleased): loci, retrieval, and the dependency check after it
+v1.4	a3ef349	2026-10-20T09:43:29+09:00	Kit v1.4 (unreleased): act on the review of adb20fd
+v1.4	906df6e	2026-10-20T09:45:31+09:00	Kit v1.4 (unreleased): record that the author accepted the drafted dependency records without review
+v1.4	6528661	2026-10-20T10:08:09+09:00	Kit v1.4: release loci, retrieval and the dependency check after it
+v1.5	6103173	2026-10-20T12:12:22+09:00	README: list Blog #22 among the posts that use the kit
+v1.5	c5d12de	2026-10-20T12:16:20+09:00	Kit v1.5 (unreleased): the notation as typed records
+v1.5	15c6fb6	2026-10-20T12:25:07+09:00	Kit v1.5 (unreleased): act on the review of c5d12de
+v1.5	d164acf	2026-10-20T12:30:47+09:00	Kit v1.5 (unreleased): act on the second review (15c6fb6)
+v1.5	b5e83d5	2026-10-20T12:30:54+09:00	Changelog: word the second-review entry so citelint does not read it as notation
+v1.5	80c303e	2026-10-20T12:32:22+09:00	Kit v1.5 (unreleased): act on the third review (d164acf)
+v1.5	d73c9ab	2026-10-20T12:55:37+09:00	Kit v1.5: release the notation reader
+v1.6	aeab288	2026-10-20T14:09:51+09:00	README: list Blog #23 among the posts that use the kit
+v1.6	4169d34	2026-10-20T14:20:25+09:00	Kit v1.6 (unreleased, work in progress): scorer for a test where empty can be right
+v1.6	b6dbf5c	2026-10-20T14:22:45+09:00	Kit v1.6 (unreleased): fill question 1's evidence with the proviso as the domain paper quotes it
+v1.6	bf625d5	2026-10-20T14:24:16+09:00	Kit v1.6 (unreleased): prose that opens like a refusal is scored unread until a reader reads it
+v1.6	17e573d	2026-10-20T14:25:07+09:00	Kit v1.6 (unreleased): the run of 20 October 2026 — prompts, answers, readings and results
+v1.6	35e5bb9	2026-10-20T14:27:45+09:00	Kit v1.6 (unreleased): README and CHANGELOG for the null test
+v1.6	83b2ddf	2026-10-20T15:11:16+09:00	nulleval: review fixes (declared values, both, kind phrases, tighter golds, CLI errors, verbatim readings)
+v1.6	1e24263	2026-10-20T15:11:25+09:00	CHANGELOG: state the one count that changed
+v1.6	08b9d85	2026-10-20T15:57:04+09:00	nulleval: fill baseline skips pattern entries; proviso label is §6-2; test stored baselines
+v1.6	ab641ca	2026-10-20T16:01:58+09:00	Release kit v1.6: CITATION.cff, READMEs, CHANGELOG
+v1.7	004638b	2026-10-20T16:59:02+09:00	Kit v1.7 (unreleased): catchlog.py and the method paper's catch log
+v1.7	c882f58	2026-10-20T17:08:32+09:00	catchlog: review fixes (workbook export, uncounted, names, separators, counts, phases, cp932, other-only)
+v1.7	448d8b5	2026-10-20T17:08:42+09:00	Example README: avoid undefined log tokens (citelint C1)
+v1.7	3deb2aa	2026-10-20T17:11:44+09:00	READMEs: 17 defects, not 18 (#35 is a rule sharpened); log #62
+v1.7	7ee46a4	2026-10-20T17:26:25+09:00	Release kit v1.7: CITATION.cff, READMEs, CHANGELOG; example README names the two documents
+v1.8	b3680f3	2026-10-21T08:36:34+09:00	READMEs: list #24 among the posts that use the kit
+v1.8	9d4ab14	2026-10-21T08:49:53+09:00	Kit v1.8 (unreleased): catchlog --fields, who-wrote column, workbook text fixes, series log example
+v1.8	26a0b7b	2026-10-21T08:50:19+09:00	v1.8 docs: READMEs and CHANGELOG
+v1.8	121cb03	2026-10-21T08:57:42+09:00	v1.8: act on the review of 9d4ab14/26a0b7b (undecided markers, unknown phase, headers, example phase notes, docs)
+v1.8	0a4b7c4	2026-10-21T09:10:08+09:00	Release kit v1.8: CITATION.cff, READMEs, CHANGELOG
+v1.9	50ab1a2	2026-10-21T10:15:29+09:00	Kit v1.9 (unreleased): extraction instruction, extractcheck, the four reports of 24 July 2026
+v1.9	ab503c2	2026-10-21T10:31:16+09:00	Kit v1.9 (unreleased): fixes from the code review of 50ab1a2
+v1.9	76e597a	2026-10-21T10:50:49+09:00	Kit v1.9 (unreleased): whole transcriptions, quotation rule, partial status
+v1.9	97f64dd	2026-10-21T10:51:46+09:00	extractcheck: print the report id only in text output
+v1.9	ba30128	2026-10-21T11:26:01+09:00	Kit v1.9 (unreleased): fixes from the third review (quotation marks, missing headings, case numbers)
+v1.9	d70b569	2026-10-21T11:26:18+09:00	Kit v1.9 (unreleased): changelog and example README after the third review
+v1.9	f5c3151	2026-10-21T11:26:25+09:00	Example README: record the second comparison
+v1.9	cfd2145	2026-10-21T12:01:38+09:00	Kit v1.9 (unreleased): Licence section lists all quoted text that is not CC0
+v1.9	9883c3f	2026-10-21T13:46:04+09:00	Release kit v1.9: CITATION.cff, READMEs, CHANGELOG
+v1.10	1256ee8	2026-10-22T13:18:19+09:00	Kit v1.10 (unreleased): derived documents and the editions they were made from
+v1.10	ce0b946	2026-10-22T13:38:17+09:00	Kit v1.10 (unreleased): fixes from the review of 1256ee8
+v1.10	6f91c47	2026-10-22T13:43:35+09:00	Kit v1.10 (unreleased): second review — keep the register append-only
+v1.10	1b57c34	2026-10-22T14:22:21+09:00	Release kit v1.10: CITATION.cff, READMEs, CHANGELOG
+v1.11	5971a28	2026-10-23T08:52:17+09:00	Kit v1.11 (draft): calccheck.py, register of computed values, schema, tests
+v1.11	da8bb48	2026-10-23T08:57:33+09:00	Kit v1.11 (draft): the 1.6% ratio is the judgment's (#76); workbook row on the marker (#77); READMEs
+v1.11	7930146	2026-10-23T09:10:23+09:00	Kit v1.11 (draft): review fixes to calccheck, register and READMEs
+v1.11	19ec6f7	2026-10-23T09:24:45+09:00	Release kit v1.11: CITATION.cff, CHANGELOG
+v1.12	beb4a7b	2026-10-23T10:22:01+09:00	README: add Hypothetical Technical Blog #31
+v1.12	db7c95a	2026-10-23T10:41:44+09:00	Kit v1.12 (in preparation): identifiers, namespaces and idcheck
+v1.12	233e072	2026-10-23T10:43:05+09:00	Kit v1.12: log entries exist to #78; record entry #78 in the changelog
+v1.12	c426159	2026-10-23T10:54:11+09:00	Kit v1.12: fixes from the review of 233e072
+v1.12	d38cc39	2026-10-23T11:01:05+09:00	Kit v1.12: record the 404 at the 2018-19 path (supersedes 2026-10-23-16)
+v1.12	146d887	2026-10-23T11:20:57+09:00	Kit v1.12: release (23 October 2026)

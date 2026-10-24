@@ -11,7 +11,7 @@ from openpyxl.worksheet.datavalidation import DataValidation
 OUT = sys.argv[1]
 os.makedirs(OUT, exist_ok=True)
 
-KIT_VERSION = "1.12"
+KIT_VERSION = "1.13"
 PAPER = "What Breaks in a Citation, v1.1 (26 July 2026); files made from v1.2 (12 October 2026) name it"
 
 F = "Arial"

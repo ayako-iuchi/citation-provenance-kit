@@ -45,7 +45,8 @@ leave it blank, before and after release, and which entries have no decision in
 "not yet decided" when it is only a dash (— – ― － -), a dash followed by a note in
 brackets ("—（未判断、2026-10-20）"), or only one of 未判断, 著者が記入, 記録なし,
 "not yet decided", "to be decided", "not recorded", "TBD", "N/A" or "?" (in brackets or
-not). Anything else is an answer, even if it mentions those words. A row whose phase is
+not), alone or followed by a note in brackets ("記録なし（2026-10-20には…）", kit v1.13).
+Anything else is an answer, even if it mentions those words. A row whose phase is
 blank or unknown is counted under "unknown" rather than stopping the report. If the log has the
 column "Who wrote 'what would have happened'?" (kit v1.8), its values are counted.
 
@@ -230,7 +231,7 @@ def _label(h):
 
 _DASH = "—–―－-"
 PENDING = re.compile(r"[%s]+\s*(?:[（(].*[)）])?|[（(]?\s*(?:未判断|著者が記入|記録なし|not yet decided|to be decided|"
-                     r"not recorded|tbd|n/?a|\?)\s*[)）]?\.?" % _DASH, re.I)
+                     r"not recorded|tbd|n/?a|\?)\s*[)）]?\.?(?:\s*[（(].*[)）])?" % _DASH, re.I)
 WOULD = re.compile(r"^what would have happened|^見逃していたら何が", re.I)
 STAKES_COL = re.compile(r"^stakes\b|影響の大きさ", re.I)
 WHO_COL = re.compile(r"^who wrote|誰が書いたか", re.I)

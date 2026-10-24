@@ -1,7 +1,7 @@
 # 引用来歴キット（Citation provenance kit）
 
 Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現キットです。論文のv1.2（2026年10月12日）から作ったファイルは、そう名乗っています。
-キット v1.12（2026年10月23日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（例外：引用した政府文書・法令・判決の文言と、法律事務所のニュースレターの数行。「ライセンス」を参照）。
+キット v1.13（2026年10月24日） · **CC0 1.0**（権利放棄）。許可も表示も不要で、複製・改変・利用できます（例外：引用した政府文書・法令・判決の文言と、法律事務所のニュースレターの数行。「ライセンス」を参照）。
 
 ※英語版READMEを正本とします。
 
@@ -30,7 +30,7 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`examples/method_paper_v1.2/`](examples/method_paper_v1.2/) | 論文v1.2の英日両版にあるすべての注記を、型付きの記録にしたもの（キットv1.5）と、公開されたキャッチログを番号・成分・結果・公開前後だけにしたもの（キットv1.7） |
 | [`tools/nulleval.py`](tools/nulleval.py)、[`evals/null/`](evals/null/)、[`schema/null_item.schema.json`](schema/null_item.schema.json) | 空の答えが正解になりうるテスト。5問の問題集、埋めた誤りと空けた誤りと3種類の空を分けて数える採点、記録した実行（キットv1.6） |
 | [`tools/catchlog.py`](tools/catchlog.py) | 成分ごとに、公開前と公開後に分けて訂正と確認を別に数え、意味のないゼロを示す（キットv1.7）。`--fields` で各欄の埋まり具合を示す（キットv1.8） |
-| [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（ログ#45〜#62）を、発見日、判断の欄、所要時間、公開前後だけにしたもの（キットv1.8） |
+| [`examples/series_log/`](examples/series_log/) | 論文v1.2より後の著者のログ（ログ#45〜#62）を、発見日、判断の欄、所要時間、公開前後だけにしたもの（キットv1.8）。ログ#45〜#78を、発見日、所要時間、公開前後だけにしたもの（キットv1.13） |
 | [`kit/extraction_prompt_2026-07-24_ja.md`](kit/extraction_prompt_2026-07-24_ja.md)、[`_en.md`](kit/extraction_prompt_2026-07-24_en.md) | 元のプロジェクトで2026年7月24日に使った逐語抽出の指示文。原文（日本語）と英訳（キットv1.9） |
 | [`kit/extraction_prompt_v2_ja.md`](kit/extraction_prompt_v2_ja.md)、[`_en.md`](kit/extraction_prompt_v2_en.md) | 指示文の改訂版。「このPDFにはない」と検索の記録、PDF頁と印字頁、資料の外から来たものの別の欄（キットv1.9） |
 | [`tools/extractcheck.py`](tools/extractcheck.py)、[`schema/extraction.schema.json`](schema/extraction.schema.json) | 抽出の報告を記録の形にしたものと、抽出係が書いているのに報告が示していない識別子の検査（キットv1.9） |
@@ -38,8 +38,10 @@ Ayako Iuchi『What Breaks in a Citation』（v1.1、2026年7月26日）の再現
 | [`tools/derivedcheck.py`](tools/derivedcheck.py)、[`register/derived.jsonl`](register/derived.jsonl)、[`schema/derived.schema.json`](schema/derived.schema.json) | 派生文書（要約、README、引用情報ファイル、写し）の台帳。それぞれが元にした版を記録し、状態ログにある元の文書のいまの版と比べる。キット自身の版の表記どうし、READMEが挙げるタグと実在のタグも比べる（キットv1.10） |
 | [`tools/calccheck.py`](tools/calccheck.py)、[`register/computed.jsonl`](register/computed.jsonl)、[`schema/computed.schema.json`](schema/computed.schema.json) | 算出値（比率、期間から数えた月、件数）の台帳。入力、演算、誰が計算したかを記録し、計算し直したうえで、計算し直しても見つからないもの（入力の格付けをそのまま付けた値など）を挙げる（キットv1.11） |
 | [`tools/idcheck.py`](tools/idcheck.py)、[`register/identifiers.jsonl`](register/identifiers.jsonl)、[`register/namespaces.json`](register/namespaces.json)、[`schema/identifier.schema.json`](schema/identifier.schema.json)、[`schema/namespaces.schema.json`](schema/namespaces.schema.json) | 識別子の台帳。それぞれが属する名前空間と、キーの残り（日付と改正対象、題、ファイルのハッシュと版）を記録する。参照を解決し、2つのものが共有する番号とファイル名を挙げ、文中の名乗りのない `#N` のうち2つの名前空間を指しうるものと、名乗った名前空間にない番号を見つける（キットv1.12） |
-| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計、抽出の検査、派生文書の検査、算出値の検査、識別子の検査のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
-| [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果。派生文書の検査（キットv1.10）、算出値の検査（キットv1.11）、識別子の検査（キットv1.12）をキットの台帳にかけた結果 |
+| [`tools/debtcheck.py`](tools/debtcheck.py)、[`register/deferred.jsonl`](register/deferred.jsonl)、[`schema/deferred.schema.json`](schema/deferred.schema.json) | 見つけて後の版に先送りした修正、行った修正、出た版の台帳。文書ごとに、未払いの件数、最も古いものが待った日数、版が出たのに入らなかったものを報告する（キットv1.13） |
+| [`tools/elapsed.py`](tools/elapsed.py) | タグを付けた版ごとに、コミットの時刻から経過時間を出す。経過時間であって、労力ではない（キットv1.13） |
+| [`tests/`](tests/) | linter、状態ログ、箇所への分割、検索後の検査、記法の読み取り、空の答えの採点、キャッチログの集計、抽出の検査、派生文書の検査、算出値の検査、識別子の検査、先送りした修正の報告、経過時間の報告のテスト（`python3 -m pytest tests`。スキーマのテストは `jsonschema` が必要で、ない場合は飛ばします） |
+| [`evidence/`](evidence/) | 論文の英日両版、v1.1とv1.2にかけた結果。派生文書の検査（キットv1.10）、算出値の検査（キットv1.11）、識別子の検査（キットv1.12）をキットの台帳にかけた結果。先送りした修正の報告、連載のログの所要時間、版ごとの経過時間と、その元になったコミットの時刻（キットv1.13） |
 | [`tools/build_kit.py`](tools/build_kit.py) | ブックとCSVを生成するスクリプト（Python 3、`openpyxl`） |
 | [`CHANGELOG.md`](CHANGELOG.md) | 日付付きの改訂履歴 |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -193,6 +195,22 @@ python3 tools/idcheck.py --scan post.txt
 最初の記録はこの連載自身のものです。G.S.R. 205(E)・206(E)（2021年）と206(E)（2015年）（§2-2）、2021年10月29日の2つの通達（一方の件名は確定していない）、ログ#48のためのBlog #18と#19、そして `echap06_vol1.pdf` という名前の2つの章です。2020-21年版のハッシュは `examples/es2021_ch6/lines.json` が記録したものです。2018-19年版はこの環境からハッシュを取れておらず、取れるまでは `key-incomplete` です。v1.12から、このREADMEは `#N` の形で書く番号すべてに名前空間を名乗らせます。成分の一覧と台帳自身の文も同じで、テストがそれを確かめます。同じ日の先に書いた3つの記録は、番号に名前空間を付けていなかったか、3つの出典から取った事実に出典を1つしか書いていませんでした。それらは書いたまま残し、後の記録が置き換えます。出力は `evidence/idcheck_2026-10-23.txt` にあり、キットに入っていない記事Blog #17〜#31の集計も載せています。
 
 読むのは、記録されたものと書かれたものだけです。どの項目を3つ目のキーにするかは書き手が選びます。ハッシュは、中身が同じでもファイルを保存し直すと変わります（メタデータが変わったPDFなど）。公開済みの記事は直しません。
+
+## 先送りした修正と経過時間（キットv1.13）
+
+```
+python3 tools/debtcheck.py register/deferred.jsonl --on 2026-10-24 --list
+python3 tools/catchlog.py examples/series_log/through_78.csv --fields
+python3 tools/elapsed.py --git . --named
+```
+
+論文は、この規律のコストを「is not a smooth per-citation tax. It arrives in lumps, late, when a rule fires on work already believed finished」（§8-4）と書き、所要時間の欄を「on day one」に足すよう勧めます（§8-1）。キットはv1.0からその列を持っています。論文v1.2より後の著者のログ、ログ#45〜#78では、34件すべてで「記録なし」です。人が記入しなければならない欄は規則であって、仕組みではありません。
+
+`register/deferred.jsonl` は3種類の行を記録します。見つけて先送りした修正（「次の版で直す」）とそのログの項目、文書、場所、条件、発見日と記録日。行った修正とその版。出た版。追記だけです。`debtcheck.py` は、ある日の時点で文書ごとに、未払いの件数（条件付きは別に数える）、支払った件数、最も古い未払いとその日数、期限を過ぎたもの（先送りを記録した後にその文書の版が出たのに、修正が入らなかったもの）を報告します。ログに発見日がないときは記録日を使い、そう書きます。数えて日付を出すだけで、修正にどれだけかかるかは言いません。最初の記録はログ自身のものです。方法論文の次の版に先送りした16件（うち2件は条件付き）、本体論文の次の改訂に先送りした1件、キットがv1.3に先送りしてそこで直した2件（ログ#46とログ#47）。期限を過ぎたものはありません。どちらの論文も、その後に版が出ていないからです。台帳にあるのは、ログが先送りとして記録したものです。作業メモの中で先送りし、ログに書かなかった修正は入っていません。
+
+`elapsed.py` はコミットの時刻を読み、タグを付けた版ごとに、前のタグからのコミット数、最初のコミットとタグのコミット、その間の時間を出します。`--named` は、件名がその版を名乗るコミットだけを数えます。経過時間であって、労力ではありません。作業と待ち時間を分けず、最初のコミットの前やgitの外の作業を知らず、並行した作業を1回しか数えません。v1.0〜v1.2はどれも1コミットなので、時間はゼロと出ます。v1.3は1週間を超えますが、その大半は中断です。`--dump` はコミットの時刻をTSVで書き出し、リポジトリがなくても報告を再現できるようにします。出力は `evidence/debtcheck_2026-10-24.txt` にあり、元は `evidence/git_times_2026-10-24.tsv` です。
+
+`catchlog.py --fields` は、印の後に括弧の注記が続く値（「記録なし（2026-10-20には判断待ちとして挙がっていた）」など）も、未記録として読むようになりました。ダッシュの後に注記が続く値は、以前からそう読んでいました。
 
 ## このキットがしないこと
 

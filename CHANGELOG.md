@@ -2,6 +2,15 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.13 — 2026-10-24
+
+- Added `tools/debtcheck.py`, `register/deferred.jsonl`, `schema/deferred.schema.json`, `tools/elapsed.py`, `tests/test_debtcheck.py`, `examples/series_log/through_78.csv`, `evidence/debtcheck_2026-10-24.txt` and `evidence/git_times_2026-10-24.tsv`. Standard library only, as before (`elapsed.py --git` runs git). The paper says the cost of the discipline arrives "in lumps, late" (§8-4) and that no time was recorded (§8-1). The register records fixes found and put off to a later edition, the fixes made, and editions published; it is only appended to. `debtcheck.py` reports, for each document as of a day, the deferrals open and paid, the oldest open one and its age, and those overdue (an edition came out after the deferral was recorded, without the fix). It counts and dates, and does not say how long a fix will take. `elapsed.py` reports the clock time each tagged release spanned, from commit times; its output says that this is not effort. Both READMEs describe them.
+- The first deferral records are the log's own: log #45, #50, #51, #53–#56, #58, #61, #66–#70, #76 and #77 for the method paper's next edition (#54 and #58 with the conditions the log states), log #52 for the domain paper's next revision, and log #46 and #47, which the kit deferred to v1.3 and made there (`register/status_log.jsonl` record 2026-10-12-01; `CITATION.cff` version 1.3). The domain paper v1.1's date is not recorded in the register.
+- **Found 2026-10-24 — the duration column has never been filled.** The catch-log template has had "Duration (minutes) / 所要時間（分）" since v1.0 (02de134). In the author's log after v1.2, log #45 to log #78, it reads 「記録なし」 in all 34 entries; `examples/series_log/through_78.csv` holds those entries' date found, duration and phase, as recorded, and `catchlog.py --fields` counts no duration filled. Recorded as entry #79 of the method paper's log, which the author keeps after v1.2.
+- `catchlog.py --fields` read 「記録なし（2026-10-20には判断待ちとして挙がっていた）」 (log #63's date found) as an answer: a marker followed by a note in brackets was not read as a marker, though a dash followed by a note was. It now is, and is tested; a marker inside a sentence is still an answer.
+- The workbook was regenerated and saved again through LibreOffice, as before; compared with v1.12 cell by cell, the only change is Start here A2 (the kit version). The CSVs `build_kit.py` writes are unchanged.
+- `CITATION.cff` names version 1.13 on this branch and has no `date-released`; the release commit writes the date on the day of the release.
+
 ## README update — 2026-10-24 (no new version)
 
 - Both READMEs list Hypothetical Technical Blog #32, *A Number Is Not a Key* (published on note and LinkedIn on 23 October 2026, after kit v1.12 was released and tagged), among the posts that use the kit.

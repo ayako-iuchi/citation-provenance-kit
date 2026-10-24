@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/deferred.schema.json",
+  "title": "Deferred fix",
+  "description": "One line of register/deferred.jsonl: a fix that was found and put off to a later edition (deferral), the fix being made (payment), or an edition of a document being published (edition). Lines are appended, never edited. A deferral is open until a payment names it. Kit v1.13. CC0 1.0.",
+  "type": "object",
+  "oneOf": [
+    {
+      "required": ["id", "kind", "log", "document", "where", "fix_in", "condition", "found_on", "recorded_on", "decided_by", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "description": "Stable identifier. Never reused."},
+        "kind": {"const": "deferral"},
+        "log": {"type": "string", "description": "The catch-log entry that found it, with its namespace: 'log #45'."},
+        "document": {"type": "string", "description": "The document to be fixed, as named in its edition lines."},
+        "where": {"type": "string", "description": "The place in the document, briefly."},
+        "fix_in": {"type": "string", "description": "When the fix is to be made: 'next edition', 'next revision', or a named edition such as 'v1.3'."},
+        "condition": {"type": ["string", "null"], "description": "A condition on the fix, if the log states one ('only if the full text confirms the error'); null if none."},
+        "found_on": {"type": ["string", "null"], "format": "date", "description": "The date found, as the log records it; null when the log does not record it. Not supplied from memory."},
+        "recorded_on": {"type": "string", "format": "date", "description": "The date the deferral was written in the log."},
+        "decided_by": {"type": "string", "description": "Who decided to defer, as recorded; 'not recorded' if the log does not say."},
+        "note": {"type": "string"}
+      }
+    },
+    {
+      "required": ["id", "kind", "pays", "paid_on", "paid_in", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"const": "payment"},
+        "pays": {"type": "string", "description": "The id of the deferral this fix settles. One payment per deferral."},
+        "paid_on": {"type": "string", "format": "date"},
+        "paid_in": {"type": "string", "description": "The edition that carries the fix."},
+        "note": {"type": "string"}
+      }
+    },
+    {
+      "required": ["id", "kind", "document", "edition", "published_on", "note"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string"},
+        "kind": {"const": "edition"},
+        "document": {"type": "string"},
+        "edition": {"type": "string"},
+        "published_on": {"type": ["string", "null"], "format": "date", "description": "null when the date is not recorded here."},
+        "note": {"type": "string"}
+      }
+    }
+  ]
+}
