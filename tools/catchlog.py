@@ -230,8 +230,9 @@ def _label(h):
 
 
 _DASH = "—–―－-"
-PENDING = re.compile(r"[%s]+\s*(?:[（(].*[)）])?|[（(]?\s*(?:未判断|著者が記入|記録なし|not yet decided|to be decided|"
-                     r"not recorded|tbd|n/?a|\?)\s*[)）]?\.?(?:\s*[（(].*[)）])?" % _DASH, re.I)
+_NOTE = r"(?:\s*[（(][^（()）]*[)）])?"  # one note in brackets, not nested, at the end
+PENDING = re.compile(r"[%s]+" % _DASH + _NOTE + r"|[（(]?\s*(?:未判断|著者が記入|記録なし|not yet decided|to be decided|"
+                     r"not recorded|tbd|n/?a|\?)\s*[)）]?\.?" + _NOTE, re.I)
 WOULD = re.compile(r"^what would have happened|^見逃していたら何が", re.I)
 STAKES_COL = re.compile(r"^stakes\b|影響の大きさ", re.I)
 WHO_COL = re.compile(r"^who wrote|誰が書いたか", re.I)

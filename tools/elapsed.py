@@ -7,30 +7,37 @@ after v1.2 (log #45 to log #78) it is never filled. A column a person has to fil
 in is a rule, not a mechanism.
 
 What does exist is the time of every commit. This tool reads them and reports, for
-each tagged release, the commits since the previous tag: how many, the time of the
-first and of the tagged commit, and the clock time between. That is elapsed time.
-It is not effort: it does not separate work from waiting, does not know about work
-done before the first commit or outside git (reading, writing the post, the
-author's review), and counts parallel work once. Commit times can also be set by
-hand, and are rewritten by a rebase. Read the numbers as grade D at best for
-anything about effort.
+each tag, the commits that belong to it — reachable from the tag and from no tag
+on an earlier commit in its history — how many there are, the time of the first
+and of the tagged commit, and the clock time between. That is elapsed time. It is
+not effort: it does not separate work from waiting, does not know about work done
+before the first commit or outside git (reading, writing the post, the author's
+review), and counts parallel work once. Commit times can also be set by hand, and
+are rewritten by a rebase. Read the numbers as grade D at best for anything about
+effort. Tags carry no time of their own here: a span ends at the tagged commit, not
+at the moment the tag was made.
 
-The first release has no previous tag; its span starts at the first commit. A
-range can begin with commits that belong to the previous release (a README updated
-after it was published); --named counts only the commits whose subject names the
-tag ("Kit v1.12: ..."), which is closer to the release's own work and still not
-effort.
+The first tag in a history has no earlier tag; its span starts at the first
+commit. Two tags on the same commit share one range: the first in version order
+gets it, and the other is reported as pointing at the same commit. A range can
+begin with commits that belong to the release before (a README updated after it
+was published); --named starts the span at the first commit whose subject names
+the tag ("Kit v1.12: ...", not "kit-v1.12" or "v1.12-rc1"), which is closer to the
+release's own work and still not effort. The span still ends at the tagged commit.
 
 Usage:
     python3 elapsed.py --git REPO [--tags v1.3 v1.4 ...] [--named] [--dump]
     python3 elapsed.py --from TIMES.tsv [--tags ...] [--named]
 
     --git    read a repository (runs git; all tags whose names start with v, in
-             version order, unless --tags names some)
-    --named  count only commits whose subject names the tag (v1.12, not v1.120)
+             version order, unless --tags names some). A shallow clone is refused.
+    --named  start each span at the first commit whose subject names the tag
     --dump   print the commit times the report rests on, as TSV, instead of the
-             report: tag, commit, committer time (ISO 8601), subject. Saved, the dump lets
-             the report be reproduced without the repository
+             report: tag, commit, committer time (ISO 8601), subject; every commit
+             of each range, so that --named can be applied when the dump is read.
+             A tag on the same commit as another is written with "-" for commit
+             and time. Saved, the dump lets the report be reproduced without the
+             repository.
     --from   read such a dump
 
 Exit status: 0, or 2 on unreadable input.
@@ -49,32 +56,48 @@ NOTE = "Elapsed clock time between commits. Not effort: waiting, parallel work a
 
 def _version_key(tag):
     nums = re.findall(r"\d+", tag)
-    return [int(n) for n in nums] or [0]
+    return ([int(n) for n in nums] or [0], tag)
 
 
-def _git(repo, *args):
-    r = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True)
-    if r.returncode != 0:
+def _git(repo, *args, ok=(0,)):
+    try:
+        r = subprocess.run(["git", "-C", repo, *args], capture_output=True, text=True)
+    except OSError as e:
+        raise ValueError(f"git: {e}") from None
+    if r.returncode not in ok:
         raise ValueError(f"git {' '.join(args)}: {r.stderr.strip()}")
-    return r.stdout
+    return r
+
+
+def _unique(seq):
+    return list(dict.fromkeys(seq))
 
 
 def from_git(repo, tags=None):
-    """[(tag, commit, iso_time)] for every commit in each tag's range, oldest first."""
-    all_tags = [t for t in _git(repo, "tag", "--list", "v*").split() if t]
-    all_tags.sort(key=_version_key)
-    wanted = tags or all_tags
+    """[(tag, commit, iso_time, subject)] for every commit in each tag's range, oldest first."""
+    if _git(repo, "rev-parse", "--is-shallow-repository").stdout.strip() == "true":
+        raise ValueError(f"{repo} is a shallow clone; fetch the full history first")
+    all_tags = sorted((t for t in _git(repo, "tag", "--list", "v*").stdout.split() if t), key=_version_key)
+    wanted = _unique(tags) if tags else all_tags
     for t in wanted:
         if t not in all_tags:
             raise ValueError(f"no tag {t}")
+    commit = {t: _git(repo, "rev-parse", f"{t}^{{commit}}").stdout.strip() for t in all_tags}
+
+    def ancestor(a, b):
+        return _git(repo, "merge-base", "--is-ancestor", a, b, ok=(0, 1)).returncode == 0
+
     rows = []
     for t in wanted:
-        i = all_tags.index(t)
-        rng = f"{all_tags[i - 1]}..{t}" if i > 0 else t
-        out = _git(repo, "log", "--reverse", "--format=%h\t%cI\t%s", rng)
+        same = [u for u in all_tags if commit[u] == commit[t]]
+        if same[0] != t:
+            rows.append((t, "-", "-", f"same commit as {same[0]}"))
+            continue
+        earlier = [commit[u] for u in all_tags if commit[u] != commit[t] and ancestor(commit[u], commit[t])]
+        out = _git(repo, "log", "--reverse", "--format=%h%x09%cI%x09%s", commit[t], *("^" + c for c in _unique(earlier))).stdout
         for line in out.splitlines():
-            commit, when, subject = line.split("\t", 2)
-            rows.append((t, commit, when, subject.replace("\t", " ")))
+            c, when, subject = line.split("\t", 2)
+            rows.append((t, c, when, subject.replace("\t", " ")))
     return rows
 
 
@@ -103,33 +126,39 @@ def _time(s):
 
 
 def names(tag, subject):
-    """Does the subject name this tag? v1.12 matches "Kit v1.12:" but not v1.120 or v1.1."""
-    return re.search(r"(?<![\w.])" + re.escape(tag) + r"(?![\w]|\.\d)", subject) is not None
+    """Does the subject name this tag? "Kit v1.12:" names v1.12; "v1.120", "v1.12.1",
+    "v1.12-rc1" and "kit-v1.12" do not."""
+    return re.search(r"(?<![\w.\-/])" + re.escape(tag) + r"(?![\w]|\.\d|-\w)", subject) is not None
 
 
 def spans(rows, tags=None, named=False):
-    """[{tag, commits, first, last, minutes}] in the order the tags first appear."""
-    by = {}
+    """[{tag, commits, first, first_commit, last, last_commit, minutes, note}] in the order given."""
+    by, notes = {}, {}
     for tag, commit, when, subject in rows:
-        t = _time(when)
         by.setdefault(tag, [])
-        if not named or names(tag, subject):
-            by[tag].append((t, commit, when))
-    order = tags or list(by)
+        if commit == "-":
+            notes[tag] = subject
+            continue
+        by[tag].append((_time(when), commit, when, subject))
+    order = _unique(tags) if tags else list(by)
     out = []
     for tag in order:
         if tag not in by:
             raise ValueError(f"no commits recorded for {tag}")
         cs = by[tag]
-        if not cs:
-            out.append({"tag": tag, "commits": 0, "first": None, "first_commit": None,
-                        "last": None, "last_commit": None, "minutes": None})
-            continue
-        first = min(cs)
-        last = cs[-1]  # the tagged commit is the last in the range
-        out.append({"tag": tag, "commits": len(cs), "first": first[2], "first_commit": first[1],
-                    "last": last[2], "last_commit": last[1],
-                    "minutes": round((last[0] - first[0]).total_seconds() / 60)})
+        row = {"tag": tag, "commits": 0, "first": None, "first_commit": None, "last": None, "last_commit": None,
+               "minutes": None, "note": notes.get(tag)}
+        if cs:
+            last = cs[-1]  # the tagged commit is the last in the range
+            row.update(last=last[2], last_commit=last[1])
+            pool = [c for c in cs if names(tag, c[3])] if named else cs
+            if pool:
+                first = min(pool, key=lambda c: c[0])
+                row.update(commits=len(pool), first=first[2], first_commit=first[1],
+                           minutes=round((last[0] - first[0]).total_seconds() / 60))
+            elif not row["note"]:
+                row["note"] = "no commit names this tag"
+        out.append(row)
     return out
 
 
@@ -140,13 +169,14 @@ def _hm(m):
 
 
 def render(sp):
-    lines = [NOTE, "", f"{'tag':<8} {'commits':>7}  {'first commit':<26} {'tagged commit':<26} {'elapsed':>8}"]
+    w = 33
+    lines = [NOTE, "", f"{'tag':<8} {'commits':>7}  {'first commit':<{w}} {'tagged commit':<{w}} {'elapsed':>8}"]
     for s in sp:
-        if not s["commits"]:
-            lines.append(f"{s['tag']:<8} {0:>7}  (no commit names this tag)")
+        if s["minutes"] is None:
+            lines.append(f"{s['tag']:<8} {s['commits']:>7}  ({s['note']})")
             continue
-        lines.append(f"{s['tag']:<8} {s['commits']:>7}  {s['first'][:19] + ' ' + s['first_commit']:<26} "
-                     f"{s['last'][:19] + ' ' + s['last_commit']:<26} {_hm(s['minutes']):>8}")
+        lines.append(f"{s['tag']:<8} {s['commits']:>7}  {s['first'] + ' ' + s['first_commit']:<{w}} "
+                     f"{s['last'] + ' ' + s['last_commit']:<{w}} {_hm(s['minutes']):>8}")
     return "\n".join(lines)
 
 
@@ -160,10 +190,7 @@ def main(argv=None):
     ap.add_argument("--dump", action="store_true")
     a = ap.parse_args(argv)
     try:
-        if a.git:
-            rows = from_git(a.git, a.tags)
-        else:
-            rows = from_tsv(a.tsv)
+        rows = from_git(a.git, a.tags) if a.git else from_tsv(a.tsv)
         if a.dump:
             print("# tag\tcommit\tcommitter time\tsubject. " + NOTE)
             for r in rows:

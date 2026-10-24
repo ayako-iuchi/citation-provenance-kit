@@ -1,9 +1,9 @@
 # debtcheck, catchlog --fields and elapsed, kit v1.13 (24 October 2026)
 
-Each section is a command run from the kit's root and its output. tests/test_debtcheck.py reruns them and compares. The commit times in evidence/git_times_2026-10-24.tsv were dumped from the repository on 24 October 2026 with `python3 tools/elapsed.py --git . --dump` (tags v1.0 to v1.12).
+Each section is a command run from the kit's root and its output. tests/test_debtcheck.py reruns them and compares. The elapsed-time sections read the commit times stored in evidence/git_times_2026-10-24.tsv, dumped from the repository on 24 October 2026 with `python3 tools/elapsed.py --git . --tags v1.0 v1.1 v1.1.1 v1.2 v1.3 v1.4 v1.5 v1.6 v1.7 v1.8 v1.9 v1.10 v1.11 v1.12 --dump`.
 
 $ python3 tools/debtcheck.py register/deferred.jsonl --check
-25 line(s); no problems
+41 line(s); no problems
 
 $ python3 tools/debtcheck.py register/deferred.jsonl --on 2026-10-24 --list
 Deferred fixes as of 2026-10-24. Counts and dates only: nothing here says how long a fix will take.
@@ -32,10 +32,10 @@ What Breaks in a Citation (method paper)
 What Your Buyer Is Defending Against (domain paper)
   open 1, paid 0; edition v1.1 (date not recorded)
   oldest open: log #52, found 2026-10-14, 10 days
-    log #52: Table 5-3 and §8-3: ¶6.22 heading on p. 190, is p. 188 (four places) — next revision
+    log #52: ¶6.22 heading given as p. 190, is p. 188: §5-3, Exhibit 5-3, §5-7 and §8-3 — next revision
 
 citation-provenance-kit
-  open 0, paid 2; latest edition v1.3 (2026-10-20)
+  open 0, paid 4; latest edition v1.12 (2026-10-23)
 
 open 17, overdue 0
 
@@ -65,37 +65,37 @@ Duration (minutes)  pre 0 / 1 / 0       post 0 / 33 / 0
 $ python3 tools/elapsed.py --from evidence/git_times_2026-10-24.tsv
 Elapsed clock time between commits. Not effort: waiting, parallel work and work outside git are not separated.
 
-tag      commits  first commit               tagged commit               elapsed
-v1.0           1  2026-10-10T15:47:39 02de134 2026-10-10T15:47:39 02de134     0h00
-v1.1           1  2026-10-10T21:09:46 3c93219 2026-10-10T21:09:46 3c93219     0h00
-v1.1.1         1  2026-10-12T17:44:50 fc5a27b 2026-10-12T17:44:50 fc5a27b     0h00
-v1.2           1  2026-10-12T19:31:42 b55e308 2026-10-12T19:31:42 b55e308     0h00
-v1.3           8  2026-10-12T20:20:41 9713ff5 2026-10-20T08:54:58 e679b5f   180h34
-v1.4           4  2026-10-20T09:36:04 adb20fd 2026-10-20T10:08:09 6528661     0h32
-v1.5           7  2026-10-20T12:12:22 6103173 2026-10-20T12:55:37 d73c9ab     0h43
-v1.6          10  2026-10-20T14:09:51 aeab288 2026-10-20T16:01:58 ab641ca     1h52
-v1.7           5  2026-10-20T16:59:02 004638b 2026-10-20T17:26:25 7ee46a4     0h27
-v1.8           5  2026-10-21T08:36:34 b3680f3 2026-10-21T09:10:08 0a4b7c4     0h34
-v1.9           9  2026-10-21T10:15:29 50ab1a2 2026-10-21T13:46:04 9883c3f     3h31
-v1.10          4  2026-10-22T13:18:19 1256ee8 2026-10-22T14:22:21 1b57c34     1h04
-v1.11          4  2026-10-23T08:52:17 5971a28 2026-10-23T09:24:45 19ec6f7     0h32
-v1.12          6  2026-10-23T10:22:01 beb4a7b 2026-10-23T11:20:57 146d887     0h59
+tag      commits  first commit                      tagged commit                      elapsed
+v1.0           1  2026-10-10T15:47:39+09:00 02de134 2026-10-10T15:47:39+09:00 02de134     0h00
+v1.1           1  2026-10-10T21:09:46+09:00 3c93219 2026-10-10T21:09:46+09:00 3c93219     0h00
+v1.1.1         1  2026-10-12T17:44:50+09:00 fc5a27b 2026-10-12T17:44:50+09:00 fc5a27b     0h00
+v1.2           1  2026-10-12T19:31:42+09:00 b55e308 2026-10-12T19:31:42+09:00 b55e308     0h00
+v1.3           8  2026-10-12T20:20:41+09:00 9713ff5 2026-10-20T08:54:58+09:00 e679b5f   180h34
+v1.4           4  2026-10-20T09:36:04+09:00 adb20fd 2026-10-20T10:08:09+09:00 6528661     0h32
+v1.5           7  2026-10-20T12:12:22+09:00 6103173 2026-10-20T12:55:37+09:00 d73c9ab     0h43
+v1.6          10  2026-10-20T14:09:51+09:00 aeab288 2026-10-20T16:01:58+09:00 ab641ca     1h52
+v1.7           5  2026-10-20T16:59:02+09:00 004638b 2026-10-20T17:26:25+09:00 7ee46a4     0h27
+v1.8           5  2026-10-21T08:36:34+09:00 b3680f3 2026-10-21T09:10:08+09:00 0a4b7c4     0h34
+v1.9           9  2026-10-21T10:15:29+09:00 50ab1a2 2026-10-21T13:46:04+09:00 9883c3f     3h31
+v1.10          4  2026-10-22T13:18:19+09:00 1256ee8 2026-10-22T14:22:21+09:00 1b57c34     1h04
+v1.11          4  2026-10-23T08:52:17+09:00 5971a28 2026-10-23T09:24:45+09:00 19ec6f7     0h32
+v1.12          6  2026-10-23T10:22:01+09:00 beb4a7b 2026-10-23T11:20:57+09:00 146d887     0h59
 
 $ python3 tools/elapsed.py --from evidence/git_times_2026-10-24.tsv --named
 Elapsed clock time between commits. Not effort: waiting, parallel work and work outside git are not separated.
 
-tag      commits  first commit               tagged commit               elapsed
-v1.0           1  2026-10-10T15:47:39 02de134 2026-10-10T15:47:39 02de134     0h00
-v1.1           1  2026-10-10T21:09:46 3c93219 2026-10-10T21:09:46 3c93219     0h00
-v1.1.1         1  2026-10-12T17:44:50 fc5a27b 2026-10-12T17:44:50 fc5a27b     0h00
-v1.2           1  2026-10-12T19:31:42 b55e308 2026-10-12T19:31:42 b55e308     0h00
-v1.3           3  2026-10-12T20:33:12 4a0ed4d 2026-10-20T08:54:58 e679b5f   180h22
-v1.4           4  2026-10-20T09:36:04 adb20fd 2026-10-20T10:08:09 6528661     0h32
-v1.5           5  2026-10-20T12:16:20 c5d12de 2026-10-20T12:55:37 d73c9ab     0h39
-v1.6           6  2026-10-20T14:20:25 4169d34 2026-10-20T16:01:58 ab641ca     1h42
-v1.7           2  2026-10-20T16:59:02 004638b 2026-10-20T17:26:25 7ee46a4     0h27
-v1.8           4  2026-10-21T08:49:53 9d4ab14 2026-10-21T09:10:08 0a4b7c4     0h20
-v1.9           7  2026-10-21T10:15:29 50ab1a2 2026-10-21T13:46:04 9883c3f     3h31
-v1.10          4  2026-10-22T13:18:19 1256ee8 2026-10-22T14:22:21 1b57c34     1h04
-v1.11          4  2026-10-23T08:52:17 5971a28 2026-10-23T09:24:45 19ec6f7     0h32
-v1.12          5  2026-10-23T10:41:44 db7c95a 2026-10-23T11:20:57 146d887     0h39
+tag      commits  first commit                      tagged commit                      elapsed
+v1.0           1  2026-10-10T15:47:39+09:00 02de134 2026-10-10T15:47:39+09:00 02de134     0h00
+v1.1           1  2026-10-10T21:09:46+09:00 3c93219 2026-10-10T21:09:46+09:00 3c93219     0h00
+v1.1.1         1  2026-10-12T17:44:50+09:00 fc5a27b 2026-10-12T17:44:50+09:00 fc5a27b     0h00
+v1.2           1  2026-10-12T19:31:42+09:00 b55e308 2026-10-12T19:31:42+09:00 b55e308     0h00
+v1.3           2  2026-10-12T20:33:12+09:00 4a0ed4d 2026-10-20T08:54:58+09:00 e679b5f   180h22
+v1.4           4  2026-10-20T09:36:04+09:00 adb20fd 2026-10-20T10:08:09+09:00 6528661     0h32
+v1.5           5  2026-10-20T12:16:20+09:00 c5d12de 2026-10-20T12:55:37+09:00 d73c9ab     0h39
+v1.6           6  2026-10-20T14:20:25+09:00 4169d34 2026-10-20T16:01:58+09:00 ab641ca     1h42
+v1.7           2  2026-10-20T16:59:02+09:00 004638b 2026-10-20T17:26:25+09:00 7ee46a4     0h27
+v1.8           4  2026-10-21T08:49:53+09:00 9d4ab14 2026-10-21T09:10:08+09:00 0a4b7c4     0h20
+v1.9           7  2026-10-21T10:15:29+09:00 50ab1a2 2026-10-21T13:46:04+09:00 9883c3f     3h31
+v1.10          4  2026-10-22T13:18:19+09:00 1256ee8 2026-10-22T14:22:21+09:00 1b57c34     1h04
+v1.11          4  2026-10-23T08:52:17+09:00 5971a28 2026-10-23T09:24:45+09:00 19ec6f7     0h32
+v1.12          5  2026-10-23T10:41:44+09:00 db7c95a 2026-10-23T11:20:57+09:00 146d887     0h39

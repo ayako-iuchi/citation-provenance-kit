@@ -38,6 +38,12 @@ def E(i, ed="v2", on="2026-10-05", doc="Paper", **kw):
     return r
 
 
+def W(i, of, on="2026-10-05", **kw):
+    r = {"id": i, "kind": "withdrawal", "withdraws": of, "withdrawn_on": on, "reason": "condition not met", "note": ""}
+    r.update(kw)
+    return r
+
+
 def write(tmp_path, recs, name="d.jsonl"):
     p = tmp_path / name
     p.write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in recs), encoding="utf-8")
@@ -59,7 +65,8 @@ def test_register_counts():
     mp = rep["What Breaks in a Citation (method paper)"]
     assert (mp["open"], mp["conditional"], mp["paid"]) == (16, 2, 0)
     assert mp["oldest"]["log"] == "log #45" and mp["oldest"]["basis"] == "recorded" and mp["oldest"]["age_days"] == 11
-    assert rep["citation-provenance-kit"]["paid"] == 2 and rep["citation-provenance-kit"]["open"] == 0
+    kit = rep["citation-provenance-kit"]
+    assert (kit["paid"], kit["open"]) == (4, 0) and kit["latest_edition"]["edition"] == "v1.12"
     assert all(not r["overdue"] for r in rep.values())
 
 
@@ -136,10 +143,17 @@ def test_other_documents_editions_do_not_count(tmp_path):
 @pytest.mark.parametrize("recs,needle", [
     ([D("a"), D("a")], "used twice"),
     ([P("c", "a"), D("a")], "not a deferral recorded earlier"),
-    ([D("a"), P("c", "a"), P("d", "a")], "already paid"),
+    ([D("a"), P("c", "a"), P("d", "a")], "already closed"),
     ([D("a", recorded_on="2026-10-04"), P("c", "a", on="2026-10-03")], "before the deferral"),
     ([D("a", found_on="2026-10-02", recorded_on="2026-10-01")], "after it was recorded"),
     ([E("e"), P("c", "e")], "not a deferral"),
+    ([D("a"), P("c", "a", inn="v9")], "not an edition of Paper"),
+    ([E("e1"), E("e2"), D("a")], "recorded twice"),
+    ([D("a", fix_in="Next edition")], "exactly"),
+    ([D("a", fix_in="next edition ")], "exactly"),
+    ([D("a", fix_in="次の版")], "exactly"),
+    ([D("a", fix_in=" v2")], "spaces"),
+    ([D("a"), W("w", "a"), P("c", "a")], "already closed"),
 ])
 def test_check_problems(tmp_path, recs, needle, capsys):
     p = write(tmp_path, recs)
@@ -155,6 +169,8 @@ def test_check_problems(tmp_path, recs, needle, capsys):
     json.dumps(D("a", recorded_on="2026-10-1")), json.dumps(D("a", recorded_on="2026-02-30")),
     json.dumps(D("a", recorded_on=None)), json.dumps(D("a", where=["§1"])), json.dumps(D("a", note=None)),
     "[" * 5000,
+    json.dumps(D("a", recorded_on="2026-W40-4")), json.dumps(D("a", recorded_on="20261001")),
+    '{"id": "a", "id": "b"}', '{"n": ' + "1" * 5000 + '}',
 ])
 def test_malformed_exits_2(tmp_path, line, capsys):
     p = tmp_path / "bad.jsonl"
@@ -191,6 +207,8 @@ def test_spans_from_the_stored_times():
     ("v1.12", "Kit v1.12 (in preparation): identifiers", True),
     ("v1.1", "Kit v1.12: release", False),
     ("v1.1", "Kit v1.1.1: fix", False),
+    ("v1.3", "Merge branch 'kit-v1.3'", False),
+    ("v1.1", "Kit v1.1-rc1: candidate", False),
     ("v1.12", "Kit v1.120", False),
     ("v1.12", "README: add Hypothetical Technical Blog #31", False),
     ("v1.1", "Kit v1.1: reproduction kit", True),
@@ -260,6 +278,92 @@ def test_marker_with_a_note_is_pending(value):
     assert catchlog.state(value) == "pending"
 
 
-@pytest.mark.parametrize("value", ["記録なしの資料を引いたため、主張が崩れる", "Not recorded because the clock was off"])
+@pytest.mark.parametrize("value", ["記録なしの資料を引いたため、主張が崩れる", "Not recorded because the clock was off",
+                                   "記録なし（原典）を引いたため、主張が崩れる（大）", "N/A (none) — but the claim fails (large)",
+                                   "—（未判断）を…（大）"])
 def test_marker_in_an_answer_is_still_an_answer(value):
     assert catchlog.state(value) == "filled"
+
+
+# --- review of 0de5a3a (2026-10-24) --------------------------------------------
+
+def test_bom_is_read(tmp_path):
+    p = tmp_path / "bom.jsonl"
+    p.write_text("\ufeff" + json.dumps(D("a")) + "\n", encoding="utf-8")
+    assert debtcheck.main([str(p), "--check"]) == 0
+
+
+def test_withdrawal_closes_without_payment(tmp_path):
+    p = write(tmp_path, [D("a", condition="if confirmed"), E("e", on="2026-10-05"), W("w", "a", on="2026-10-04")])
+    rep = debtcheck.report(debtcheck.load(p), "2026-10-06")["Paper"]
+    assert (rep["open"], rep["withdrawn"], rep["overdue"]) == (0, 1, [])
+
+
+def test_overdue_conditional_is_marked(tmp_path):
+    p = write(tmp_path, [D("a", condition="if confirmed"), E("e", on="2026-10-05")])
+    out = debtcheck.render(debtcheck.report(debtcheck.load(p), "2026-10-06"), "2026-10-06")
+    assert "OVERDUE log #1" in out and "conditional: if confirmed" in out
+
+
+def test_documents_appear_from_their_first_dated_line(tmp_path):
+    p = write(tmp_path, [D("a", recorded_on="2026-10-08", found_on="2026-10-08"), E("x", doc="Other", on="2026-10-09")])
+    assert debtcheck.report(debtcheck.load(p), "2026-10-07") == {}
+    assert list(debtcheck.report(debtcheck.load(p), "2026-10-08")) == ["Paper"]
+
+
+def test_named_edition_published_before_the_deferral_is_overdue(tmp_path):
+    # The rule for a named edition does not look at the day the deferral was recorded.
+    p = write(tmp_path, [E("e", ed="v3", on="2026-10-01"), D("a", fix_in="v3", recorded_on="2026-10-02", found_on="2026-10-02")])
+    assert [o["id"] for o in debtcheck.report(debtcheck.load(p), "2026-10-03")["Paper"]["overdue"]] == ["a"]
+
+
+def test_elapsed_alias_and_prerelease_tags(tmp_path):
+    repo = tmp_path / "r"
+    repo.mkdir()
+    env = {**os.environ, "GIT_AUTHOR_NAME": "a", "GIT_AUTHOR_EMAIL": "a@x", "GIT_COMMITTER_NAME": "a", "GIT_COMMITTER_EMAIL": "a@x"}
+
+    def git(*a, when=None):
+        e = dict(env)
+        if when:
+            e["GIT_COMMITTER_DATE"] = e["GIT_AUTHOR_DATE"] = when
+        subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True, env=e)
+    git("init", "-q")
+    steps = [("2026-10-01T09:00:00+09:00", "Kit v1.1: start", ["v1.1-rc1"]),
+             ("2026-10-01T10:00:00+09:00", "Kit v1.1: release", ["v1.1", "v1.1.0"]),
+             ("2026-10-02T09:00:00+09:00", "Kit v1.2: work", []),
+             ("2026-10-02T09:30:00+09:00", "Merge branch 'kit-v1.2'", ["v1.2"])]
+    for i, (when, msg, tags) in enumerate(steps):
+        (repo / "f").write_text(str(i))
+        git("add", "f")
+        git("commit", "-q", "-m", msg, when=when)
+        for t in tags:
+            git("tag", t)
+    sp = {s["tag"]: s for s in elapsed.spans(elapsed.from_git(str(repo)))}
+    assert sp["v1.1"]["commits"] == 1 and sp["v1.1"]["first_commit"] == sp["v1.1"]["last_commit"]
+    assert sp["v1.1.0"]["note"] == "same commit as v1.1" and sp["v1.1.0"]["minutes"] is None
+    assert sp["v1.2"]["commits"] == 2 and sp["v1.2"]["minutes"] == 30
+    named = {s["tag"]: s for s in elapsed.spans(elapsed.from_git(str(repo)), named=True)}
+    assert named["v1.2"]["commits"] == 1 and named["v1.2"]["minutes"] == 30  # ends at the tagged merge commit
+    assert elapsed.spans(elapsed.from_git(str(repo), ["v1.2", "v1.2"]))[0]["tag"] == "v1.2"
+    assert len(elapsed.spans(elapsed.from_git(str(repo), ["v1.2", "v1.2"]), ["v1.2", "v1.2"])) == 1
+
+
+def test_elapsed_refuses_a_shallow_clone(tmp_path, capsys):
+    src = tmp_path / "src"
+    src.mkdir()
+    subprocess.run(["git", "-C", str(src), "init", "-q"], check=True)
+    env = {**os.environ, "GIT_AUTHOR_NAME": "a", "GIT_AUTHOR_EMAIL": "a@x", "GIT_COMMITTER_NAME": "a", "GIT_COMMITTER_EMAIL": "a@x"}
+    for i in range(2):
+        (src / "f").write_text(str(i))
+        subprocess.run(["git", "-C", str(src), "add", "f"], check=True, env=env)
+        subprocess.run(["git", "-C", str(src), "commit", "-q", "-m", f"c{i}"], check=True, env=env)
+    subprocess.run(["git", "-C", str(src), "tag", "v1"], check=True)
+    dst = tmp_path / "dst"
+    subprocess.run(["git", "clone", "-q", "--depth", "1", "file://" + str(src), str(dst)], check=True, capture_output=True)
+    assert elapsed.main(["--git", str(dst)]) == 2
+    assert "shallow" in capsys.readouterr().err
+
+
+def test_elapsed_shows_the_time_zone():
+    out = elapsed.render(elapsed.spans(elapsed.from_tsv(TIMES), named=True))
+    assert "2026-10-23T10:41:44+09:00 db7c95a" in out
