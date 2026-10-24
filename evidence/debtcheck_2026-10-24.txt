@@ -1,4 +1,4 @@
-# debtcheck, catchlog --fields and elapsed, kit v1.13 (24 October 2026)
+# debtcheck, catchlog --fields and elapsed, kit v1.13, regenerated for v1.14 (24 October 2026)
 
 Each section is a command run from the kit's root and its output. tests/test_debtcheck.py reruns them and compares. The elapsed-time sections read the commit times stored in evidence/git_times_2026-10-24.tsv, dumped from the repository on 24 October 2026 with `python3 tools/elapsed.py --git . --tags v1.0 v1.1 v1.1.1 v1.2 v1.3 v1.4 v1.5 v1.6 v1.7 v1.8 v1.9 v1.10 v1.11 v1.12 --dump`. Regenerated for kit v1.14, after log #80 and log #81 were added to the register; the output as released in v1.13 is in that tag.
 

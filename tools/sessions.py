@@ -81,7 +81,7 @@ def from_git(repo, trailer="Claude-Session"):
     if r.stdout.strip() == "true":
         raise ValueError(f"{repo} is a shallow clone; fetch the full history first")
     fmt = f"%x1e%h%x09%p%x09%cI%x09%(trailers:key={trailer},valueonly,separator=%x2C)%x09%s"
-    r = subprocess.run(["git", "-C", repo, "-c", "core.quotePath=false", "log", "--branches", "--tags", "--remotes",
+    r = subprocess.run(["git", "-C", repo, "-c", "core.quotePath=false", "log", "HEAD", "--branches", "--tags", "--remotes",
                         "--reverse", "--name-only", "--no-renames", "--diff-merges=dense-combined", f"--format={fmt}"],
                        capture_output=True, text=True, encoding="utf-8", errors="replace")
     if r.returncode != 0:
