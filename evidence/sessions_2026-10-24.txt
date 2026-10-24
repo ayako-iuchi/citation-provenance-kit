@@ -1,9 +1,9 @@
 # sessions, kit v1.14 (24 October 2026)
 
-The command run from the kit's root and its output. tests/test_sessions.py reruns it and compares. evidence/sessions_commits_2026-10-24.tsv was dumped from the repository on 24 October 2026 with `python3 tools/sessions.py --git . --dump`, after the v1.13 release.
+The command run from the kit's root and its output. tests/test_sessions.py reruns it and compares. evidence/sessions_commits_2026-10-24.tsv was dumped from the repository on 24 October 2026 with `python3 tools/sessions.py --git . --dump`, while kit v1.14 was in preparation; commits made after the dump are not in it.
 
 $ python3 tools/sessions.py --from evidence/sessions_commits_2026-10-24.tsv
-75 commit(s), 8 session(s). A span is first to last commit; a session can be open before and after it, and edit outside git.
+76 commit(s), 8 session(s). A span is first to last commit; a session can be open before and after it, and edit outside git.
 sessions
   session_01Fd1QFMvYddHhRn3tvR18wb    5 commit(s)  2026-10-10T15:47:39+09:00 02de134  to  2026-10-13T10:37:06+09:00 c9a9823
   session_01R1NG8V8Aks6YACnYRCqP7y    6 commit(s)  2026-10-12T20:20:41+09:00 9713ff5  to  2026-10-13T10:55:50+09:00 84a6849
@@ -12,7 +12,7 @@ sessions
   session_01An5kAJaSFWr25i7TG7bg5X    9 commit(s)  2026-10-21T10:15:29+09:00 50ab1a2  to  2026-10-21T13:46:04+09:00 9883c3f
   session_01Eoppy7WpRmSWDgHU6JWiT4    4 commit(s)  2026-10-22T13:18:19+09:00 1256ee8  to  2026-10-22T14:22:21+09:00 1b57c34
   session_017nRQoJfYS1HKcabqfT7Nan    5 commit(s)  2026-10-23T08:52:17+09:00 5971a28  to  2026-10-23T10:22:01+09:00 beb4a7b
-  session_012GHKTPrv7gqJNPJ7Qn8DDG   14 commit(s)  2026-10-23T10:41:44+09:00 db7c95a  to  2026-10-24T09:53:23+09:00 c6e5a8a
+  session_012GHKTPrv7gqJNPJ7Qn8DDG   15 commit(s)  2026-10-23T10:41:44+09:00 db7c95a  to  2026-10-24T09:58:44+09:00 eaa4fe4
 concurrent
   session_01Fd1QFMvYddHhRn3tvR18wb and session_01R1NG8V8Aks6YACnYRCqP7y overlap from 2026-10-12T20:20:41+09:00 to 2026-10-13T10:37:06+09:00
     same file: README.md, README_ja.md: 4a0ed4d (session_01R1NG8V8Aks6YACnYRCqP7y, 2026-10-12T20:33:12+09:00) then c9a9823 (session_01Fd1QFMvYddHhRn3tvR18wb, 844 min later)

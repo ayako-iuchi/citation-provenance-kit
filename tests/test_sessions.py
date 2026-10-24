@@ -102,7 +102,10 @@ def test_evidence_reproduces():
     stored = open(os.path.join(ROOT, "evidence", "sessions_2026-10-24.txt"), encoding="utf-8").read()
     for block in stored.split("\n\n$ ")[1:]:
         cmd, _, want = block.partition("\n")
-        r = subprocess.run(cmd.split(), cwd=ROOT, capture_output=True, text=True)
+        args = cmd.split()
+        if args[0] == "python3":
+            args[0] = sys.executable
+        r = subprocess.run(args, cwd=ROOT, capture_output=True, text=True)
         got = r.stdout.rstrip("\n") + (f"\n[exit {r.returncode}]" if r.returncode else "")
         assert got == want.rstrip("\n"), cmd
 
@@ -111,4 +114,67 @@ def test_the_kit_history_shows_the_13_october_pair():
     res = sessions.analyse(sessions.from_tsv(COMMITS))
     pairs = [(p["first"]["commit"], p["second"]["commit"], p["minutes"]) for c in res["concurrent"] for p in c["same_file"]]
     assert ("c9a9823", "fdd8f9c", 8) in pairs
-    assert all(not c["same_file"] for c in res["concurrent"] if c["from"].isoformat() > "2026-10-14")
+    import datetime as _dt
+    assert all(not c["same_file"] for c in res["concurrent"] if c["from"] > _dt.datetime(2026, 10, 14, tzinfo=_dt.timezone.utc))
+
+
+# --- review of eaa4fe4 (2026-10-24) -------------------------------------------
+
+def test_several_sessions_in_one_trailer():
+    rows = [R("a1", "2026-10-01T10:00:00+09:00", "A", ["x"]), R("ac", "2026-10-01T11:00:00+09:00", "A, C", ["y"], ["a1"]),
+            R("c1", "2026-10-01T12:00:00+09:00", "C", ["z"], ["ac"])]
+    res = sessions.analyse(rows)
+    counts = {s["session"]: s["commits"] for s in res["sessions"]}
+    assert counts == {"A": 2, "C": 2} and res["unsigned"] == []
+
+
+@pytest.mark.parametrize("rows,needle", [
+    ([R("a", "2026-10-01T10:00:00+09:00", "A", ["x"]), R("a", "2026-10-01T11:00:00+09:00", "A", ["x"])], "twice"),
+    ([R("a", "2026-10-01T10:00:00+09:00", "A", ["x"], ["b"]), R("b", "2026-10-01T11:00:00+09:00", "B", ["x"], ["a"])], "cycle"),
+])
+def test_inconsistent_input(rows, needle):
+    with pytest.raises(ValueError, match=needle):
+        sessions.analyse(rows)
+
+
+def test_missing_parents_are_reported():
+    res = sessions.analyse([R("a", "2026-10-01T10:00:00+09:00", "A", ["x"], ["zz"])])
+    assert res["missing_parents"] == ["zz"] and "history incomplete" in sessions.render(res)
+
+
+def test_file_names_round_trip(tmp_path):
+    names = ["a|b.md", "c\\d.md", "日本語.md", "@@x"]
+    assert sessions.split_files(sessions.join_files(names)) == names
+
+
+def test_stash_and_merge_files(tmp_path):
+    repo = tmp_path / "r"
+    repo.mkdir()
+
+    def git(*a, when=None):
+        e = dict(ENV)
+        if when:
+            e["GIT_COMMITTER_DATE"] = e["GIT_AUTHOR_DATE"] = when
+        return subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True, text=True, env=e)
+
+    def commit(f, msg, session, when):
+        (repo / f).write_text(msg)
+        git("add", f)
+        git("commit", "-q", "-m", f"{msg}\n\nClaude-Session: https://claude.ai/code/{session}", when=when)
+    git("init", "-q", "-b", "main")
+    commit("a.md", "one", "s_A", "2026-10-01T09:00:00+09:00")
+    git("checkout", "-q", "-b", "kit")
+    commit("b.md", "two", "s_B", "2026-10-01T09:30:00+09:00")
+    git("checkout", "-q", "main")
+    commit("a.md", "three", "s_A", "2026-10-01T10:00:00+09:00")
+    git("checkout", "-q", "kit")
+    e = dict(ENV, GIT_COMMITTER_DATE="2026-10-01T10:10:00+09:00", GIT_AUTHOR_DATE="2026-10-01T10:10:00+09:00")
+    subprocess.run(["git", "-C", str(repo), "merge", "-q", "--no-edit", "-m", "merge\n\nClaude-Session: https://claude.ai/code/s_B", "main"],
+                   check=True, capture_output=True, env=e)
+    git("checkout", "-q", "main")
+    commit("a.md", "four", "s_A", "2026-10-01T10:20:00+09:00")
+    (repo / "a.md").write_text("dirty")
+    git("stash", "-q")
+    res = sessions.analyse(sessions.from_git(str(repo)))
+    assert res["unsigned"] == []                      # the stash is not read
+    assert all(not c["same_file"] for c in res["concurrent"])  # a clean merge does not claim main's files

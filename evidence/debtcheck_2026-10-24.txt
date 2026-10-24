@@ -1,15 +1,15 @@
 # debtcheck, catchlog --fields and elapsed, kit v1.13 (24 October 2026)
 
-Each section is a command run from the kit's root and its output. tests/test_debtcheck.py reruns them and compares. The elapsed-time sections read the commit times stored in evidence/git_times_2026-10-24.tsv, dumped from the repository on 24 October 2026 with `python3 tools/elapsed.py --git . --tags v1.0 v1.1 v1.1.1 v1.2 v1.3 v1.4 v1.5 v1.6 v1.7 v1.8 v1.9 v1.10 v1.11 v1.12 --dump`.
+Each section is a command run from the kit's root and its output. tests/test_debtcheck.py reruns them and compares. The elapsed-time sections read the commit times stored in evidence/git_times_2026-10-24.tsv, dumped from the repository on 24 October 2026 with `python3 tools/elapsed.py --git . --tags v1.0 v1.1 v1.1.1 v1.2 v1.3 v1.4 v1.5 v1.6 v1.7 v1.8 v1.9 v1.10 v1.11 v1.12 --dump`. Regenerated for kit v1.14, after log #80 and log #81 were added to the register; the output as released in v1.13 is in that tag.
 
 $ python3 tools/debtcheck.py register/deferred.jsonl --check
-37 line(s); no problems
+39 line(s); no problems
 
 $ python3 tools/debtcheck.py register/deferred.jsonl --on 2026-10-24 --list
 Deferred fixes as of 2026-10-24. Counts and dates only: nothing here says how long a fix will take.
 
 What Breaks in a Citation (method paper)
-  open 16 (2 conditional), paid 0; latest edition v1.2 (2026-10-12)
+  open 18 (2 conditional), paid 0; latest edition v1.2 (2026-10-12)
   oldest open: log #45, recorded 2026-10-13, 11 days
   date found not recorded: log #45
     log #45: Japanese edition: chapter 3 title, table of contents against heading — next edition
@@ -28,6 +28,8 @@ What Breaks in a Citation (method paper)
     log #70: §1-1: the preprint's note, paraphrased and quoted — next edition
     log #76: §9-3, A-3 and A-6 (log #34): the ratio called derived — next edition
     log #77: §4-6: a marker proposed and not shown — next edition
+    log #80: §9-7 and A-5 say the log closes at publication; the v1.2 change note says it no longer does — next edition
+    log #81: §9-7: 'every cell of the matrix', a matrix the paper does not define — next edition
 
 What Your Buyer Is Defending Against (domain paper)
   open 1, paid 0; edition v1.1 (date not recorded)
@@ -37,7 +39,7 @@ What Your Buyer Is Defending Against (domain paper)
 citation-provenance-kit
   open 0, paid 2; latest edition v1.12 (2026-10-23)
 
-open 17, overdue 0
+open 19, overdue 0
 
 $ python3 tools/debtcheck.py register/deferred.jsonl --on 2026-10-19
 Deferred fixes as of 2026-10-19. Counts and dates only: nothing here says how long a fix will take.
