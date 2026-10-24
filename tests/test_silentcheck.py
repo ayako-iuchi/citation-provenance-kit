@@ -121,5 +121,8 @@ def test_this_release_names_every_changed_file():
     if not base:
         pytest.skip("no earlier tag")
     aliases = silentcheck.load_aliases(os.path.join(ROOT, "register", "silent_aliases.json"))
-    r = silentcheck.check_range(ROOT, base[-1], "HEAD", aliases=aliases)
+    try:
+        r = silentcheck.check_range(ROOT, base[-1], "HEAD", aliases=aliases)
+    except ValueError:
+        pytest.skip("tags not fetched")
     assert r["unnamed"] == [], r["unnamed"]
