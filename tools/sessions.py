@@ -11,7 +11,8 @@ mechanism. This tool reads whether the rule held.
 
 Each commit made in a session carries a trailer naming it (Claude-Session by
 default). The tool reads, for every commit on every branch, the time it was
-committed, its session and the files it changed, and reports:
+committed, its session and the files it changed (a merge: the files it changed
+against its first parent), and reports:
 
     sessions     each session's first and last commit, and how many
     concurrent   two sessions whose spans (first to last commit) overlap, and the
@@ -74,7 +75,7 @@ def from_git(repo, trailer="Claude-Session"):
     if r.stdout.strip() == "true":
         raise ValueError(f"{repo} is a shallow clone; fetch the full history first")
     fmt = f"@@%h%x09%p%x09%cI%x09%(trailers:key={trailer},valueonly,separator=%x2C)%x09%s"
-    r = subprocess.run(["git", "-C", repo, "log", "--all", "--reverse", "--name-only", "--no-renames", f"--format={fmt}"],
+    r = subprocess.run(["git", "-C", repo, "log", "--all", "--reverse", "--name-only", "--no-renames", "--diff-merges=first-parent", f"--format={fmt}"],
                        capture_output=True, text=True)
     if r.returncode != 0:
         raise ValueError(f"git log: {r.stderr.strip()}")

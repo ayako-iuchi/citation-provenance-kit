@@ -1,9 +1,9 @@
 # sessions, kit v1.14 (24 October 2026)
 
-The command run from the kit's root and its output. tests/test_sessions.py reruns it and compares. evidence/sessions_commits_2026-10-24.tsv was dumped from the repository on 24 October 2026 with `python3 tools/sessions.py --git . --dump`, after commit bfa72db.
+The command run from the kit's root and its output. tests/test_sessions.py reruns it and compares. evidence/sessions_commits_2026-10-24.tsv was dumped from the repository on 24 October 2026 with `python3 tools/sessions.py --git . --dump`, after the v1.13 release.
 
 $ python3 tools/sessions.py --from evidence/sessions_commits_2026-10-24.tsv
-72 commit(s), 8 session(s). A span is first to last commit; a session can be open before and after it, and edit outside git.
+75 commit(s), 8 session(s). A span is first to last commit; a session can be open before and after it, and edit outside git.
 sessions
   session_01Fd1QFMvYddHhRn3tvR18wb    5 commit(s)  2026-10-10T15:47:39+09:00 02de134  to  2026-10-13T10:37:06+09:00 c9a9823
   session_01R1NG8V8Aks6YACnYRCqP7y    6 commit(s)  2026-10-12T20:20:41+09:00 9713ff5  to  2026-10-13T10:55:50+09:00 84a6849
@@ -12,12 +12,13 @@ sessions
   session_01An5kAJaSFWr25i7TG7bg5X    9 commit(s)  2026-10-21T10:15:29+09:00 50ab1a2  to  2026-10-21T13:46:04+09:00 9883c3f
   session_01Eoppy7WpRmSWDgHU6JWiT4    4 commit(s)  2026-10-22T13:18:19+09:00 1256ee8  to  2026-10-22T14:22:21+09:00 1b57c34
   session_017nRQoJfYS1HKcabqfT7Nan    5 commit(s)  2026-10-23T08:52:17+09:00 5971a28  to  2026-10-23T10:22:01+09:00 beb4a7b
-  session_012GHKTPrv7gqJNPJ7Qn8DDG   11 commit(s)  2026-10-23T10:41:44+09:00 db7c95a  to  2026-10-24T09:39:59+09:00 bfa72db
+  session_012GHKTPrv7gqJNPJ7Qn8DDG   14 commit(s)  2026-10-23T10:41:44+09:00 db7c95a  to  2026-10-24T09:53:23+09:00 c6e5a8a
 concurrent
   session_01Fd1QFMvYddHhRn3tvR18wb and session_01R1NG8V8Aks6YACnYRCqP7y overlap from 2026-10-12T20:20:41+09:00 to 2026-10-13T10:37:06+09:00
     same file: README.md, README_ja.md: 4a0ed4d (session_01R1NG8V8Aks6YACnYRCqP7y, 2026-10-12T20:33:12+09:00) then c9a9823 (session_01Fd1QFMvYddHhRn3tvR18wb, 844 min later)
     same file: README.md, README_ja.md: c9a9823 (session_01Fd1QFMvYddHhRn3tvR18wb, 2026-10-13T10:37:06+09:00) then fdd8f9c (session_01R1NG8V8Aks6YACnYRCqP7y, 8 min later)
 handoffs (for information)
+  session_01R1NG8V8Aks6YACnYRCqP7y -> session_01MYVLeT4ysACMPPoL2uCwnj after 9959 min: CHANGELOG.md (84a6849 then e679b5f)
   session_01MYVLeT4ysACMPPoL2uCwnj -> session_01C2RNJLwLc4CBTFwfe5m9zY after 124 min: CHANGELOG.md, README.md, README_ja.md (6528661 then 6103173)
   session_01C2RNJLwLc4CBTFwfe5m9zY -> session_01An5kAJaSFWr25i7TG7bg5X after 65 min: CHANGELOG.md, README.md, README_ja.md (0a4b7c4 then 50ab1a2)
   session_01An5kAJaSFWr25i7TG7bg5X -> session_01Eoppy7WpRmSWDgHU6JWiT4 after 1412 min: CHANGELOG.md, CITATION.cff, README.md, README_ja.md (9883c3f then 1256ee8)

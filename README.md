@@ -1,7 +1,7 @@
 # Citation provenance kit
 
 Reproduction kit for **What Breaks in a Citation** (v1.1, 26 July 2026) by Ayako Iuchi. Files made from the paper's v1.2 (12 October 2026) name it.
-Kit v1.13 (24 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
+Kit v1.14 (24 October 2026) · **CC0 1.0** — no rights reserved. Copy, change and use it without asking or attributing. (Exceptions: quoted government, statutory and judicial text, and a few lines of a law firm's newsletter; see Licence.)
 
 The paper argues that machine-assisted writing breaks less often in *what a source says* than in *what is true of the source*: its date, edition, page, identifier, or whether it is in force. This kit is the set of working materials for keeping that record while you write.
 
@@ -38,8 +38,9 @@ The paper argues that machine-assisted writing breaks less often in *what a sour
 | [`tools/idcheck.py`](tools/idcheck.py), [`register/identifiers.jsonl`](register/identifiers.jsonl), [`register/namespaces.json`](register/namespaces.json), [`schema/identifier.schema.json`](schema/identifier.schema.json), [`schema/namespaces.schema.json`](schema/namespaces.schema.json) | A register of identifiers with the namespace each belongs to and the rest of its key (a date and what it amends, a title, a file's hash and edition), and a check that resolves a reference, reports numbers and file names that two things share, and finds each bare `#N` in a text that two namespaces could mean, and each named one the namespace does not have (kit v1.12) |
 | [`tools/debtcheck.py`](tools/debtcheck.py), [`register/deferred.jsonl`](register/deferred.jsonl), [`schema/deferred.schema.json`](schema/deferred.schema.json) | A register of fixes found and put off to a later edition, the fixes made, and the editions published, and a report of how many are open for each document, how long the oldest has waited, and which an edition came out without (kit v1.13) |
 | [`tools/elapsed.py`](tools/elapsed.py) | The clock time each tagged release spanned, from the commit times: elapsed time, not effort (kit v1.13) |
-| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally, the extraction check, the derived-document check, the computed-value check, the identifier check, the deferred-fix report and the elapsed-time report (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
-| [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2; the derived-document check (kit v1.10), the computed-value check (kit v1.11) and the identifier check (kit v1.12) on the kit's registers; the deferred-fix report, the durations of the series log and the elapsed time of each release, with the commit times they rest on (kit v1.13) |
+| [`tools/sessions.py`](tools/sessions.py) | Who was editing at the same time: the sessions named in the commits, their spans, two sessions that changed the same file on diverged lines of history, handoffs, and commits that name no session (kit v1.14) |
+| [`tests/`](tests/) | Tests for the linter, the status log, the locus splitter, the check after retrieval, the notation reader, the null-answer scorer, the catch-log tally, the extraction check, the derived-document check, the computed-value check, the identifier check, the deferred-fix report, the elapsed-time report and the session report (`python3 -m pytest tests`; the schema tests need `jsonschema` and are skipped without it) |
+| [`evidence/`](evidence/) | The linter's output on both editions of the paper, v1.1 and v1.2; the derived-document check (kit v1.10), the computed-value check (kit v1.11) and the identifier check (kit v1.12) on the kit's registers; the deferred-fix report, the durations of the series log and the elapsed time of each release, with the commit times they rest on (kit v1.13); the session report on the kit's own history, with the commits it rests on (kit v1.14) |
 | [`tools/build_kit.py`](tools/build_kit.py) | The script that generates the workbook and CSVs (Python 3, `openpyxl`) |
 | [`CHANGELOG.md`](CHANGELOG.md) | Dated revisions |
 | [`LICENSE`](LICENSE) | CC0 1.0 Universal |
@@ -213,6 +214,21 @@ The first records are the log's own: sixteen fixes deferred to the method paper'
 `elapsed.py` reads the commit times and reports, for each tagged release, the commits that belong to it (reachable from the tag and from no tag on an earlier commit), the first and the tagged commit, and the clock time between; `--named` starts the span at the first commit whose subject names the release, and counts every commit from there. The span ends at the tagged commit, not when the tag was made. It is elapsed time, not effort: it does not separate work from waiting, knows nothing of work before the first commit or outside git, and counts parallel work once. v1.0 to v1.2 were each one commit, so each shows no time at all; v1.3 shows more than a week, most of it a pause. `--dump` writes the commit times as TSV, so the report can be reproduced without the repository. The outputs of all three tools are in `evidence/debtcheck_2026-10-24.txt`; the elapsed-time sections are computed from the commit times stored in `evidence/git_times_2026-10-24.tsv`.
 
 `catchlog.py --fields` now also reads a marker followed by one note in brackets, such as 「記録なし（2026-10-20には判断待ちとして挙がっていた）」, as not recorded, as it already did for a dash followed by a note. Text after the note makes it an answer, for a dash as for a marker.
+
+## Who was editing (kit v1.14)
+
+```
+python3 tools/sessions.py --git .
+python3 tools/sessions.py --from evidence/sessions_commits_2026-10-24.tsv
+```
+
+The paper's log closed at release (§9-7); from v1.2 it stays open, and the author's log after v1.2 is kept in the same way. An open log records failures of the process as well as of the documents. On 13 October 2026 two sessions changed the same lines of both READMEs eight minutes apart, on two branches (c9a9823 on `main`, the number of a post only; fdd8f9c on `kit-v1.3`, its number and title), and the first wrote nothing in this changelog until the second recorded it (c538dae; log #48). The response was a rule kept in the series' handoff memo: one thread at a time is the sole editor.
+
+Every commit in this repository ends with a `Claude-Session` line naming the session that made it. `sessions.py` reads, for every commit on every branch, the time, the session and the files changed (for a merge, against its first parent). It reports each session's span (first to last commit); pairs of sessions whose spans overlap, and within them, commits of the two that changed the same file when neither had the other in its history and one was made while the other session was active; handoffs, where a session's first commit changed a file the previous session's last commit had changed; and commits with no session line. `--trailer` names another trailer. `--dump` writes the commits as TSV, with their parents, so the report can be reproduced without the repository. The exit status is 1 when two sessions changed the same file on diverged lines, or a commit has no session.
+
+On this repository it finds eight sessions and one overlap, from the evening of 12 October to the morning of 13 October, with two such pairs on the READMEs; none after. A commit made on top of the other session's commit, as the 12 October changelog entry after the v1.2 release was, is not reported. The output is in `evidence/sessions_2026-10-24.txt`.
+
+It sees commits only. A session can be open before its first commit and after its last; documents edited outside git (the series' theme list, memo and posts) leave nothing here; several agents inside one session share its name. Two spans that overlap say that two sessions committed in the same period, not that they conflicted.
 
 ## What this kit does not do
 

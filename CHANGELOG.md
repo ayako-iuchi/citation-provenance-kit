@@ -2,6 +2,11 @@
 
 Revisions are dated and kept visible. Nothing is changed silently.
 
+## Kit v1.14 — 2026-10-24
+
+- Added `tools/sessions.py`, `tests/test_sessions.py`, `evidence/sessions_2026-10-24.txt` and `evidence/sessions_commits_2026-10-24.tsv`. Standard library only, as before (`--git` runs git). The tool reads the session line at the end of each commit and reports sessions, overlapping spans, same-file commits on diverged lines of history, handoffs and unsigned commits. On this repository: eight sessions; one overlap (12 October 20:20 to 13 October 10:37 JST), within which 4a0ed4d and c9a9823, and c9a9823 and fdd8f9c (eight minutes apart, the same lines; log #48), changed both READMEs; no overlap after 13 October. Both READMEs describe it, with what it cannot see. Hypothetical Technical Blog #34 describes it.
+- `CITATION.cff` names version 1.14 on this branch and has no `date-released`; the release commit writes the date on the day of the release.
+
 ## Kit v1.13 — 2026-10-24
 
 - **Released on 24 October 2026,** before Hypothetical Technical Blog #33 (*The Bill Comes Later*), which cites it, is published. `main` was fast-forwarded to the branch `kit-v1.13`; no history was rewritten. The entries below were written while the release was in preparation and are kept as written. The tag `v1.13` is made by the author on GitHub after this commit; until it exists, the README's list of tags does not include it.
