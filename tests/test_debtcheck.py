@@ -63,7 +63,7 @@ def test_register_is_valid_and_matches_schema_fields():
 def test_register_counts():
     rep = debtcheck.report(debtcheck.load(REGISTER), "2026-10-24")
     mp = rep["What Breaks in a Citation (method paper)"]
-    assert (mp["open"], mp["conditional"], mp["paid"]) == (16, 2, 0)
+    assert (mp["open"], mp["conditional"], mp["paid"]) == (18, 2, 0)
     assert mp["oldest"]["log"] == "log #45" and mp["oldest"]["basis"] == "recorded" and mp["oldest"]["age_days"] == 11
     kit = rep["citation-provenance-kit"]
     assert (kit["paid"], kit["open"]) == (2, 0) and kit["latest_edition"]["edition"] == "v1.12"
