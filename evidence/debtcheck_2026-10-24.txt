@@ -3,7 +3,7 @@
 Each section is a command run from the kit's root and its output. tests/test_debtcheck.py reruns them and compares. The elapsed-time sections read the commit times stored in evidence/git_times_2026-10-24.tsv, dumped from the repository on 24 October 2026 with `python3 tools/elapsed.py --git . --tags v1.0 v1.1 v1.1.1 v1.2 v1.3 v1.4 v1.5 v1.6 v1.7 v1.8 v1.9 v1.10 v1.11 v1.12 --dump`.
 
 $ python3 tools/debtcheck.py register/deferred.jsonl --check
-43 line(s); no problems
+37 line(s); no problems
 
 $ python3 tools/debtcheck.py register/deferred.jsonl --on 2026-10-24 --list
 Deferred fixes as of 2026-10-24. Counts and dates only: nothing here says how long a fix will take.
@@ -35,7 +35,7 @@ What Your Buyer Is Defending Against (domain paper)
     log #52: ¶6.22 heading given as p. 190, is p. 188: §5-3, Exhibit 5-3, §5-7 and §8-3 — next revision
 
 citation-provenance-kit
-  open 0, paid 5; latest edition v1.12 (2026-10-23)
+  open 0, paid 2; latest edition v1.12 (2026-10-23)
 
 open 17, overdue 0
 

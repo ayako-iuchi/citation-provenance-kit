@@ -66,7 +66,7 @@ def test_register_counts():
     assert (mp["open"], mp["conditional"], mp["paid"]) == (16, 2, 0)
     assert mp["oldest"]["log"] == "log #45" and mp["oldest"]["basis"] == "recorded" and mp["oldest"]["age_days"] == 11
     kit = rep["citation-provenance-kit"]
-    assert (kit["paid"], kit["open"]) == (5, 0) and kit["latest_edition"]["edition"] == "v1.12"
+    assert (kit["paid"], kit["open"]) == (2, 0) and kit["latest_edition"]["edition"] == "v1.12"
     assert all(not r["overdue"] for r in rep.values())
 
 

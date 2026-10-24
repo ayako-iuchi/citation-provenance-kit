@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/deferred.schema.json",
   "title": "Deferred fix",
-  "description": "One line of register/deferred.jsonl: a fix that was found and put off to a later edition (deferral), the fix being made (payment), a deferral closed without a fix (withdrawal), or an edition of a document being published (edition). Lines are appended, never edited. A deferral is open until a payment or a withdrawal names it. A line recorded wrongly is not edited: a withdrawal says so, and a new deferral replaces it. What counts as a deferral: a log entry whose outcome names a later edition, in the future tense, as where the fix will be made ('to be fixed in the next edition', 'v1.3 will add'); an outcome that records the fix as made is not one. Kit v1.13. CC0 1.0.",
+  "description": "One line of register/deferred.jsonl: a fix that was found and put off to a later edition (deferral), the fix being made (payment), a deferral closed without a fix (withdrawal), or an edition of a document being published (edition). Lines are appended, never edited. A deferral is open until a payment or a withdrawal names it. A line recorded wrongly is not edited: a withdrawal says so, and a new deferral replaces it. What counts as a deferral: a log entry whose outcome leaves the fix out of an edition that is published, or released without it, and names a later one ('not changed in v1.2; v1.3 will add', 'to be fixed in the next edition'). A fix made in the version being prepared when the entry was written is not one. Kit v1.13. CC0 1.0.",
   "type": "object",
   "oneOf": [
     {
