@@ -408,10 +408,19 @@ def evidence_text():
     return "\n\n".join(out) + "\n"
 
 
+def _sections(text):
+    return [b.strip("\n") for b in text.split("\n\n") if b.startswith("$ python3 tools/idcheck.py")]
+
+
 def test_evidence_reproduces():
+    # The scan of the READMEs records them as they stood on 2026-10-23; the READMEs
+    # change after (new posts are listed), so that section is not rerun here.
+    # test_readmes_name_every_number checks the READMEs as they stand.
     with open(os.path.join(ROOT, "evidence", "idcheck_2026-10-23.txt"), encoding="utf-8") as f:
-        stored = f.read()
-    assert stored.split("\n\n# ", 1)[0].rstrip("\n") + "\n" == evidence_text()
+        stored = f.read().split("\n\n# ", 1)[0]
+    keep = lambda bs: [b for b in bs if "README.md README_ja.md" not in b.split("\n", 1)[0]]
+    assert keep(_sections(stored)) == keep(_sections(evidence_text()))
+    assert any("README.md README_ja.md" in b.split("\n", 1)[0] for b in _sections(stored))
 
 
 def test_readmes_name_every_number():

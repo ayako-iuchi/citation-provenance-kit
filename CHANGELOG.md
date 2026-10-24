@@ -4,7 +4,8 @@ Revisions are dated and kept visible. Nothing is changed silently.
 
 ## README update — 2026-10-24 (no new version)
 
-- Both READMEs list Hypothetical Technical Blog #32, *A Number Is Not a Key* (published on note and LinkedIn on 23 October 2026, after kit v1.12 was released and tagged), among the posts that use the kit. No other file changed.
+- Both READMEs list Hypothetical Technical Blog #32, *A Number Is Not a Key* (published on note and LinkedIn on 23 October 2026, after kit v1.12 was released and tagged), among the posts that use the kit.
+- `tests/test_idcheck.py`: the stored output in `evidence/idcheck_2026-10-23.txt` includes a scan of the READMEs as they stood on 23 October; any later change to the READMEs made the test that reruns the stored commands fail (it failed on this update, after the commit was pushed as de33005). That one section is no longer rerun; the READMEs as they stand are still scanned by their own test. The evidence file is unchanged.
 
 ## README update — 2026-10-23 (no new version)
 
