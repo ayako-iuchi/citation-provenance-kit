@@ -23,7 +23,8 @@ gets it, and the other is reported as pointing at the same commit. A range can
 begin with commits that belong to the release before (a README updated after it
 was published); --named starts the span at the first commit whose subject names
 the tag ("Kit v1.12: ...", not "kit-v1.12" or "v1.12-rc1"), which is closer to the
-release's own work and still not effort. The span still ends at the tagged commit.
+release's own work and still not effort. The span still ends at the tagged commit,
+and the count is of every commit in the span, from that first commit on.
 
 Usage:
     python3 elapsed.py --git REPO [--tags v1.3 v1.4 ...] [--named] [--dump]
@@ -154,7 +155,8 @@ def spans(rows, tags=None, named=False):
             pool = [c for c in cs if names(tag, c[3])] if named else cs
             if pool:
                 first = min(pool, key=lambda c: c[0])
-                row.update(commits=len(pool), first=first[2], first_commit=first[1],
+                within = [c for c in cs if c[0] >= first[0]]
+                row.update(commits=len(within), first=first[2], first_commit=first[1],
                            minutes=round((last[0] - first[0]).total_seconds() / 60))
             elif not row["note"]:
                 row["note"] = "no commit names this tag"

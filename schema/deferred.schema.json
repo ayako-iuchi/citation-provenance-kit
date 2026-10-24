@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/ayako-iuchi/citation-provenance-kit/schema/deferred.schema.json",
   "title": "Deferred fix",
-  "description": "One line of register/deferred.jsonl: a fix that was found and put off to a later edition (deferral), the fix being made (payment), a deferral closed without a fix (withdrawal), or an edition of a document being published (edition). Lines are appended, never edited. A deferral is open until a payment or a withdrawal names it. What counts as a deferral: a log entry whose outcome names a later edition, in the future tense, as where the fix will be made ('to be fixed in the next edition', 'v1.3 will add'); an outcome that records the fix as made is not one. Kit v1.13. CC0 1.0.",
+  "description": "One line of register/deferred.jsonl: a fix that was found and put off to a later edition (deferral), the fix being made (payment), a deferral closed without a fix (withdrawal), or an edition of a document being published (edition). Lines are appended, never edited. A deferral is open until a payment or a withdrawal names it. A line recorded wrongly is not edited: a withdrawal says so, and a new deferral replaces it. What counts as a deferral: a log entry whose outcome names a later edition, in the future tense, as where the fix will be made ('to be fixed in the next edition', 'v1.3 will add'); an outcome that records the fix as made is not one. Kit v1.13. CC0 1.0.",
   "type": "object",
   "oneOf": [
     {
@@ -43,7 +43,7 @@
         "fix_in": {
           "type": "string",
           "pattern": "^\\S(.*\\S)?$",
-          "description": "When the fix is to be made: exactly 'next edition' or 'next revision', or the name of an edition such as 'v1.3'. Other spellings of 'next edition' are refused by --check."
+          "description": "When the fix is to be made: exactly 'next edition' or 'next revision', or the name of an edition such as 'v1.3'. Anything else that says 'next' or 次 is refused by --check."
         },
         "condition": {
           "type": [
@@ -58,12 +58,14 @@
             "null"
           ],
           "format": "date",
-          "description": "The date found, as the log records it; null when the log does not record it. Not supplied from memory."
+          "description": "The date found, as the log records it; null when the log does not record it. Not supplied from memory.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         "recorded_on": {
           "type": "string",
           "format": "date",
-          "description": "The date the deferral was written in the log."
+          "description": "The day the deferral was first written down: in the log, or in a changelog the log entry cites.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         "decided_by": {
           "type": "string",
@@ -98,7 +100,8 @@
         "paid_on": {
           "type": "string",
           "format": "date",
-          "description": "The day the edition carrying the fix was published."
+          "description": "The day the edition carrying the fix was published.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         "paid_in": {
           "type": "string",
@@ -132,11 +135,13 @@
         },
         "withdrawn_on": {
           "type": "string",
-          "format": "date"
+          "format": "date",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         "reason": {
           "type": "string",
-          "description": "Why: the condition was not met, or it was decided not to make the fix, and by whom."
+          "description": "Why: the condition was not met, or it was decided not to make the fix, and by whom.",
+          "minLength": 1
         },
         "note": {
           "type": "string"
@@ -172,7 +177,8 @@
             "null"
           ],
           "format": "date",
-          "description": "null when the date is not recorded here."
+          "description": "null when the date is not recorded here.",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
         },
         "note": {
           "type": "string"

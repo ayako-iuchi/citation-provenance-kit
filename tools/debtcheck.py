@@ -24,7 +24,9 @@ and reports, for each document, as of a day:
 
     open       deferrals with no payment or withdrawal (conditional ones counted
                apart)
-    paid       deferrals with a payment; withdrawn, those with a withdrawal
+    paid       deferrals with a payment; withdrawn, those with a withdrawal. A line
+               recorded wrongly is corrected the same way: a withdrawal that says
+               so, and a new deferral
     oldest     the open deferral found longest ago, and its age in days; when the
                log does not record the date found, the date recorded is used and
                the report says so
@@ -144,8 +146,8 @@ def check(recs):
         if r["kind"] == "edition":
             key = (r["document"], r["edition"])
             if key in editions:
-                problems.append(f"line {r['_line']}: edition {r['edition']} of {r['document']} is recorded twice (line {editions[key]})")
-            editions.setdefault(key, r["_line"])
+                problems.append(f"line {r['_line']}: edition {r['edition']} of {r['document']} is recorded twice (line {editions[key]['_line']})")
+            editions.setdefault(key, r)
     for r in recs:
         n = r["_line"]
         if r["id"] in ids:
@@ -155,7 +157,7 @@ def check(recs):
             deferrals[r["id"]] = r
             if r["found_on"] and r["found_on"] > r["recorded_on"]:
                 problems.append(f"line {n}: found on {r['found_on']}, after it was recorded ({r['recorded_on']})")
-            if r["fix_in"] not in NEXT and NEXT_LIKE.match(r["fix_in"]):
+            if r["fix_in"] not in NEXT and (NEXT_LIKE.match(r["fix_in"]) or re.search(r"next|次", r["fix_in"], re.I)):
                 problems.append(f"line {n}: fix_in {r['fix_in']!r}: write 'next edition' or 'next revision' exactly, or name an edition")
             elif r["fix_in"] != r["fix_in"].strip() or not r["fix_in"]:
                 problems.append(f"line {n}: fix_in {r['fix_in']!r} has spaces at its ends or is empty")
@@ -171,8 +173,14 @@ def check(recs):
             closed[target] = n
             if day < d["recorded_on"]:
                 problems.append(f"line {n}: dated {day}, before the deferral was recorded ({d['recorded_on']})")
-            if r["kind"] == "payment" and (d["document"], r["paid_in"]) not in editions:
-                problems.append(f"line {n}: paid in {r['paid_in']}, which is not an edition of {d['document']} in the register")
+            if r["kind"] == "payment":
+                e = editions.get((d["document"], r["paid_in"]))
+                if e is None:
+                    problems.append(f"line {n}: paid in {r['paid_in']}, which is not an edition of {d['document']} in the register")
+                elif e["published_on"] and e["published_on"] != r["paid_on"]:
+                    problems.append(f"line {n}: paid on {r['paid_on']}, but {r['paid_in']} was published on {e['published_on']}")
+            if r["kind"] == "withdrawal" and not r["reason"].strip():
+                problems.append(f"line {n}: a withdrawal must give its reason")
     return problems
 
 

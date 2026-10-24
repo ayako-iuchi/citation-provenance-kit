@@ -66,7 +66,7 @@ def test_register_counts():
     assert (mp["open"], mp["conditional"], mp["paid"]) == (16, 2, 0)
     assert mp["oldest"]["log"] == "log #45" and mp["oldest"]["basis"] == "recorded" and mp["oldest"]["age_days"] == 11
     kit = rep["citation-provenance-kit"]
-    assert (kit["paid"], kit["open"]) == (4, 0) and kit["latest_edition"]["edition"] == "v1.12"
+    assert (kit["paid"], kit["open"]) == (5, 0) and kit["latest_edition"]["edition"] == "v1.12"
     assert all(not r["overdue"] for r in rep.values())
 
 
@@ -153,6 +153,10 @@ def test_other_documents_editions_do_not_count(tmp_path):
     ([D("a", fix_in="next edition ")], "exactly"),
     ([D("a", fix_in="次の版")], "exactly"),
     ([D("a", fix_in=" v2")], "spaces"),
+    ([D("a", fix_in="next ed.")], "exactly"),
+    ([D("a", fix_in="次回の改訂")], "exactly"),
+    ([D("a"), E("e", on="2026-10-06"), P("c", "a", on="2026-10-05", inn="v2")], "was published on"),
+    ([D("a"), W("w", "a", reason=" ")], "reason"),
     ([D("a"), W("w", "a"), P("c", "a")], "already closed"),
 ])
 def test_check_problems(tmp_path, recs, needle, capsys):
@@ -199,6 +203,7 @@ def test_spans_from_the_stored_times():
     assert sp["v1.12"]["minutes"] == 59 and sp["v1.12"]["first_commit"] == "beb4a7b"
     named = {s["tag"]: s for s in elapsed.spans(elapsed.from_tsv(TIMES), named=True)}
     assert named["v1.12"]["first_commit"] == "db7c95a" and named["v1.12"]["minutes"] == 39
+    assert named["v1.6"]["commits"] == 9  # every commit in the span, not only those that name the tag
     assert named["v1.12"]["last_commit"] == "146d887"
 
 
@@ -343,7 +348,7 @@ def test_elapsed_alias_and_prerelease_tags(tmp_path):
     assert sp["v1.1.0"]["note"] == "same commit as v1.1" and sp["v1.1.0"]["minutes"] is None
     assert sp["v1.2"]["commits"] == 2 and sp["v1.2"]["minutes"] == 30
     named = {s["tag"]: s for s in elapsed.spans(elapsed.from_git(str(repo)), named=True)}
-    assert named["v1.2"]["commits"] == 1 and named["v1.2"]["minutes"] == 30  # ends at the tagged merge commit
+    assert named["v1.2"]["commits"] == 2 and named["v1.2"]["minutes"] == 30  # ends at the tagged merge commit
     assert elapsed.spans(elapsed.from_git(str(repo), ["v1.2", "v1.2"]))[0]["tag"] == "v1.2"
     assert len(elapsed.spans(elapsed.from_git(str(repo), ["v1.2", "v1.2"]), ["v1.2", "v1.2"])) == 1
 
