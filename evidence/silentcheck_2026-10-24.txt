@@ -80,3 +80,9 @@ Changed files that the changelog lines added in the same range do not name. Name
 v1.12..v1.13: 16 file(s) changed, 1 not named: register/namespaces.json
 not named in all: 1
 [exit 1]
+
+$ python3 tools/silentcheck.py --git . --from v1.13 --to v1.14
+Changed files that the changelog lines added in the same range do not name. Names, not content.
+v1.13..v1.14: 13 file(s) changed, 3 not named: kit/citation-provenance-kit.xlsx, tests/test_debtcheck.py, tools/build_kit.py
+not named in all: 3
+[exit 1]

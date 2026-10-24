@@ -27,6 +27,12 @@ ALIASES = {"README.md": ["README", "READMEs"], "README_ja.md": ["README", "READM
     ("kit/book.xlsx", "The workbook was regenerated.", "alias workbook"),
     ("kit/book.xlsx", "workbooks", None),
     ("CITATION.cff", "The release commit writes the date.", None),
+    # An alias is a word on its own, not part of another path (review of v1.15).
+    ("README.md", "Added `examples/x/README.md`.", None),
+    ("README.md", "README_ja.md gains a row.", None),
+    ("README.md", "See the README.", "alias README"),
+    # A directory at the end of a sentence.
+    ("examples/es/lines.json", "Added examples/es/.", "directory examples/es/"),
 ])
 def test_named(path, text, want):
     assert silentcheck.named(path, text, ALIASES) == want
@@ -72,6 +78,60 @@ def test_a_changelog_line_added_later_counts(tmp_path):
     repo = _repo(tmp_path)
     r = silentcheck.check_range(str(repo), "v1.0", "v1.2")
     assert "b.py" in r["unnamed"] and "a.py" not in r["unnamed"]
+    (repo / "CHANGELOG.md").write_text("# Changelog\n\n## v1.2\n- Nothing new.\n\n## v1.1\n- `a.py` reads more.\n- `c.py` added.\n")
+    (repo / "c.py").write_text("c")
+    _git = lambda *a: subprocess.run(["git", "-C", str(repo), *a], check=True, capture_output=True, env=ENV)
+    _git("add", "-A")
+    _git("commit", "-q", "-m", "old section")
+    r = silentcheck.check_range(str(repo), "v1.2", "HEAD")
+    assert r["unnamed"] == []
+
+
+def _commit(repo, files, msg, tag=None):
+    for name, body in files.items():
+        p = repo / name
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(body)
+    subprocess.run(["git", "-C", str(repo), "add", "-A"], check=True, capture_output=True, env=ENV)
+    subprocess.run(["git", "-C", str(repo), "commit", "-q", "-m", msg], check=True, capture_output=True, env=ENV)
+    if tag:
+        subprocess.run(["git", "-C", str(repo), "tag", tag], check=True, capture_output=True, env=ENV)
+
+
+def test_headings_do_not_name_but_numbered_lines_do(tmp_path):
+    repo = _repo(tmp_path)
+    _commit(repo, {"CHANGELOG.md": "# Changelog\n\n## c.py update\n#83 d.py changed\n", "c.py": "1", "d.py": "1"}, "h")
+    r = silentcheck.check_range(str(repo), "v1.2", "HEAD")
+    assert r["unnamed"] == ["c.py"]
+
+
+def test_pre_release_tags_are_left_out(tmp_path):
+    repo = _repo(tmp_path)
+    _commit(repo, {"CHANGELOG.md": "# Changelog\n- `e.py`\n", "e.py": "1"}, "rc", "v1.3-rc1")
+    assert silentcheck.release_tags(str(repo)) == ["v1.0", "v1.1", "v1.2"]
+
+
+def test_missing_changelog_exits_2(tmp_path):
+    repo = _repo(tmp_path)
+    assert silentcheck.main(["--git", str(repo), "--changelog", "CHANGES.md"]) == 2
+
+
+def test_colour_and_odd_file_names(tmp_path):
+    repo = _repo(tmp_path)
+    subprocess.run(["git", "-C", str(repo), "config", "color.ui", "always"], check=True, env=ENV)
+    subprocess.run(["git", "-C", str(repo), "config", "color.diff", "always"], check=True, env=ENV)
+    _commit(repo, {"CHANGELOG.md": "# Changelog\n- `x\ty.py` and `q\"z.py` and `ü.py`\n",
+                   "x\ty.py": "1", 'q"z.py': "1", "ü.py": "1", "other.py": "1"}, "odd")
+    r = silentcheck.check_range(str(repo), "v1.2", "HEAD")
+    assert r["unnamed"] == ["other.py"]
+
+
+def test_json_output(tmp_path, capsys):
+    repo = _repo(tmp_path)
+    assert silentcheck.main(["--git", str(repo), "--from", "v1.0", "--to", "v1.1", "--json"]) == 1
+    d = json.loads(capsys.readouterr().out)
+    assert d[0]["from"] == "v1.0" and d[0]["unnamed"] == ["CITATION.cff"]
+    assert {f["path"]: f["named_by"] for f in d[0]["files"]} == {"CITATION.cff": None, "a.py": "path"}
 
 
 @pytest.mark.parametrize("args", [["--from", "v1.0"], ["--from", "v9", "--to", "v1.1"]])
@@ -112,8 +172,10 @@ def test_evidence_reproduces():
 
 def test_this_release_names_every_changed_file():
     """The kit's own release, against the latest tag before it: nothing changed silently."""
+    # Only tags reachable from HEAD: a checkout of an older release compares with the tag before it,
+    # not with a later one (review of v1.15).
     try:
-        tags = sorted(silentcheck._git(ROOT, "tag", "--list", "v*").split(), key=silentcheck._version_key)
+        tags = silentcheck.release_tags(ROOT, merged="HEAD")
         head_tags = silentcheck._git(ROOT, "tag", "--points-at", "HEAD").split()
     except ValueError:
         pytest.skip("not a git checkout")

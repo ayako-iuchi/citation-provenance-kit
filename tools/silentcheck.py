@@ -24,8 +24,9 @@ It reports names, not content. A file named in one line about something else
 counts as named, and a changelog that names a file and describes the change
 wrongly passes. What it finds is a change the changelog never mentions at all.
 
-Headings in the changelog ("## README update — 2026-10-24") do not name
-anything; only the lines under them do. The changelog itself is not checked
+Headings in the changelog ("## README update — 2026-10-24", a line that starts
+with one to six "#" and a space) do not name anything; only the lines under them
+do. Only release tags (v1.2, v1.2.3) are compared; a tag like v1.2-rc1 is left out. The changelog itself is not checked
 against itself.
 
 Usage:
@@ -45,13 +46,17 @@ import subprocess
 import sys
 
 
+RELEASE_TAG = re.compile(r"v\d+(?:\.\d+)*")
+HEADING = re.compile(r"\s*#{1,6}(?:\s|$)")
+
+
 def _version_key(tag):
     return ([int(n) for n in re.findall(r"\d+", tag)] or [0], tag)
 
 
 def _git(repo, *args):
     try:
-        r = subprocess.run(["git", "-C", repo, "-c", "core.quotePath=false", *args],
+        r = subprocess.run(["git", "-C", repo, "-c", "core.quotePath=false", "-c", "color.ui=false", *args],
                            capture_output=True, text=True, encoding="utf-8", errors="replace")
     except OSError as e:
         raise ValueError(f"git: {e}") from None
@@ -76,7 +81,7 @@ def load_aliases(path):
 
 def _bounded(text, s, after_dir=False):
     lead = r"(?<![\w./-])"
-    tail = r"(?=[\s`'\"),;:]|$)" if after_dir else r"(?![\w/-]|\.\w)"
+    tail = r"(?=[\s`'\"),;:]|\.(?:\s|$)|$)" if after_dir else r"(?![\w/-]|\.\w)"
     return re.search(lead + re.escape(s) + tail, text, re.M) is not None
 
 
@@ -93,17 +98,27 @@ def named(path, text, aliases):
         if _bounded(text, d, after_dir=True):
             return f"directory {d}"
     for w in aliases.get(path, []):
-        if re.search(r"(?<!\w)" + re.escape(w) + r"(?!\w)", text, re.I):
+        if re.search(r"(?<![\w./-])" + re.escape(w) + r"(?![\w/-]|\.\w)", text, re.I | re.M):
             return f"alias {w}"
     return None
 
 
+def release_tags(repo, merged=None):
+    """Release tags (v1, v1.2, v1.2.3; not v1.2-rc1) in version order; with `merged`, only those reachable from it."""
+    args = ["tag", "--list", "v*"] + (["--merged", merged] if merged else [])
+    return sorted((t for t in _git(repo, *args).split() if RELEASE_TAG.fullmatch(t)), key=_version_key)
+
+
 def check_range(repo, a, b, changelog="CHANGELOG.md", aliases=None):
     aliases = aliases or {}
-    files = [f for f in _git(repo, "diff", "--name-only", "--no-renames", a, b).splitlines() if f]
-    diff = _git(repo, "diff", "-U0", a, b, "--", changelog)
-    added = "\n".join(l[1:] for l in diff.splitlines()
-                      if l.startswith("+") and not l.startswith("+++") and not l[1:].lstrip().startswith("#"))
+    try:
+        _git(repo, "cat-file", "-e", f"{b}:{changelog}")
+    except ValueError:
+        raise ValueError(f"{changelog} not found at {b}") from None
+    files = [f for f in _git(repo, "diff", "--name-only", "--no-renames", "-z", a, b).split("\0") if f]
+    diff = _git(repo, "diff", "--no-color", "--no-ext-diff", "--no-textconv", "-U0", a, b, "--", changelog)
+    added = "\n".join(l[1:] for l in diff.split("\n")
+                      if l.startswith("+") and not l.startswith("+++") and not HEADING.match(l[1:]))
     rows = []
     for f in files:
         if f == changelog:
@@ -133,7 +148,7 @@ def main(argv=None):
         if a.a:
             pairs = [(a.a, a.b)]
         else:
-            tags = sorted((t for t in _git(a.git, "tag", "--list", "v*").split() if t), key=_version_key)
+            tags = release_tags(a.git)
             if len(tags) < 2:
                 raise ValueError("fewer than two tags")
             pairs = list(zip(tags, tags[1:]))
